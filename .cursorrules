@@ -1,0 +1,51 @@
+# Sentinella — Cursor project rules
+
+Sentinella is a mobile-first travel safety and security app for a specific group of
+travelers in Italy. It is a Next.js 14 (App Router) PWA deployed on Railway with a
+Railway PostgreSQL database. Access to personal features is gated by invite-code
+registration; safety-critical content (emergency numbers, guide) is public and works
+offline by design.
+
+## Stack
+- Next.js 14 App Router + TypeScript (strict), directory: src/
+- Tailwind CSS with a custom token system (see tailwind.config.ts)
+- Drizzle ORM + node-postgres (pg); schema in src/db/schema.ts; migrations in drizzle/
+- Auth: signed JWT (jose, HS256) in an httpOnly cookie; bcryptjs password hashing;
+  gate lives in src/middleware.ts
+- PWA: public/manifest.json + hand-written public/sw.js (no workbox)
+
+## Commands
+- npm run dev            — local dev server
+- npm run build          — production build
+- npm run typecheck      — tsc --noEmit
+- npm run db:generate    — generate SQL migrations from schema changes
+- npm run db:migrate     — apply migrations (needs DATABASE_URL)
+- npm run db:push        — dev-only schema sync
+- npm run db:seed        — seed sample alerts
+
+## Environment
+DATABASE_URL, AUTH_SECRET, INVITE_CODES (comma-separated), ADMIN_EMAILS
+(comma-separated). Never hardcode or commit these. .env is gitignored.
+
+## Non-negotiable conventions
+1. Signal red (`signal` token) is reserved for emergency actions only — if it's red,
+   tapping it summons help. Never use it decoratively. Green (`verde`) is the working
+   color; `ambra` marks caution.
+2. Emergency and guide content lives in src/data/*.ts as typed static data so it is
+   bundled and available offline. Do not move it into the database.
+3. Never put safety-critical screens (/emergency, /guide) behind auth.
+4. Touch targets are at least 44–48px (min-h-[2.75rem] or larger); keep visible
+   focus states; respect prefers-reduced-motion.
+5. All API input is validated with zod; auth is re-checked inside handlers even when
+   middleware already gates the route.
+6. When changing src/db/schema.ts, run npm run db:generate and commit the new files
+   in drizzle/ — Railway applies them on deploy via npm run start:railway.
+7. Any hardcoded phone numbers (embassies, poison control) must keep their
+   "verify against official sources" caveat in the UI.
+8. UI copy: plain verbs, sentence case, specific instructions. Errors say what
+   happened and what to do next.
+
+## Layout language
+Signage plates (.plate + CallPlate component) are the signature element — emergency
+numbers rendered like Italian road signs with large monospace numerals. Keep new
+surfaces consistent with this system rather than introducing new card styles.
