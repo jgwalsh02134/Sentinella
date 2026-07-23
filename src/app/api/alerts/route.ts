@@ -4,6 +4,7 @@ import { desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { alerts } from "@/db/schema";
 import { getSessionUser } from "@/lib/session";
+import { sendPush } from "@/lib/push";
 
 export const dynamic = "force-dynamic";
 
@@ -41,5 +42,18 @@ export async function POST(req: Request) {
   }
 
   const [row] = await db.insert(alerts).values(parsed.data).returning();
+
+  // Notify opted-in users. Best effort: a push failure must never unpublish.
+  try {
+    await sendPush("team", {
+      title: `Team alert: ${row.title}`.slice(0, 120),
+      body: `${row.region} · ${row.severity}`,
+      url: "/alerts",
+      tag: `team-alert-${row.id}`,
+    });
+  } catch (err) {
+    console.error("team alert push failed:", err);
+  }
+
   return NextResponse.json({ alert: row }, { status: 201 });
 }

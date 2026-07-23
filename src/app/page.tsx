@@ -3,6 +3,7 @@ import CallPlate from "@/components/CallPlate";
 import Crest from "@/components/Crest";
 import InstallGuide from "@/components/InstallGuide";
 import LatestAlert from "@/components/LatestAlert";
+import NotificationSettings from "@/components/NotificationSettings";
 import SignOutButton from "@/components/SignOutButton";
 import { getSessionUser } from "@/lib/session";
 import { invitesRequired } from "@/lib/invites";
@@ -82,6 +83,12 @@ export default async function HomePage() {
           <LatestAlert />
         </div>
       </section>
+
+      {session ? (
+        <section className="mt-6" aria-label="Notification settings">
+          <NotificationSettings />
+        </section>
+      ) : null}
 
       <section className="mt-6" aria-label="Offline readiness">
         <div className="plate bg-verde-tint p-4">

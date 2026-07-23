@@ -1,0 +1,123 @@
+/**
+ * Web Push delivery. Server-side only.
+ *
+ * VAPID keys come from VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY / VAPID_SUBJECT
+ * (generate with `npx web-push generate-vapid-keys`). When they're not set,
+ * every send is a logged no-op — notifications are an enhancement and must
+ * never break publishing or feed refreshes.
+ */
+import webpush from "web-push";
+import { and, eq, inArray, isNull } from "drizzle-orm";
+import { db } from "@/db";
+import { externalAdvisories, pushSubscriptions, users, type ExternalAdvisory } from "@/db/schema";
+
+export type PushPayload = {
+  title: string;
+  body: string;
+  /** In-app path the notification opens, e.g. "/alerts". */
+  url: string;
+  /** Collapse key: notifications with the same tag replace each other. */
+  tag?: string;
+};
+
+export type NotifyPreference = "official" | "team" | "reminders";
+
+const PREF_COLUMN = {
+  official: users.notifyOfficial,
+  team: users.notifyTeam,
+  reminders: users.notifyReminders,
+} as const;
+
+let vapidConfigured = false;
+
+function ensureVapid(): boolean {
+  const { VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT } = process.env;
+  if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY || !VAPID_SUBJECT) {
+    console.warn("[push] VAPID env vars not set; skipping send");
+    return false;
+  }
+  if (!vapidConfigured) {
+    webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
+    vapidConfigured = true;
+  }
+  return true;
+}
+
+/**
+ * Sends to every subscription of users who opted into `pref` — all such
+ * users, or only those in `userIds` when given. Dead subscriptions
+ * (endpoints answering 404/410) are deleted. Never throws.
+ */
+export async function sendPush(
+  pref: NotifyPreference,
+  payload: PushPayload,
+  userIds?: string[],
+): Promise<{ sent: number; failed: number }> {
+  if (!ensureVapid()) return { sent: 0, failed: 0 };
+  if (userIds && userIds.length === 0) return { sent: 0, failed: 0 };
+
+  const rows = await db
+    .select({
+      id: pushSubscriptions.id,
+      endpoint: pushSubscriptions.endpoint,
+      keys: pushSubscriptions.keys,
+    })
+    .from(pushSubscriptions)
+    .innerJoin(users, eq(pushSubscriptions.userId, users.id))
+    .where(
+      userIds
+        ? and(eq(PREF_COLUMN[pref], true), inArray(pushSubscriptions.userId, userIds))
+        : eq(PREF_COLUMN[pref], true),
+    );
+
+  const body = JSON.stringify(payload);
+  let sent = 0;
+  let failed = 0;
+  await Promise.all(
+    rows.map(async (sub) => {
+      try {
+        await webpush.sendNotification({ endpoint: sub.endpoint, keys: sub.keys }, body);
+        sent += 1;
+      } catch (err) {
+        failed += 1;
+        const status = (err as { statusCode?: number }).statusCode;
+        if (status === 404 || status === 410) {
+          await db.delete(pushSubscriptions).where(eq(pushSubscriptions.id, sub.id)).catch(() => undefined);
+        } else {
+          console.error(`[push] send failed (${status ?? "?"}) for ${sub.endpoint.slice(0, 60)}…`);
+        }
+      }
+    }),
+  );
+  return { sent, failed };
+}
+
+/**
+ * Notifies opted-in users about advisory items that have never been
+ * notified. Dedupe lives in the table: rows are keyed by URL and
+ * notified_at is stamped before sending, so re-running a refresh — or two
+ * refreshes racing — never double-sends an item.
+ */
+export async function notifyNewAdvisories(items: ExternalAdvisory[]): Promise<void> {
+  for (const item of items) {
+    try {
+      // Claim the row first; only the claimer sends.
+      const claimed = await db
+        .update(externalAdvisories)
+        .set({ notifiedAt: new Date() })
+        .where(and(eq(externalAdvisories.id, item.id), isNull(externalAdvisories.notifiedAt)))
+        .returning({ id: externalAdvisories.id });
+      if (claimed.length === 0) continue;
+
+      const label = item.source === "embassy" ? "U.S. Embassy alert" : "U.S. State Dept";
+      await sendPush("official", {
+        title: `${label}: ${item.title}`.slice(0, 120),
+        body: item.regions.length ? `Affects: ${item.regions.join(", ")}` : "Tap for details.",
+        url: "/alerts",
+        tag: item.url,
+      });
+    } catch (err) {
+      console.error("[push] advisory notification failed:", err);
+    }
+  }
+}

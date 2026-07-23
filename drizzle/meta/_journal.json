@@ -15,6 +15,13 @@
       "when": 1784830944381,
       "tag": "0001_supreme_james_howlett",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784832527854,
+      "tag": "0002_typical_ultragirl",
+      "breakpoints": true
     }
   ]
 }

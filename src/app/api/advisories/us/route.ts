@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getUsAdvisories, refreshUsAdvisories } from "@/lib/us-advisories";
+import { notifyNewAdvisories } from "@/lib/push";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,12 @@ export const dynamic = "force-dynamic";
  */
 export async function GET() {
   try {
-    await refreshUsAdvisories();
+    const refresh = await refreshUsAdvisories();
+    if (refresh.newItems.length > 0) {
+      // Fire-and-forget: notified_at stamping in notifyNewAdvisories makes
+      // this safe to trigger from any refresh path without double-sending.
+      void notifyNewAdvisories(refresh.newItems);
+    }
     const data = await getUsAdvisories();
     return NextResponse.json(data);
   } catch (err) {

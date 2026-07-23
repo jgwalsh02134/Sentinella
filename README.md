@@ -49,6 +49,18 @@ PROTOMAPS_BUILD=20260722 MAXZOOM=14 node scripts/build-map-packs.mjs rome
 
 The script extracts each city's bounding box from a [Protomaps daily build](https://build.protomaps.com) (OpenStreetMap data), writes the packs, and regenerates the `src/data/mapPacks.ts` manifest with real byte sizes. To add a city, add its bbox to the `CITIES` array in the script and re-run; keep each pack under ~40 MB (GitHub warns at 50 MB) by trimming the bbox or lowering `MAXZOOM`. Label glyphs are self-hosted under `public/map-fonts/` (Noto Sans, Latin ranges from [basemaps-assets](https://github.com/protomaps/basemaps-assets)) so text renders offline; the hand-written style lives in `src/lib/mapStyle.ts`.
 
+## Notifications (Web Push)
+
+Signed-in users can enable push notifications from the card on the home screen: official U.S. advisory updates, team alerts, and check-in reminders, each individually toggleable. The server needs VAPID keys in its environment — generate a pair with:
+
+```bash
+npx web-push generate-vapid-keys
+```
+
+Set `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, and `VAPID_SUBJECT` (a `mailto:` contact URL) locally and on Railway. Without them the app runs fine and push sends become logged no-ops.
+
+iOS reality check: iPhones and iPads only receive web push on iOS 16.4+ **and** with the app installed to the home screen — Safari tabs can't receive notifications, so the UI shows install guidance there instead of a permission prompt.
+
 ## Working in Cursor
 
 Open the folder in Cursor and it will pick up `.cursorrules`, which teaches the AI the stack, commands, and the project's non-negotiables (red is reserved for emergency actions, safety content stays public and offline-capable, schema changes require generated migrations, etc.). Good first prompts: "add an itinerary table and screen following the existing conventions" or "add pagination to check-in history."

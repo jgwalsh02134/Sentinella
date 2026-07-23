@@ -11,8 +11,8 @@
  *    files managed in IndexedDB by the Map screen, and their online mode uses
  *    HTTP range requests the Cache API can't store.
  */
-// v3: crest rebrand — new icon artwork and the in-app crest rendition.
-const VERSION = "sentinella-v3";
+// v4: web push — notification display and click-through handlers.
+const VERSION = "sentinella-v4";
 const PRECACHE = [
   "/",
   "/emergency",
@@ -41,6 +41,37 @@ self.addEventListener("activate", (event) => {
       .keys()
       .then((keys) => Promise.all(keys.filter((k) => k !== VERSION).map((k) => caches.delete(k))))
       .then(() => self.clients.claim()),
+  );
+});
+
+self.addEventListener("push", (event) => {
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch {
+    // Non-JSON payloads fall through to the generic notification.
+  }
+  event.waitUntil(
+    self.registration.showNotification(data.title || "Sentinella", {
+      body: data.body || "",
+      icon: "/icons/icon-192.png",
+      badge: "/icons/icon-192.png",
+      tag: data.tag || undefined,
+      data: { url: data.url || "/" },
+    }),
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url = (event.notification.data && event.notification.data.url) || "/";
+  event.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((windows) => {
+      for (const client of windows) {
+        if (new URL(client.url).pathname === url && "focus" in client) return client.focus();
+      }
+      return clients.openWindow(url);
+    }),
   );
 });
 

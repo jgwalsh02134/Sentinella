@@ -3,6 +3,7 @@ import {
   boolean,
   doublePrecision,
   integer,
+  jsonb,
   pgEnum,
   pgTable,
   text,
@@ -21,6 +22,22 @@ export const users = pgTable("users", {
   name: text("name").notNull(),
   passwordHash: text("password_hash").notNull(),
   role: userRole("role").notNull().default("traveler"),
+  /** Notification preferences; delivery also requires a push subscription. */
+  notifyOfficial: boolean("notify_official").notNull().default(true),
+  notifyTeam: boolean("notify_team").notNull().default(true),
+  notifyReminders: boolean("notify_reminders").notNull().default(true),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** One row per browser/device push registration (a user may have several). */
+export const pushSubscriptions = pgTable("push_subscriptions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  endpoint: text("endpoint").notNull().unique(),
+  /** { p256dh, auth } from PushSubscription.toJSON().keys */
+  keys: jsonb("keys").$type<{ p256dh: string; auth: string }>().notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -69,6 +86,11 @@ export const externalAdvisories = pgTable("external_advisories", {
     .default(sql`'{}'::text[]`),
   publishedAt: timestamp("published_at", { withTimezone: true }),
   fetchedAt: timestamp("fetched_at", { withTimezone: true }).notNull().defaultNow(),
+  /**
+   * When push notifications for this item were sent. Dedupe: rows are keyed
+   * by URL and this is set exactly once, so feed refreshes never double-send.
+   */
+  notifiedAt: timestamp("notified_at", { withTimezone: true }),
 });
 
 export type User = typeof users.$inferSelect;
