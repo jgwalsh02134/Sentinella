@@ -3,6 +3,13 @@ export type InfoItem = {
   body: string;
   /** Must-not-miss warning, rendered as a highlighted callout (max one per section). */
   warning?: string;
+  /**
+   * Official external resources only — every URL here must be verified as
+   * the official source (government body, operator, or store listing by the
+   * official publisher). Rendered as outline link buttons; they need a
+   * connection, unlike the guide itself.
+   */
+  links?: { label: string; url: string }[];
 };
 
 export const healthItems: InfoItem[] = [
@@ -22,6 +29,12 @@ export const healthItems: InfoItem[] = [
     title: "EU & UK visitors: bring the card",
     body: "The EHIC (EU) or GHIC (UK) gives access to state healthcare on the same terms as residents.",
     warning: "The card is not a substitute for travel insurance — repatriation and private clinics are not covered.",
+    links: [
+      {
+        label: "Apply for a UK GHIC (NHS)",
+        url: "https://www.nhs.uk/using-the-nhs/healthcare-abroad/apply-for-a-free-uk-global-health-insurance-card-ghic/",
+      },
+    ],
   },
   {
     title: "Everyone else: insurance first",
@@ -41,10 +54,19 @@ export const basicsItems: InfoItem[] = [
   {
     title: "112 works everywhere",
     body: "One number for everything, from any phone, free, with interpreters. The official '112 Where ARE U' app can send your GPS position to the operator automatically in the regions that support it — worth installing alongside this one.",
+    links: [
+      // Official listings: publisher is AREU (Azienda Regionale Emergenza
+      // Urgenza), linked from where.areu.lombardia.it.
+      { label: "App Store — 112 Where ARE U", url: "https://apps.apple.com/app/112-where-are-u/id888964800" },
+      { label: "Google Play — 112 Where ARE U", url: "https://play.google.com/store/apps/details?id=it.Beta80Group.whereareu" },
+    ],
   },
   {
     title: "Strikes are scheduled, not surprises",
     body: "Transport strikes (scioperi) are announced days ahead and usually run set hours with guaranteed peak service. The night before any train or flight, check the operator's site — Trenitalia, Italo, or your airline — and have a fallback.",
+    links: [
+      { label: "Trenitalia — strike info", url: "https://www.trenitalia.com/en/information/in-case-of-strike.html" },
+    ],
   },
   {
     title: "ZTL zones will fine you by camera",
@@ -66,6 +88,7 @@ export const basicsItems: InfoItem[] = [
   {
     title: "Register your trip",
     body: "Many governments run traveler registration (the U.S. STEP program, for example) that pushes alerts and helps your embassy find you in a crisis. Enroll before departure.",
+    links: [{ label: "Enroll in STEP (US)", url: "https://step.state.gov" }],
   },
   {
     title: "Keep a paper layer",
