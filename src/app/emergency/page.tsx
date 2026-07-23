@@ -1,9 +1,22 @@
 import type { Metadata } from "next";
 import CallPlate from "@/components/CallPlate";
 import ShareLocation from "@/components/ShareLocation";
+import AustraliaFlag from "@/components/AustraliaFlag";
+import IrelandFlag from "@/components/IrelandFlag";
+import NewZealandFlag from "@/components/NewZealandFlag";
+import UkFlag from "@/components/UkFlag";
 import UsFlag from "@/components/UsFlag";
 import { callScript, emergencyNumbers, poisonCenters } from "@/data/emergency";
 import { embassies, lostDocumentSteps } from "@/data/embassies";
+
+/** Countries with SVG flag icons; the rest fall back to their emoji flag. */
+const flagIcons: Record<string, (props: { className?: string }) => JSX.Element> = {
+  "United States": UsFlag,
+  "United Kingdom": UkFlag,
+  Ireland: IrelandFlag,
+  Australia: AustraliaFlag,
+  "New Zealand": NewZealandFlag,
+};
 
 export const metadata: Metadata = { title: "Emergency" };
 
@@ -75,14 +88,12 @@ export default function EmergencyPage() {
           official site before travel.
         </p>
         <div className="mt-3 space-y-3">
-          {embassies.map((e) => (
+          {embassies.map((e) => {
+            const FlagIcon = flagIcons[e.country];
+            return (
             <div key={e.country} className="plate border border-line bg-white p-4">
               <p className="text-base font-bold">
-                {e.country === "United States" ? (
-                  <UsFlag />
-                ) : (
-                  <span aria-hidden="true">{e.flag}</span>
-                )}{" "}
+                {FlagIcon ? <FlagIcon /> : <span aria-hidden="true">{e.flag}</span>}{" "}
                 {e.name}
               </p>
               <p className="mt-0.5 text-sm text-mist">{e.address}</p>
@@ -104,7 +115,8 @@ export default function EmergencyPage() {
                 </a>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
