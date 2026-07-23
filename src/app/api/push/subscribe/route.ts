@@ -17,13 +17,15 @@ export async function GET() {
       notifyOfficial: users.notifyOfficial,
       notifyTeam: users.notifyTeam,
       notifyReminders: users.notifyReminders,
+      checkinReminderHours: users.checkinReminderHours,
     })
     .from(users)
     .where(eq(users.id, session.sub));
 
   return NextResponse.json({
     publicKey: process.env.VAPID_PUBLIC_KEY ?? null,
-    preferences: user ?? { notifyOfficial: true, notifyTeam: true, notifyReminders: true },
+    preferences:
+      user ?? { notifyOfficial: true, notifyTeam: true, notifyReminders: true, checkinReminderHours: 0 },
   });
 }
 

@@ -4,6 +4,7 @@ import { desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { checkIns } from "@/db/schema";
 import { getSessionUser } from "@/lib/session";
+import { advisoriesNear, type NearbyAdvisory } from "@/lib/advisory-proximity";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +29,7 @@ const Body = z.object({
   accuracyM: z.number().nonnegative().nullable().optional(),
   placeName: z.string().trim().max(120).optional(),
   note: z.string().trim().max(500).optional(),
+  isAuto: z.boolean().optional(),
 });
 
 export async function POST(req: Request) {
@@ -40,7 +42,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Check the check-in fields and try again." }, { status: 400 });
   }
 
-  const { status, lat, lng, accuracyM, placeName, note } = parsed.data;
+  const { status, lat, lng, accuracyM, placeName, note, isAuto } = parsed.data;
   const [row] = await db
     .insert(checkIns)
     .values({
@@ -51,8 +53,21 @@ export async function POST(req: Request) {
       accuracyM: accuracyM ?? null,
       placeName: placeName || null,
       note: note || null,
+      isAuto: isAuto ?? false,
     })
     .returning();
 
-  return NextResponse.json({ checkIn: row }, { status: 201 });
+  // Advisory proximity: surface anything active near these coordinates so
+  // the caution appears immediately after checking in. Never blocks the
+  // check-in itself.
+  let advisories: NearbyAdvisory[] = [];
+  if (lat != null && lng != null) {
+    try {
+      advisories = await advisoriesNear(lat, lng);
+    } catch (err) {
+      console.error("advisory proximity failed:", err);
+    }
+  }
+
+  return NextResponse.json({ checkIn: row, advisories }, { status: 201 });
 }

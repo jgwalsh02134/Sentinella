@@ -22,6 +22,13 @@
       "when": 1784832527854,
       "tag": "0002_typical_ultragirl",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1784839351086,
+      "tag": "0003_condemned_makkari",
+      "breakpoints": true
     }
   ]
 }

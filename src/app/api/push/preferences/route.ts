@@ -11,6 +11,7 @@ const Body = z.object({
   notifyOfficial: z.boolean().optional(),
   notifyTeam: z.boolean().optional(),
   notifyReminders: z.boolean().optional(),
+  checkinReminderHours: z.union([z.literal(0), z.literal(4), z.literal(8), z.literal(24)]).optional(),
 });
 
 export async function PATCH(req: Request) {
@@ -31,6 +32,7 @@ export async function PATCH(req: Request) {
         notifyOfficial: users.notifyOfficial,
         notifyTeam: users.notifyTeam,
         notifyReminders: users.notifyReminders,
+        checkinReminderHours: users.checkinReminderHours,
       });
 
     return NextResponse.json({ preferences: row });

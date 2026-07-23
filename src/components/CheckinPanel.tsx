@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ReminderSettings from "@/components/ReminderSettings";
+import TripTracking from "@/components/TripTracking";
 
 type Status = "safe" | "caution" | "help";
 
@@ -12,7 +14,15 @@ type CheckIn = {
   accuracyM: number | null;
   placeName: string | null;
   note: string | null;
+  isAuto?: boolean;
   createdAt: string;
+};
+
+type NearbyAdvisory = {
+  source: "team" | "official";
+  title: string;
+  badge: string | null;
+  url: string | null;
 };
 
 const statusMeta: Record<Status, { label: string; dot: string; chip: string }> = {
@@ -43,6 +53,7 @@ export default function CheckinPanel() {
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<CheckIn[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
+  const [nearby, setNearby] = useState<NearbyAdvisory[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -99,6 +110,7 @@ export default function CheckinPanel() {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error ?? "Check-in didn't save.");
       setHistory((h) => [data.checkIn, ...h]);
+      setNearby(data.advisories ?? []);
       setMessage("Checked in.");
       setPlaceName("");
       setNote("");
@@ -112,6 +124,39 @@ export default function CheckinPanel() {
 
   return (
     <div className="space-y-6">
+      <TripTracking
+        onAutoCheckIn={(checkIn, advisories) => {
+          setHistory((h) => [checkIn as CheckIn, ...h]);
+          setNearby(advisories as NearbyAdvisory[]);
+        }}
+      />
+
+      {nearby.length > 0 ? (
+        <div className="rounded-xl bg-ambra-tint p-4" role="status">
+          <p className="text-sm font-bold text-ambra">Active advisories near your position</p>
+          <ul className="mt-1.5 space-y-1">
+            {nearby.map((a) => (
+              <li key={a.title} className="text-sm leading-relaxed text-ambra">
+                {a.badge ? <span className="font-bold uppercase">{a.badge} · </span> : null}
+                {a.url ? (
+                  <a
+                    href={a.url}
+                    target={a.url.startsWith("/") ? undefined : "_blank"}
+                    rel="noreferrer"
+                    className="underline underline-offset-2"
+                  >
+                    {a.title}
+                  </a>
+                ) : (
+                  a.title
+                )}
+                <span className="text-xs"> ({a.source === "team" ? "team" : "official"})</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
       <div className="plate border border-line bg-white p-5">
         <h2 className="eyebrow">New check-in</h2>
 
@@ -190,6 +235,8 @@ export default function CheckinPanel() {
         </button>
       </div>
 
+      <ReminderSettings />
+
       <section>
         <h2 className="eyebrow">History</h2>
         {loadingHistory ? (
@@ -205,6 +252,11 @@ export default function CheckinPanel() {
                 <div className="flex items-center gap-2">
                   <span className={`h-2.5 w-2.5 rounded-full ${statusMeta[c.status].dot}`} aria-hidden="true" />
                   <span className="text-sm font-bold">{statusMeta[c.status].label}</span>
+                  {c.isAuto ? (
+                    <span className="rounded-full border border-line px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-mist">
+                      Auto
+                    </span>
+                  ) : null}
                   <span className="ml-auto text-xs text-mist">{formatWhen(c.createdAt)}</span>
                 </div>
                 {c.placeName ? <p className="mt-1 break-words text-sm">{c.placeName}</p> : null}

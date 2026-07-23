@@ -26,6 +26,12 @@ export const users = pgTable("users", {
   notifyOfficial: boolean("notify_official").notNull().default(true),
   notifyTeam: boolean("notify_team").notNull().default(true),
   notifyReminders: boolean("notify_reminders").notNull().default(true),
+  /** Check-in reminder interval in hours: 0 = off, else 4/8/24. */
+  checkinReminderHours: integer("checkin_reminder_hours").notNull().default(0),
+  /** When the user was last push-reminded to check in. */
+  lastReminderAt: timestamp("last_reminder_at", { withTimezone: true }),
+  /** When admins were last escalated to about this user's silence. */
+  lastEscalationAt: timestamp("last_escalation_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -52,6 +58,8 @@ export const checkIns = pgTable("check_ins", {
   accuracyM: doublePrecision("accuracy_m"),
   placeName: text("place_name"),
   note: text("note"),
+  /** True for check-ins posted automatically by trip tracking. */
+  isAuto: boolean("is_auto").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

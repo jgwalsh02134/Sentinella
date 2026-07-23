@@ -45,17 +45,23 @@ function ensureVapid(): boolean {
 
 /**
  * Sends to every subscription of users who opted into `pref` — all such
- * users, or only those in `userIds` when given. Dead subscriptions
- * (endpoints answering 404/410) are deleted. Never throws.
+ * users, or only those in `userIds` when given. `pref: null` skips the
+ * preference filter (used for admin safety escalations, which must not be
+ * silenced by a preference). Dead subscriptions (endpoints answering
+ * 404/410) are deleted. Never throws.
  */
 export async function sendPush(
-  pref: NotifyPreference,
+  pref: NotifyPreference | null,
   payload: PushPayload,
   userIds?: string[],
 ): Promise<{ sent: number; failed: number }> {
   if (!ensureVapid()) return { sent: 0, failed: 0 };
   if (userIds && userIds.length === 0) return { sent: 0, failed: 0 };
 
+  const conditions = [
+    ...(pref ? [eq(PREF_COLUMN[pref], true)] : []),
+    ...(userIds ? [inArray(pushSubscriptions.userId, userIds)] : []),
+  ];
   const rows = await db
     .select({
       id: pushSubscriptions.id,
@@ -64,11 +70,7 @@ export async function sendPush(
     })
     .from(pushSubscriptions)
     .innerJoin(users, eq(pushSubscriptions.userId, users.id))
-    .where(
-      userIds
-        ? and(eq(PREF_COLUMN[pref], true), inArray(pushSubscriptions.userId, userIds))
-        : eq(PREF_COLUMN[pref], true),
-    );
+    .where(conditions.length ? and(...conditions) : undefined);
 
   const body = JSON.stringify(payload);
   let sent = 0;
