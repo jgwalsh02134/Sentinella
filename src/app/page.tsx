@@ -1,6 +1,7 @@
 import Link from "next/link";
 import CallPlate from "@/components/CallPlate";
 import Crest from "@/components/Crest";
+import InstallGuide from "@/components/InstallGuide";
 import LatestAlert from "@/components/LatestAlert";
 import SignOutButton from "@/components/SignOutButton";
 import { getSessionUser } from "@/lib/session";
@@ -91,6 +92,8 @@ export default async function HomePage() {
           </p>
         </div>
       </section>
+
+      <InstallGuide />
 
       {!session ? (
         <section className="mt-6">
