@@ -6,6 +6,7 @@ import { FetchSource, PMTiles, Protocol } from "pmtiles";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { MAP_PACKS, PACKS_MAXZOOM, type MapPack } from "@/data/mapPacks";
 import { buildMapStyle } from "@/lib/mapStyle";
+import { saveLastFix } from "@/lib/lastFix";
 
 function cityStyle(city: MapPack) {
   return buildMapStyle({ key: city.id, bounds: city.bbox, maxzoom: PACKS_MAXZOOM });
@@ -95,6 +96,7 @@ export default function MapView() {
       geolocate.on("geolocate", (e: GeolocationPosition) => {
         setLocating(false);
         setFix({ lat: e.coords.latitude, lng: e.coords.longitude, accuracyM: e.coords.accuracy });
+        saveLastFix(e.coords.latitude, e.coords.longitude);
       });
       geolocate.on("error", () => setLocating(false));
 

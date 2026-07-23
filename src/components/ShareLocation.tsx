@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { saveLastFix } from "@/lib/lastFix";
 
 type Fix = {
   lat: number;
@@ -45,6 +46,7 @@ export default function ShareLocation() {
           accuracyM: pos.coords.accuracy,
           at: new Date(),
         });
+        saveLastFix(pos.coords.latitude, pos.coords.longitude);
         setBusy(false);
       },
       (err) => {
