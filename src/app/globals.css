@@ -26,6 +26,44 @@ body {
   @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-verde;
 }
 
+/* ---- Type scale -----------------------------------------------------
+   One system, defined here, applied everywhere. A person under stress,
+   outdoors, on a phone, should find the key fact in two seconds. */
+
+/* Page title: exactly one per screen (the h1). */
+.title-page {
+  @apply text-2xl font-extrabold tracking-tight;
+}
+
+/* Visible section heading; pairs with an .eyebrow on long sections. */
+.title-section {
+  @apply text-lg font-bold tracking-tight;
+}
+
+/* Default body copy on content screens. */
+.body-copy {
+  @apply text-[15px] leading-relaxed;
+}
+
+/* ---- Emphasis system ------------------------------------------------
+   Each device has exactly one job:
+   - bold      : actions and critical facts (numbers, imperatives)
+   - italic    : Italian-language terms and pronunciations
+   - .callout  : must-not-miss warnings (max one per section)
+   - .text-link: standalone interactive text
+   Red is never an emphasis device — signal is reserved for emergency
+   actions (if it's red, tapping it summons help). */
+
+/* Must-not-miss warning. Ambra only, never signal red. */
+.callout {
+  @apply rounded-r-xl border-l-[3px] border-ambra bg-ambra-tint p-3 text-[15px] leading-relaxed text-ink;
+}
+
+/* Standalone text link. */
+.text-link {
+  @apply font-semibold text-verde underline underline-offset-2;
+}
+
 /* Signage-style plate: the app's signature element. */
 .plate {
   @apply block rounded-plate shadow-plate;

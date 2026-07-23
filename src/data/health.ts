@@ -1,6 +1,8 @@
 export type InfoItem = {
   title: string;
   body: string;
+  /** Must-not-miss warning, rendered as a highlighted callout (max one per section). */
+  warning?: string;
 };
 
 export const healthItems: InfoItem[] = [
@@ -18,7 +20,8 @@ export const healthItems: InfoItem[] = [
   },
   {
     title: "EU & UK visitors: bring the card",
-    body: "The EHIC (EU) or GHIC (UK) gives access to state healthcare on the same terms as residents. It is not a substitute for travel insurance — repatriation and private clinics are not covered.",
+    body: "The EHIC (EU) or GHIC (UK) gives access to state healthcare on the same terms as residents.",
+    warning: "The card is not a substitute for travel insurance — repatriation and private clinics are not covered.",
   },
   {
     title: "Everyone else: insurance first",
@@ -57,7 +60,8 @@ export const basicsItems: InfoItem[] = [
   },
   {
     title: "Beach flags mean what they say",
-    body: "Red flag = no swimming, and currents on some coasts are serious. Staffed lidos (stabilimenti) have lifeguards; free beaches (spiagge libere) often don't.",
+    body: "Staffed lidos (stabilimenti) have lifeguards; free beaches (spiagge libere) often don't.",
+    warning: "Red flag = no swimming, and currents on some coasts are serious.",
   },
   {
     title: "Register your trip",

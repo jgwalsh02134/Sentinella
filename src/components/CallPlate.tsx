@@ -52,9 +52,9 @@ export default function CallPlate({
             {name}
           </span>
           {nameIt ? (
-            <span className={`block text-sm ${isSupport ? "text-mist" : "text-white/75"}`}>
+            <i lang="it" className={`block text-sm italic ${isSupport ? "text-mist" : "text-white/75"}`}>
               {nameIt}
-            </span>
+            </i>
           ) : null}
         </span>
         <svg

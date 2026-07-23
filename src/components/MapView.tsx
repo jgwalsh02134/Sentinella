@@ -200,7 +200,7 @@ export default function MapView() {
       />
 
       <div className="plate mt-3 border border-line bg-white p-4">
-        <p className="eyebrow">Your position</p>
+        <h2 className="eyebrow">Your position</h2>
         {fix ? (
           <>
             <p className="mt-1 font-mono text-lg font-bold tabular-nums text-verde-deep">
@@ -218,7 +218,7 @@ export default function MapView() {
       </div>
 
       <section className="mt-5" aria-label="Offline maps">
-        <p className="eyebrow">Offline maps</p>
+        <h2 className="eyebrow">Offline maps</h2>
         <p className="mt-1 text-xs leading-relaxed text-mist">
           Download a city before you travel and the map works with no connection. Each pack covers
           the metro area with streets down to building level.

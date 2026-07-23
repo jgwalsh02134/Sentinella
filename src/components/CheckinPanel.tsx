@@ -113,7 +113,7 @@ export default function CheckinPanel() {
   return (
     <div className="space-y-6">
       <div className="plate border border-line bg-white p-5">
-        <p className="eyebrow">New check-in</p>
+        <h2 className="eyebrow">New check-in</h2>
 
         <div className="mt-3 grid grid-cols-3 gap-2" role="radiogroup" aria-label="Status">
           {(Object.keys(statusMeta) as Status[]).map((s) => {
@@ -191,7 +191,7 @@ export default function CheckinPanel() {
       </div>
 
       <section>
-        <p className="eyebrow">History</p>
+        <h2 className="eyebrow">History</h2>
         {loadingHistory ? (
           <p className="mt-3 text-sm text-mist">Loading…</p>
         ) : history.length === 0 ? (

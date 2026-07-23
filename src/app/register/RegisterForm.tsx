@@ -92,7 +92,7 @@ export default function RegisterForm({ invitesRequired }: { invitesRequired: boo
       </button>
       <p className="text-sm text-mist">
         Already registered?{" "}
-        <Link href="/login" className="font-bold text-verde underline underline-offset-2">
+        <Link href="/login" className="text-link">
           Sign in
         </Link>
       </p>

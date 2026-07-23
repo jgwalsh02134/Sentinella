@@ -69,7 +69,7 @@ function LoginForm() {
       </button>
       <p className="text-sm text-mist">
         New here?{" "}
-        <Link href="/register" className="font-bold text-verde underline underline-offset-2">
+        <Link href="/register" className="text-link">
           Create an account
         </Link>{" "}
         with your invite code.
@@ -86,8 +86,8 @@ export default function LoginPage() {
           <Crest size={72} priority />
         </div>
         <p className="eyebrow">Sign in</p>
-        <h1 className="text-2xl font-extrabold tracking-tight">Welcome back</h1>
-        <p className="mt-1 text-sm leading-relaxed text-mist">
+        <h1 className="title-page">Welcome back</h1>
+        <p className="body-copy mt-1 text-mist">
           Signing in unlocks check-ins. Emergency numbers and the guide never require an account.
         </p>
       </header>

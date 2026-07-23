@@ -30,8 +30,8 @@ export default function EmergencyPage() {
     <main>
       <header>
         <p className="eyebrow">Emergency</p>
-        <h1 className="text-2xl font-extrabold tracking-tight">One tap to help</h1>
-        <p className="mt-1 text-sm leading-relaxed text-mist">
+        <h1 className="title-page">One tap to help</h1>
+        <p className="body-copy mt-1 text-mist">
           Every plate below is a phone number. All core lines are free and work from any phone, with
           or without a local SIM.
         </p>
@@ -42,12 +42,14 @@ export default function EmergencyPage() {
           <CallPlate key={n.dial} {...n} />
         ))}
         <div className="plate border border-line bg-white p-5">
-          <p className="eyebrow">When the operator answers</p>
+          <h2 className="eyebrow">When the operator answers</h2>
           <ol className="mt-2 space-y-2">
-            {callScript.map((line, i) => (
-              <li key={line} className="flex gap-3 text-sm leading-relaxed">
+            {callScript.map((step, i) => (
+              <li key={step.lead} className="body-copy flex gap-3">
                 <span className="font-mono font-bold text-verde">{i + 1}</span>
-                <span className="text-mist">{line}</span>
+                <span className="text-mist">
+                  <strong className="font-bold text-ink">{step.lead}</strong> {step.rest}
+                </span>
               </li>
             ))}
           </ol>
@@ -65,14 +67,14 @@ export default function EmergencyPage() {
       </section>
 
       <section className="mt-6 space-y-3" aria-label="Emergency services">
-        <p className="eyebrow">Direct service lines</p>
+        <h2 className="eyebrow">Direct service lines</h2>
         {services.map((n) => (
           <CallPlate key={n.dial} {...n} />
         ))}
       </section>
 
       <section className="mt-6 space-y-3" aria-label="Support lines">
-        <p className="eyebrow">Support lines</p>
+        <h2 className="eyebrow">Support lines</h2>
         {support.map((n) => (
           <CallPlate key={n.dial} {...n} />
         ))}
@@ -89,10 +91,10 @@ export default function EmergencyPage() {
       </section>
 
       <section className="mt-6" aria-label="Embassies">
-        <p className="eyebrow">Embassies in Rome</p>
-        <p className="mt-1 text-xs leading-relaxed text-mist">
-          Switchboard numbers. After-hours consular emergency lines differ — verify yours on the
-          official site before travel.
+        <h2 className="eyebrow">Embassies in Rome</h2>
+        <p className="callout mt-2">
+          Switchboard numbers only. After-hours consular emergency lines differ —{" "}
+          <strong className="font-bold">verify yours on the official site before travel.</strong>
         </p>
         <div className="mt-3 space-y-3">
           {embassies.map((e) => {
@@ -128,13 +130,15 @@ export default function EmergencyPage() {
       </section>
 
       <section className="mt-6" aria-label="Lost documents">
-        <p className="eyebrow">Passport lost or stolen</p>
+        <h2 className="eyebrow">Passport lost or stolen</h2>
         <div className="plate mt-2 border border-line bg-white p-5">
           <ol className="space-y-2.5">
             {lostDocumentSteps.map((step, i) => (
-              <li key={step} className="flex gap-3 text-sm leading-relaxed">
+              <li key={step.lead} className="body-copy flex gap-3">
                 <span className="font-mono font-bold text-verde">{i + 1}</span>
-                <span className="text-mist">{step}</span>
+                <span className="text-mist">
+                  <strong className="font-bold text-ink">{step.lead}</strong> {step.rest}
+                </span>
               </li>
             ))}
           </ol>

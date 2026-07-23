@@ -180,7 +180,7 @@ export default function AlertsPanel() {
                 <span className="ml-auto text-xs text-mist">{formatWhen(a.createdAt)}</span>
               </div>
               <h2 className="mt-2 text-base font-bold leading-snug">{a.title}</h2>
-              <p className="mt-1 text-sm leading-relaxed text-mist">{a.body}</p>
+              <p className="body-copy mt-1 text-mist">{a.body}</p>
             </li>
           ))}
         </ul>

@@ -18,8 +18,8 @@ export default function RegisterPage() {
           <Crest size={72} priority />
         </div>
         <p className="eyebrow">Create account</p>
-        <h1 className="text-2xl font-extrabold tracking-tight">Join your traveler group</h1>
-        <p className="mt-1 text-sm leading-relaxed text-mist">
+        <h1 className="title-page">Join your traveler group</h1>
+        <p className="body-copy mt-1 text-mist">
           {required
             ? "Access is by invite code — the app is limited to a specific group even though it's reachable on the open web."
             : "Create an account to check in and see your trip history. Emergency numbers and the guide never need one."}

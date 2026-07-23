@@ -106,11 +106,18 @@ export const poisonCenters: PoisonCenter[] = [
   },
 ];
 
+export type Step = {
+  /** Bolded lead — the verb or key fact that must scan instantly. */
+  lead: string;
+  /** The rest of the instruction, regular weight. */
+  rest: string;
+};
+
 /** What to say when you call 112 — shown next to the primary plate. */
-export const callScript = [
-  "Where you are: town, street, and a landmark. Location first — the call can drop.",
-  "What happened: accident, crime, fire, medical.",
-  "Who is involved: how many people, ages, conditions.",
-  "Your number, in case the operator needs to call back.",
-  "Stay on the line until the operator tells you to hang up.",
+export const callScript: Step[] = [
+  { lead: "Where you are:", rest: "town, street, and a landmark. Location first — the call can drop." },
+  { lead: "What happened:", rest: "accident, crime, fire, medical." },
+  { lead: "Who is involved:", rest: "how many people, ages, conditions." },
+  { lead: "Your number,", rest: "in case the operator needs to call back." },
+  { lead: "Stay on the line", rest: "until the operator tells you to hang up." },
 ];

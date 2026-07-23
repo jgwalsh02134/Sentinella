@@ -19,7 +19,7 @@ export default async function HomePage() {
           <Crest size={40} priority />
           <div>
             <p className="eyebrow">Sentinella</p>
-            <h1 className="text-2xl font-extrabold tracking-tight">
+            <h1 className="title-page">
               {session ? `Ciao, ${session.name.split(" ")[0]}` : "Italy, handled."}
             </h1>
           </div>
@@ -27,7 +27,7 @@ export default async function HomePage() {
         {session ? (
           <SignOutButton />
         ) : (
-          <Link href="/login" className="text-xs font-semibold text-verde underline underline-offset-2">
+          <Link href="/login" className="text-link text-xs">
             Sign in
           </Link>
         )}
@@ -47,7 +47,7 @@ export default async function HomePage() {
       </section>
 
       <section className="mt-6" aria-label="Quick actions">
-        <p className="eyebrow">Right now</p>
+        <h2 className="eyebrow">Right now</h2>
         <div className="mt-2 grid grid-cols-2 gap-3">
           <Link href="/checkin" className="plate border border-line bg-white p-4">
             <span className="block text-2xl" aria-hidden="true">
@@ -76,7 +76,7 @@ export default async function HomePage() {
       </section>
 
       <section className="mt-6" aria-label="Latest advisory">
-        <p className="eyebrow">Latest advisory</p>
+        <h2 className="eyebrow">Latest advisory</h2>
         <div className="mt-2">
           <LatestAlert />
         </div>
@@ -84,7 +84,7 @@ export default async function HomePage() {
 
       <section className="mt-6" aria-label="Offline readiness">
         <div className="plate bg-verde-tint p-4">
-          <p className="text-sm font-bold text-verde-deep">Built for dead zones</p>
+          <h2 className="text-sm font-bold text-verde-deep">Built for dead zones</h2>
           <p className="mt-1 text-sm leading-relaxed text-verde-deep/80">
             Open the Emergency and Guide screens once while online and they stay available without a
             connection — numbers, phrases, and briefings included.
@@ -97,7 +97,7 @@ export default async function HomePage() {
           <div className="plate border border-line bg-white p-4">
             <p className="text-sm leading-relaxed text-mist">
               {inviteOnly ? "Have an invite code? " : "New here? "}
-              <Link href="/register" className="font-bold text-verde underline underline-offset-2">
+              <Link href="/register" className="text-link">
                 Create your account
               </Link>{" "}
               to check in and see your trip history.

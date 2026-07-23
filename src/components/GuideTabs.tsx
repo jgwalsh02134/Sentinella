@@ -5,10 +5,71 @@ import ItalyFlag from "@/components/ItalyFlag";
 import { scams } from "@/data/scams";
 import { phraseGroups } from "@/data/phrases";
 import { regions } from "@/data/regions";
-import { healthItems, basicsItems } from "@/data/health";
+import { healthItems, basicsItems, type InfoItem } from "@/data/health";
 
 const tabs = ["Basics", "Scams", "Phrases", "Cities", "Health"] as const;
 type Tab = (typeof tabs)[number];
+
+/** Visible section heading paired with the eyebrow micro-label per tab. */
+const tabHeadings: Record<Tab, string> = {
+  Basics: "Situational basics",
+  Scams: "The scams that actually run",
+  Phrases: "Emergency Italian",
+  Cities: "City briefings",
+  Health: "How healthcare works",
+};
+
+/**
+ * Split off the first sentence so an item's lead can render bold and the
+ * key fact scans in two seconds. Avoids false breaks after abbreviations
+ * ("U.S. STEP") by requiring a lowercase letter, digit, or closing
+ * punctuation before the period. Returns null for single-sentence bodies —
+ * if everything is bold, nothing is.
+ */
+function splitFirstSentence(text: string): [string, string] | null {
+  for (let i = 1; i < text.length - 2; i++) {
+    if (text[i] === "." && text[i + 1] === " " && /[a-z0-9)'"’”]/.test(text[i - 1])) {
+      return [text.slice(0, i + 1), text.slice(i + 2)];
+    }
+  }
+  return null;
+}
+
+/** Body copy with a bold first-sentence lead. */
+function LeadBody({ text }: { text: string }) {
+  const split = splitFirstSentence(text);
+  if (!split) return <>{text}</>;
+  return (
+    <>
+      <strong className="font-bold text-ink">{split[0]}</strong> {split[1]}
+    </>
+  );
+}
+
+/** City-briefing bullets: bold the place/topic before a leading colon. */
+function ColonLead({ text }: { text: string }) {
+  const idx = text.indexOf(":");
+  if (idx === -1 || idx > 40) return <>{text}</>;
+  return (
+    <>
+      <strong className="font-bold text-ink">{text.slice(0, idx + 1)}</strong>
+      {text.slice(idx + 1)}
+    </>
+  );
+}
+
+/** Basics and Health share one card layout. */
+function InfoCard({ item }: { item: InfoItem }) {
+  return (
+    <article className="plate border border-line bg-white p-5">
+      <h3 className="text-base font-bold leading-snug">{item.title}</h3>
+      <p className="body-copy mt-1.5 text-mist">
+        <LeadBody text={item.body} />
+      </p>
+      {item.warning ? <p className="callout mt-2.5">{item.warning}</p> : null}
+    </article>
+  );
+}
 
 export default function GuideTabs() {
   const [tab, setTab] = useState<Tab>("Basics");
@@ -38,41 +99,42 @@ export default function GuideTabs() {
         })}
       </div>
 
-      <div className="mt-4 space-y-3">
-        {tab === "Basics" &&
-          basicsItems.map((item) => (
-            <article key={item.title} className="plate border border-line bg-white p-5">
-              <h2 className="text-base font-bold leading-snug">{item.title}</h2>
-              <p className="mt-1.5 text-sm leading-relaxed text-mist">{item.body}</p>
-            </article>
-          ))}
+      <header className="mt-4">
+        <p className="eyebrow">{tab}</p>
+        <h2 className="title-section">{tabHeadings[tab]}</h2>
+      </header>
+
+      <div className="mt-3 space-y-3">
+        {tab === "Basics" && basicsItems.map((item) => <InfoCard key={item.title} item={item} />)}
 
         {tab === "Scams" &&
           scams.map((s) => (
             <article key={s.title} className="plate border border-line bg-white p-5">
-              <h2 className="text-base font-bold leading-snug">{s.title}</h2>
+              <h3 className="text-base font-bold leading-snug">{s.title}</h3>
               <p className="mt-0.5 text-xs font-semibold uppercase tracking-wide text-mist">
                 {s.where}
               </p>
-              <p className="mt-2 text-sm leading-relaxed text-mist">{s.how}</p>
-              <p className="mt-2 rounded-xl bg-verde-tint p-3 text-sm font-medium leading-relaxed text-verde-deep">
-                {s.counter}
+              <p className="body-copy mt-2 text-mist">{s.how}</p>
+              <p className="body-copy mt-2 rounded-xl bg-verde-tint p-3 text-verde-deep">
+                <strong className="font-bold">Counter:</strong> {s.counter}
               </p>
             </article>
           ))}
 
         {tab === "Phrases" &&
           phraseGroups.map((group) => (
-            <section key={group.label}>
-              <p className="eyebrow mt-2">{group.label}</p>
+            <section key={group.label} aria-label={group.label}>
+              <h3 className="eyebrow mt-2">{group.label}</h3>
               <div className="mt-2 space-y-2">
                 {group.phrases.map((p) => (
                   <div key={p.it} className="plate border border-line bg-white p-4">
-                    <p className="text-base font-bold text-verde-deep">
-                      <ItalyFlag /> {p.it}
+                    <p className="text-xs font-semibold uppercase tracking-wide text-mist">
+                      {p.en}
                     </p>
-                    <p className="text-sm text-ink">{p.en}</p>
-                    <p className="mt-0.5 font-mono text-xs text-mist">{p.say}</p>
+                    <p className="mt-1 text-lg font-bold leading-snug text-verde-deep">
+                      <ItalyFlag /> <i lang="it">{p.it}</i>
+                    </p>
+                    <p className="mt-0.5 text-sm italic text-mist">{p.say}</p>
                   </div>
                 ))}
               </div>
@@ -82,34 +144,28 @@ export default function GuideTabs() {
         {tab === "Cities" &&
           regions.map((r) => (
             <article key={r.name} className="plate border border-line bg-white p-5">
-              <h2 className="text-lg font-bold">{r.name}</h2>
-              <p className="mt-0.5 text-sm font-medium text-verde-deep">{r.headline}</p>
-              <p className="eyebrow mt-3">Watch for</p>
+              <h3 className="title-section">{r.name}</h3>
+              <p className="body-copy mt-0.5 font-medium text-verde-deep">{r.headline}</p>
+              <h4 className="eyebrow mt-3">Watch for</h4>
               <ul className="mt-1 space-y-1.5">
                 {r.watch.map((w) => (
-                  <li key={w} className="text-sm leading-relaxed text-mist">
-                    {w}
+                  <li key={w} className="body-copy text-mist">
+                    <ColonLead text={w} />
                   </li>
                 ))}
               </ul>
-              <p className="eyebrow mt-3">Moving around</p>
+              <h4 className="eyebrow mt-3">Moving around</h4>
               <ul className="mt-1 space-y-1.5">
                 {r.move.map((m) => (
-                  <li key={m} className="text-sm leading-relaxed text-mist">
-                    {m}
+                  <li key={m} className="body-copy text-mist">
+                    <ColonLead text={m} />
                   </li>
                 ))}
               </ul>
             </article>
           ))}
 
-        {tab === "Health" &&
-          healthItems.map((item) => (
-            <article key={item.title} className="plate border border-line bg-white p-5">
-              <h2 className="text-base font-bold leading-snug">{item.title}</h2>
-              <p className="mt-1.5 text-sm leading-relaxed text-mist">{item.body}</p>
-            </article>
-          ))}
+        {tab === "Health" && healthItems.map((item) => <InfoCard key={item.title} item={item} />)}
       </div>
     </div>
   );

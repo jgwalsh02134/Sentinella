@@ -8,8 +8,8 @@ export default function CheckinPage() {
     <main>
       <header>
         <p className="eyebrow">Check in</p>
-        <h1 className="text-2xl font-extrabold tracking-tight">Leave a breadcrumb</h1>
-        <p className="mt-1 text-sm leading-relaxed text-mist">
+        <h1 className="title-page">Leave a breadcrumb</h1>
+        <p className="body-copy mt-1 text-mist">
           A timestamped status with optional position. Your history builds a trail your team or
           contacts can reconstruct if it's ever needed.
         </p>

@@ -7,8 +7,8 @@ export default function OfflinePage() {
     <main>
       <header>
         <p className="eyebrow">Offline</p>
-        <h1 className="text-2xl font-extrabold tracking-tight">No connection — you're still covered</h1>
-        <p className="mt-1 text-sm leading-relaxed text-mist">
+        <h1 className="title-page">No connection — you're still covered</h1>
+        <p className="body-copy mt-1 text-mist">
           This page wasn't cached yet, but calls don't need data. The core numbers are below; the
           Emergency and Guide screens work offline if you've opened them before.
         </p>

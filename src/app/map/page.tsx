@@ -8,8 +8,8 @@ export default function MapPage() {
     <main>
       <header>
         <p className="eyebrow">Map</p>
-        <h1 className="text-2xl font-extrabold tracking-tight">Know where you are</h1>
-        <p className="mt-1 text-sm leading-relaxed text-mist">
+        <h1 className="title-page">Know where you are</h1>
+        <p className="body-copy mt-1 text-mist">
           City maps you can download before you travel, with GPS that works even with no signal.
         </p>
       </header>

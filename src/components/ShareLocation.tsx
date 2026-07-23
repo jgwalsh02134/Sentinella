@@ -80,7 +80,7 @@ export default function ShareLocation() {
 
   return (
     <div className="plate border border-line bg-white p-5">
-      <p className="eyebrow">Your position</p>
+      <h2 className="eyebrow">Your position</h2>
       <p className="mt-1 text-sm leading-relaxed text-mist">
         Get your coordinates to read to a 112 operator, or send them to a contact.
       </p>
@@ -92,7 +92,7 @@ export default function ShareLocation() {
           </p>
           <p className="mt-1 text-xs text-mist">
             Accurate to ~{Math.round(fix.accuracyM)} m ·{" "}
-            <a href={mapsUrl(fix)} target="_blank" rel="noreferrer" className="font-semibold text-verde underline">
+            <a href={mapsUrl(fix)} target="_blank" rel="noreferrer" className="text-link">
               Open in Maps
             </a>
           </p>

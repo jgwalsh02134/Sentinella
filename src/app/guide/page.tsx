@@ -8,8 +8,8 @@ export default function GuidePage() {
     <main>
       <header>
         <p className="eyebrow">Field guide</p>
-        <h1 className="text-2xl font-extrabold tracking-tight">Know it before you need it</h1>
-        <p className="mt-1 text-sm leading-relaxed text-mist">
+        <h1 className="title-page">Know it before you need it</h1>
+        <p className="body-copy mt-1 text-mist">
           Situational basics, the scams that actually run, emergency Italian, city briefings, and
           how healthcare works. Loads once, then works offline.
         </p>

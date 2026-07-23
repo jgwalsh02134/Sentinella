@@ -8,8 +8,8 @@ export default function AlertsPage() {
     <main>
       <header>
         <p className="eyebrow">Alerts</p>
-        <h1 className="text-2xl font-extrabold tracking-tight">Active advisories</h1>
-        <p className="mt-1 text-sm leading-relaxed text-mist">
+        <h1 className="title-page">Active advisories</h1>
+        <p className="body-copy mt-1 text-mist">
           Published for this traveler group: strikes, weather, and local conditions that change
           plans.
         </p>
