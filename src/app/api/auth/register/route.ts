@@ -6,12 +6,13 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { SESSION_COOKIE, sessionCookieOptions, signSession } from "@/lib/auth";
+import { inviteCodes } from "@/lib/invites";
 
 const Body = z.object({
   name: z.string().trim().min(1, "Name is required").max(80),
   email: z.string().trim().email("Enter a valid email"),
   password: z.string().min(8, "Password must be at least 8 characters").max(200),
-  inviteCode: z.string().trim().min(1, "Invite code is required"),
+  inviteCode: z.string().trim().max(100).optional(),
 });
 
 export async function POST(req: Request) {
@@ -25,7 +26,6 @@ export async function POST(req: Request) {
 
     const { name, password } = parsed.data;
     const email = parsed.data.email.toLowerCase();
-    const inviteCode = parsed.data.inviteCode.toUpperCase();
 
     if (!process.env.AUTH_SECRET) {
       return NextResponse.json(
@@ -34,18 +34,17 @@ export async function POST(req: Request) {
       );
     }
 
-    const validCodes = (process.env.INVITE_CODES ?? "")
-      .split(",")
-      .map((c) => c.trim().toUpperCase())
-      .filter(Boolean);
-    if (validCodes.length === 0) {
-      return NextResponse.json(
-        { error: "Registration is not configured. Set INVITE_CODES on the server." },
-        { status: 500 },
-      );
-    }
-    if (!validCodes.includes(inviteCode)) {
-      return NextResponse.json({ error: "That invite code is not valid." }, { status: 403 });
+    // With INVITE_CODES unset or empty, registration is open and any submitted
+    // code is ignored. With codes configured, one of them is required.
+    const validCodes = inviteCodes();
+    if (validCodes.length > 0) {
+      const submitted = (parsed.data.inviteCode ?? "").toUpperCase();
+      if (!submitted) {
+        return NextResponse.json({ error: "An invite code is required." }, { status: 403 });
+      }
+      if (!validCodes.includes(submitted)) {
+        return NextResponse.json({ error: "That invite code is not valid." }, { status: 403 });
+      }
     }
 
     const existing = await db.query.users.findFirst({ where: eq(users.email, email) });

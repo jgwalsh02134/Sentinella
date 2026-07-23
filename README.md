@@ -6,7 +6,7 @@ Built with Next.js 14, Tailwind, Drizzle ORM, and PostgreSQL. Designed to be dev
 
 ## How access works
 
-The app is reachable on the public web, but it is not a consumer product: creating an account requires an invite code you control (`INVITE_CODES`). Safety-critical content — the Emergency screen and the Guide — is deliberately public and never behind a login, because nobody should fumble with a password during an incident. Check-ins and alert publishing require an account; alert publishing additionally requires the admin role (granted automatically to emails listed in `ADMIN_EMAILS`).
+The app is reachable on the public web. Registration is config-driven: set `INVITE_CODES` (comma-separated) and creating an account requires one of those codes — compared trimmed and case-insensitively — which keeps access limited to your traveler group. Leave `INVITE_CODES` unset or empty and registration is open to anyone; the register form hides the invite field entirely. Safety-critical content — the Emergency screen and the Guide — is deliberately public and never behind a login, because nobody should fumble with a password during an incident. Check-ins and alert publishing require an account; alert publishing additionally requires the admin role (granted automatically to emails listed in `ADMIN_EMAILS`).
 
 ## Features
 
@@ -31,7 +31,7 @@ npm run dev                 # http://localhost:3000
 
 Generate a strong `AUTH_SECRET` with `openssl rand -base64 48`.
 
-Register through the UI using one of your invite codes. If the email is listed in `ADMIN_EMAILS`, the account gets the admin role and a "Publish an alert" form appears on the Alerts screen.
+Register through the UI — with one of your invite codes if `INVITE_CODES` is set, or directly if it's empty. If the email is listed in `ADMIN_EMAILS`, the account gets the admin role and a "Publish an alert" form appears on the Alerts screen.
 
 Note: the service worker registers only in production builds, so offline behavior is tested with `npm run build && npm run start`, not `npm run dev`.
 
@@ -62,7 +62,7 @@ Or with the GitHub CLI: `gh repo create sentinella --private --source=. --push`.
 3. **Set variables** on the app service (Variables tab):
    - `DATABASE_URL` → add a reference: `${{Postgres.DATABASE_URL}}`
    - `AUTH_SECRET` → long random string
-   - `INVITE_CODES` → e.g. `ROMA-TEAM-26,MILAN-OPS-26`
+   - `INVITE_CODES` → e.g. `ROMA-TEAM-26,MILAN-OPS-26` (optional — omit to open registration to anyone)
    - `ADMIN_EMAILS` → comma-separated admin emails
 4. **Deploy.** The start command (`npm run start:railway`) applies pending Drizzle migrations before booting, so the schema is created on first deploy automatically.
 5. **Seed sample alerts (optional).** With the [Railway CLI](https://docs.railway.com/guides/cli): `railway link`, then `railway run npm run db:seed`.

@@ -3,11 +3,13 @@ import CallPlate from "@/components/CallPlate";
 import LatestAlert from "@/components/LatestAlert";
 import SignOutButton from "@/components/SignOutButton";
 import { getSessionUser } from "@/lib/session";
+import { invitesRequired } from "@/lib/invites";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const session = await getSessionUser();
+  const inviteOnly = invitesRequired();
 
   return (
     <main>
@@ -81,7 +83,7 @@ export default async function HomePage() {
         <section className="mt-6">
           <div className="plate border border-line bg-white p-4">
             <p className="text-sm leading-relaxed text-mist">
-              Have an invite code?{" "}
+              {inviteOnly ? "Have an invite code? " : "New here? "}
               <Link href="/register" className="font-bold text-verde underline underline-offset-2">
                 Create your account
               </Link>{" "}
