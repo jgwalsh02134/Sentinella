@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import CallPlate from "@/components/CallPlate";
 import ShareLocation from "@/components/ShareLocation";
+import UsFlag from "@/components/UsFlag";
 import { callScript, emergencyNumbers, poisonCenters } from "@/data/emergency";
 import { embassies, lostDocumentSteps } from "@/data/embassies";
 
@@ -77,7 +78,12 @@ export default function EmergencyPage() {
           {embassies.map((e) => (
             <div key={e.country} className="plate border border-line bg-white p-4">
               <p className="text-base font-bold">
-                <span aria-hidden="true">{e.flag}</span> {e.name}
+                {e.country === "United States" ? (
+                  <UsFlag />
+                ) : (
+                  <span aria-hidden="true">{e.flag}</span>
+                )}{" "}
+                {e.name}
               </p>
               <p className="mt-0.5 text-sm text-mist">{e.address}</p>
               {e.notes ? <p className="mt-1 text-xs leading-relaxed text-mist">{e.notes}</p> : null}

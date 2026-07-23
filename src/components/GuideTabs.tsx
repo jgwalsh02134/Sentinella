@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import ItalyFlag from "@/components/ItalyFlag";
 import { scams } from "@/data/scams";
 import { phraseGroups } from "@/data/phrases";
 import { regions } from "@/data/regions";
@@ -67,7 +68,9 @@ export default function GuideTabs() {
               <div className="mt-2 space-y-2">
                 {group.phrases.map((p) => (
                   <div key={p.it} className="plate border border-line bg-white p-4">
-                    <p className="text-base font-bold text-verde-deep">{p.it}</p>
+                    <p className="text-base font-bold text-verde-deep">
+                      <ItalyFlag /> {p.it}
+                    </p>
                     <p className="text-sm text-ink">{p.en}</p>
                     <p className="mt-0.5 font-mono text-xs text-mist">{p.say}</p>
                   </div>
