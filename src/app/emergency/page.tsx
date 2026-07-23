@@ -9,6 +9,7 @@ import UkFlag from "@/components/UkFlag";
 import UsFlag from "@/components/UsFlag";
 import { callScript, emergencyNumbers, poisonCenters } from "@/data/emergency";
 import { embassies, lostDocumentSteps } from "@/data/embassies";
+import { appleMapsDirectionsUrl } from "@/lib/maps";
 
 /** Countries with SVG flag icons; the rest fall back to their emoji flag. */
 const flagIcons: Record<string, (props: { className?: string }) => JSX.Element> = {
@@ -79,14 +80,23 @@ export default function EmergencyPage() {
           <CallPlate key={n.dial} {...n} />
         ))}
         {poisonCenters.map((p) => (
-          <CallPlate
-            key={p.dial}
-            number={p.phone.replace("+39 ", "")}
-            dial={p.dial}
-            name={`Poison control — ${p.city}`}
-            nameIt={p.hospital}
-            tier="support"
-          />
+          <div key={p.dial} className="space-y-2">
+            <CallPlate
+              number={p.phone.replace("+39 ", "")}
+              dial={p.dial}
+              name={`Poison control — ${p.city}`}
+              nameIt={p.hospital}
+              tier="support"
+            />
+            <a
+              href={appleMapsDirectionsUrl(`${p.hospital}, ${p.city}, Italy`)}
+              target="_blank"
+              rel="noreferrer"
+              className="flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde text-sm font-bold text-verde active:bg-verde-tint"
+            >
+              Directions — {p.hospital}
+            </a>
+          </div>
         ))}
       </section>
 
@@ -106,19 +116,28 @@ export default function EmergencyPage() {
                 {e.name}
               </p>
               <p className="mt-0.5 text-sm text-mist">{e.address}</p>
+              <p className="mt-0.5 font-mono text-sm font-semibold tabular-nums">{e.phone}</p>
               {e.notes ? <p className="mt-1 text-xs leading-relaxed text-mist">{e.notes}</p> : null}
-              <div className="mt-3 flex gap-3">
+              <div className="mt-3 grid grid-cols-2 gap-2">
                 <a
                   href={`tel:${e.dial}`}
-                  className="min-h-[2.75rem] flex-1 rounded-xl bg-verde text-center text-sm font-bold leading-[2.75rem] text-white active:bg-verde-deep"
+                  className="flex min-h-[2.75rem] items-center justify-center rounded-xl bg-verde text-sm font-bold text-white active:bg-verde-deep"
                 >
-                  {e.phone}
+                  Call
+                </a>
+                <a
+                  href={appleMapsDirectionsUrl(`${e.address}, Italy`)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde text-sm font-bold text-verde active:bg-verde-tint"
+                >
+                  Directions
                 </a>
                 <a
                   href={e.website}
                   target="_blank"
                   rel="noreferrer"
-                  className="min-h-[2.75rem] flex-1 rounded-xl border-2 border-verde text-center text-sm font-bold leading-[2.6rem] text-verde active:bg-verde-tint"
+                  className="col-span-2 flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde text-sm font-bold text-verde active:bg-verde-tint"
                 >
                   Website
                 </a>
