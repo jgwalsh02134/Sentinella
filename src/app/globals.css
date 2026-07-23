@@ -8,10 +8,23 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   @apply bg-paper text-ink font-sans antialiased;
+  overflow-x: clip; /* belt-and-braces; root causes are fixed at the source */
+}
+
+/* Deliberate, instant taps: no 300ms double-tap-zoom delay on controls. */
+a,
+button,
+input,
+select,
+textarea,
+[role="button"],
+[role="tab"] {
+  touch-action: manipulation;
 }
 
 /* Every interactive element gets a visible focus ring. */
@@ -66,7 +79,24 @@ body {
 
 /* Signage-style plate: the app's signature element. */
 .plate {
-  @apply block rounded-plate shadow-plate;
+  @apply block max-w-full rounded-plate shadow-plate;
+}
+
+/* Horizontal scroller that hides its scrollbar. Content may scroll within
+   the container (e.g. the guide tab strip); the page itself never scrolls
+   horizontally. */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Right-edge fade on a horizontal scroller — hints that more tabs exist. */
+.scroll-fade-x {
+  -webkit-mask-image: linear-gradient(to right, black calc(100% - 1.75rem), transparent);
+  mask-image: linear-gradient(to right, black calc(100% - 1.75rem), transparent);
 }
 
 /* Reserve space for the fixed bottom tab bar + iOS home indicator. */

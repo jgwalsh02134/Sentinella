@@ -179,8 +179,8 @@ export default function AlertsPanel() {
                 <span className="text-xs font-semibold text-mist">{a.region}</span>
                 <span className="ml-auto text-xs text-mist">{formatWhen(a.createdAt)}</span>
               </div>
-              <h2 className="mt-2 text-base font-bold leading-snug">{a.title}</h2>
-              <p className="body-copy mt-1 text-mist">{a.body}</p>
+              <h2 className="mt-2 break-words text-base font-bold leading-snug">{a.title}</h2>
+              <p className="body-copy mt-1 break-words text-mist">{a.body}</p>
             </li>
           ))}
         </ul>

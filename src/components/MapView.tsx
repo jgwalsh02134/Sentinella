@@ -194,7 +194,7 @@ export default function MapView() {
     <div>
       <div
         ref={containerRef}
-        className="plate mt-5 h-[60vh] min-h-[20rem] overflow-hidden border border-line bg-white"
+        className="plate mt-5 h-[60dvh] min-h-[20rem] overflow-hidden border border-line bg-white"
         role="application"
         aria-label="City map"
       />

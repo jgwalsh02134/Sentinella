@@ -79,7 +79,7 @@ export default function GuideTabs() {
       <div
         role="tablist"
         aria-label="Guide sections"
-        className="scrollbar-none -mx-4 flex gap-2 overflow-x-auto px-4 pb-1"
+        className="scrollbar-none scroll-fade-x -mx-4 flex gap-2 overflow-x-auto px-4 pb-1"
       >
         {tabs.map((t) => {
           const active = t === tab;

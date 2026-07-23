@@ -59,9 +59,9 @@ export default function LatestAlert() {
         >
           {alert.severity}
         </span>
-        <span className="text-xs font-semibold text-mist">{alert.region}</span>
+        <span className="min-w-0 truncate text-xs font-semibold text-mist">{alert.region}</span>
       </span>
-      <span className="mt-2 block text-sm font-bold leading-snug">{alert.title}</span>
+      <span className="mt-2 block break-words text-sm font-bold leading-snug">{alert.title}</span>
       <span className="mt-1 block text-xs font-semibold text-verde">All advisories →</span>
     </Link>
   );

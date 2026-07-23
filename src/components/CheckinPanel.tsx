@@ -207,14 +207,14 @@ export default function CheckinPanel() {
                   <span className="text-sm font-bold">{statusMeta[c.status].label}</span>
                   <span className="ml-auto text-xs text-mist">{formatWhen(c.createdAt)}</span>
                 </div>
-                {c.placeName ? <p className="mt-1 text-sm">{c.placeName}</p> : null}
-                {c.note ? <p className="mt-1 text-sm text-mist">{c.note}</p> : null}
+                {c.placeName ? <p className="mt-1 break-words text-sm">{c.placeName}</p> : null}
+                {c.note ? <p className="mt-1 break-words text-sm text-mist">{c.note}</p> : null}
                 {c.lat != null && c.lng != null ? (
                   <a
                     href={`https://maps.google.com/?q=${c.lat},${c.lng}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-1 inline-block font-mono text-xs tabular-nums text-verde underline"
+                    className="mt-1 inline-block break-all font-mono text-xs tabular-nums text-verde underline"
                   >
                     {c.lat.toFixed(5)}, {c.lng.toFixed(5)}
                   </a>

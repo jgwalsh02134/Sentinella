@@ -100,7 +100,7 @@ export default function EmergencyPage() {
           {embassies.map((e) => {
             const FlagIcon = flagIcons[e.country];
             return (
-            <div key={e.country} className="plate border border-line bg-white p-4">
+            <div key={e.country} className="plate break-words border border-line bg-white p-4">
               <p className="text-base font-bold">
                 {FlagIcon ? <FlagIcon /> : <span aria-hidden="true">{e.flag}</span>}{" "}
                 {e.name}
