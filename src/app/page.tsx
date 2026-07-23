@@ -1,5 +1,6 @@
 import Link from "next/link";
 import CallPlate from "@/components/CallPlate";
+import Crest from "@/components/Crest";
 import LatestAlert from "@/components/LatestAlert";
 import SignOutButton from "@/components/SignOutButton";
 import { getSessionUser } from "@/lib/session";
@@ -13,12 +14,15 @@ export default async function HomePage() {
 
   return (
     <main>
-      <header className="flex items-baseline justify-between">
-        <div>
-          <p className="eyebrow">Sentinella</p>
-          <h1 className="text-2xl font-extrabold tracking-tight">
-            {session ? `Ciao, ${session.name.split(" ")[0]}` : "Italy, handled."}
-          </h1>
+      <header className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Crest size={40} priority />
+          <div>
+            <p className="eyebrow">Sentinella</p>
+            <h1 className="text-2xl font-extrabold tracking-tight">
+              {session ? `Ciao, ${session.name.split(" ")[0]}` : "Italy, handled."}
+            </h1>
+          </div>
         </div>
         {session ? (
           <SignOutButton />

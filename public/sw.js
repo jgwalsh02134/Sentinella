@@ -11,7 +11,8 @@
  *    files managed in IndexedDB by the Map screen, and their online mode uses
  *    HTTP range requests the Cache API can't store.
  */
-const VERSION = "sentinella-v2";
+// v3: crest rebrand — new icon artwork and the in-app crest rendition.
+const VERSION = "sentinella-v3";
 const PRECACHE = [
   "/",
   "/emergency",
@@ -19,8 +20,10 @@ const PRECACHE = [
   "/map",
   "/offline",
   "/manifest.json",
+  "/favicon.ico",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
+  "/brand/crest-ui.png",
 ];
 
 self.addEventListener("install", (event) => {
@@ -73,6 +76,7 @@ self.addEventListener("fetch", (event) => {
   if (
     url.pathname.startsWith("/_next/static/") ||
     url.pathname.startsWith("/icons/") ||
+    url.pathname.startsWith("/brand/") ||
     url.pathname.startsWith("/map-fonts/")
   ) {
     event.respondWith(

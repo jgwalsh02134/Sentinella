@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Suspense, useState } from "react";
+import Crest from "@/components/Crest";
 import { useRouter, useSearchParams } from "next/navigation";
 
 function LoginForm() {
@@ -81,6 +82,9 @@ export default function LoginPage() {
   return (
     <main>
       <header>
+        <div className="flex justify-center pb-3 pt-1">
+          <Crest size={72} priority />
+        </div>
         <p className="eyebrow">Sign in</p>
         <h1 className="text-2xl font-extrabold tracking-tight">Welcome back</h1>
         <p className="mt-1 text-sm leading-relaxed text-mist">

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Crest from "@/components/Crest";
 import { invitesRequired } from "@/lib/invites";
 import RegisterForm from "./RegisterForm";
 
@@ -13,6 +14,9 @@ export default function RegisterPage() {
   return (
     <main>
       <header>
+        <div className="flex justify-center pb-3 pt-1">
+          <Crest size={72} priority />
+        </div>
         <p className="eyebrow">Create account</p>
         <h1 className="text-2xl font-extrabold tracking-tight">Join your traveler group</h1>
         <p className="mt-1 text-sm leading-relaxed text-mist">

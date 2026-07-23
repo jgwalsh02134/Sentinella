@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import BottomNav from "@/components/BottomNav";
+import Crest from "@/components/Crest";
 import RegisterSW from "@/components/RegisterSW";
 
 export const metadata: Metadata = {
@@ -12,7 +13,10 @@ export const metadata: Metadata = {
     "Emergency numbers, safety briefings, advisories, and check-ins for travelers in Italy. Built to work one-handed, under stress, and offline.",
   manifest: "/manifest.json",
   icons: {
-    icon: "/icons/icon-192.png",
+    icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/icons/icon-192.png", type: "image/png", sizes: "192x192" },
+    ],
     apple: "/icons/icon-180.png",
   },
   appleWebApp: {
@@ -35,12 +39,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <div className="page-shell mx-auto min-h-dvh w-full max-w-md px-4 pt-4">
           {children}
-          <footer className="mt-10 border-t border-line pt-4 text-xs leading-relaxed text-mist">
+          <footer className="mt-10 flex items-start gap-3 border-t border-line pt-4 text-xs leading-relaxed text-mist">
+            <Crest size={28} className="mt-0.5 shrink-0" />
+            <span>
             Sentinella is an informational tool. In an emergency, always call{" "}
             <a href="tel:112" className="font-bold text-signal-deep">
               112
             </a>
             . Verify contact numbers against official sources before relying on them.
+            </span>
           </footer>
         </div>
         <BottomNav />
