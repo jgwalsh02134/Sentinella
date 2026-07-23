@@ -15,7 +15,8 @@ The app is reachable on the public web. Registration is config-driven: set `INVI
 - **Field guide.** Situational basics (strikes, ZTL zones, earthquakes, ticket validation), the ten scams that actually run in Italy with counters, emergency Italian with pronunciation, briefings for Rome, Milan, Naples, Florence, Venice, and southern driving, and how Italian healthcare works for visitors.
 - **Check-ins.** Timestamped safe/caution/help statuses with optional GPS and notes, building a trail per traveler. Selecting "need help" surfaces a call-112 prompt, because a check-in is not monitored in real time.
 - **Alerts.** Advisories published by your admins (strikes, weather, local conditions), readable by anyone, with severity levels.
-- **Offline by design.** A service worker precaches the Emergency and Guide screens; all reference data ships in the JS bundle, not the database. Installable to the home screen (PWA).
+- **Offline map.** `/map` renders vector city maps (MapLibre + PMTiles) with a GPS blue dot and your current coordinates. Per-city packs — Rome, Florence, Venice, Milan, Naples — download on a switch into IndexedDB and keep the map fully working with no connection, including street labels.
+- **Offline by design.** A service worker precaches the Emergency, Guide, and Map screens; all reference data ships in the JS bundle, not the database. Installable to the home screen (PWA).
 
 ## Local development
 
@@ -34,6 +35,19 @@ Generate a strong `AUTH_SECRET` with `openssl rand -base64 48`.
 Register through the UI — with one of your invite codes if `INVITE_CODES` is set, or directly if it's empty. If the email is listed in `ADMIN_EMAILS`, the account gets the admin role and a "Publish an alert" form appears on the Alerts screen.
 
 Note: the service worker registers only in production builds, so offline behavior is tested with `npm run build && npm run start`, not `npm run dev`.
+
+## Offline map packs
+
+The Map screen streams vector tiles from `public/map-packs/<city>.pmtiles` — over HTTP range requests when online, or from a Blob in IndexedDB after the user flips a city's download switch. The committed packs cover the metro areas of Rome, Florence, Venice, Milan, and Naples at zoom 0–14 (buildings and street detail included), each well under 40 MB.
+
+To regenerate or add cities, install the [pmtiles CLI](https://github.com/protomaps/go-pmtiles) (`brew install pmtiles`) and run:
+
+```bash
+node scripts/build-map-packs.mjs                       # all cities
+PROTOMAPS_BUILD=20260722 MAXZOOM=14 node scripts/build-map-packs.mjs rome
+```
+
+The script extracts each city's bounding box from a [Protomaps daily build](https://build.protomaps.com) (OpenStreetMap data), writes the packs, and regenerates the `src/data/mapPacks.ts` manifest with real byte sizes. To add a city, add its bbox to the `CITIES` array in the script and re-run; keep each pack under ~40 MB (GitHub warns at 50 MB) by trimming the bbox or lowering `MAXZOOM`. Label glyphs are self-hosted under `public/map-fonts/` (Noto Sans, Latin ranges from [basemaps-assets](https://github.com/protomaps/basemaps-assets)) so text renders offline; the hand-written style lives in `src/lib/mapStyle.ts`.
 
 ## Working in Cursor
 
@@ -77,10 +91,13 @@ src/app            pages + API route handlers (App Router)
 src/components     UI (CallPlate is the signature signage component)
 src/data           typed static safety content — bundled so it works offline
 src/db             Drizzle schema, client, seed
-src/lib            JWT auth + session helpers
+src/lib            JWT auth + session helpers, map style + offline pack storage
 src/middleware.ts  auth gate for /checkin and /api/checkins
 drizzle/           generated SQL migrations (committed)
+scripts/           build-map-packs.mjs (extracts city .pmtiles from Protomaps)
 public/sw.js       service worker (offline strategy)
+public/map-packs/  committed per-city offline map packs (.pmtiles)
+public/map-fonts/  self-hosted label glyphs for offline rendering
 .cursorrules       Cursor AI context for this codebase
 ```
 

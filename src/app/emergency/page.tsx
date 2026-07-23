@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import CallPlate from "@/components/CallPlate";
 import ShareLocation from "@/components/ShareLocation";
 import AustraliaFlag from "@/components/AustraliaFlag";
@@ -55,6 +56,12 @@ export default function EmergencyPage() {
 
       <section className="mt-6" aria-label="Share your position">
         <ShareLocation />
+        <Link href="/map" className="plate mt-3 block border border-line bg-white p-4">
+          <p className="text-sm font-bold">Offline map →</p>
+          <p className="mt-0.5 text-xs leading-relaxed text-mist">
+            See where you are on a downloaded city map — works without a connection.
+          </p>
+        </Link>
       </section>
 
       <section className="mt-6 space-y-3" aria-label="Emergency services">

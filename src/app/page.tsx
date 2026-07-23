@@ -59,6 +59,15 @@ export default async function HomePage() {
             <span className="mt-1 block text-sm font-bold">Field guide</span>
             <span className="block text-xs text-mist">Scams, phrases, cities</span>
           </Link>
+          <Link href="/map" className="plate col-span-2 border border-line bg-white p-4">
+            <span className="block text-2xl" aria-hidden="true">
+              🗺️
+            </span>
+            <span className="mt-1 block text-sm font-bold">Offline map</span>
+            <span className="block text-xs text-mist">
+              Download city maps and see where you are, no signal needed
+            </span>
+          </Link>
         </div>
       </section>
 
