@@ -85,7 +85,19 @@ export async function requestPersistentStorage(): Promise<boolean> {
   }
 }
 
-/** Streams a pack, reporting (receivedBytes, totalBytes) as it downloads. */
+/**
+ * Minimum time between onProgress calls. Network chunks arrive every few
+ * milliseconds, and each report triggers a React re-render in the caller —
+ * unthrottled, a multi-megabyte pack means thousands of renders (jank and
+ * battery drain on phones). ~7 updates/second is plenty for a progress bar.
+ */
+const PROGRESS_REPORT_INTERVAL_MS = 150;
+
+/**
+ * Streams a pack, reporting (receivedBytes, totalBytes) as it downloads.
+ * Progress is throttled to one report per PROGRESS_REPORT_INTERVAL_MS,
+ * with a final report guaranteed once the download completes.
+ */
 export async function downloadPack(
   url: string,
   onProgress: (received: number, total: number) => void,
@@ -99,13 +111,19 @@ export async function downloadPack(
   const reader = res.body.getReader();
   const chunks: BlobPart[] = [];
   let received = 0;
+  let lastReportAt = 0;
   for (;;) {
     const { done, value } = await reader.read();
     if (done) break;
     chunks.push(value);
     received += value.byteLength;
-    onProgress(received, total);
+    const now = Date.now();
+    if (now - lastReportAt >= PROGRESS_REPORT_INTERVAL_MS) {
+      lastReportAt = now;
+      onProgress(received, total);
+    }
   }
+  onProgress(received, total);
   return new Blob(chunks, { type: "application/octet-stream" });
 }
 
