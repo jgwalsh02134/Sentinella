@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import StateDeptWhatsAppCard from "@/components/StateDeptWhatsAppCard";
 import Card from "@/components/ui/Card";
 import Disclosure from "@/components/ui/Disclosure";
 import SectionHeader from "@/components/ui/SectionHeader";
@@ -125,9 +126,15 @@ export default function PrepareChecklist() {
                             </span>
                           }
                         >
-                          <p className="body-copy whitespace-pre-line break-words pt-1 text-secondary">
-                            {item.body}
-                          </p>
+                          {item.widget === "stateDeptWhatsApp" ? (
+                            <div className="pb-1 pt-2">
+                              <StateDeptWhatsAppCard variant="full" />
+                            </div>
+                          ) : (
+                            <p className="body-copy whitespace-pre-line break-words pt-1 text-secondary">
+                              {item.body}
+                            </p>
+                          )}
                           {item.links.length > 0 ? (
                             <p className="flex flex-wrap gap-x-4 gap-y-2 break-words pb-1 pt-2">
                               {item.links.map((link) => (

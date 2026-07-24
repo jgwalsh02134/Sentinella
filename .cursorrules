@@ -46,9 +46,10 @@ DATABASE_URL, AUTH_SECRET, INVITE_CODES (comma-separated), ADMIN_EMAILS
    happened and what to do next.
 9. Brand marks (src/components/BrandIcon.tsx): the Apple mark appears ONLY on
    App Store links; the Google mark ONLY on Google Play / Google Maps share
-   links. Directions buttons are destination-agnostic UI — Lucide Navigation
+   links; the WhatsApp mark ONLY on WhatsApp destinations (channels, chats).
+   Directions buttons are destination-agnostic UI — Lucide Navigation
    icon + label "Directions", never a brand mark, even though the link opens
-   Apple Maps. No third-party logos beyond these two.
+   Apple Maps. No third-party logos beyond these three.
 
 ## Glossary (one term per concept — enforce in all UI copy)
 - "advisory" = official government guidance (State Dept, embassy). Never for team posts.

@@ -16,6 +16,9 @@ export type PrepItem = {
   title: string;
   body: string;
   links: PrepLink[];
+  /** Rich content rendered in place of body/links — copy lives with the
+      widget's own config, not here. */
+  widget?: "stateDeptWhatsApp";
 };
 
 export type PrepSection = {
@@ -121,6 +124,13 @@ export const predeparture: PrepSection[] = [
         title: "Enroll in STEP",
         body: "Embassy alerts, plus an easier way for the embassy to reach you in an emergency.",
         links: [{ label: "step.state.gov", href: "https://step.state.gov" }],
+      },
+      {
+        id: "whatsapp-channel",
+        title: "Follow the State Dept WhatsApp channel",
+        body: "",
+        links: [],
+        widget: "stateDeptWhatsApp",
       },
       {
         id: "esim",

@@ -11,6 +11,7 @@ import SectionHeader from "@/components/ui/SectionHeader";
 import EmergencyJumpChips from "@/components/EmergencyJumpChips";
 import Icon from "@/components/Icon";
 import SealBadge from "@/components/SealBadge";
+import StateDeptWhatsAppCard from "@/components/StateDeptWhatsAppCard";
 import ShareLocation from "@/components/ShareLocation";
 import TelText from "@/components/TelText";
 import WhereAreUCard from "@/components/WhereAreUCard";
@@ -256,6 +257,8 @@ export default function EmergencyPage() {
             <p className="mt-0.5 text-subhead text-secondary">{overseasCitizensServices.summary}</p>
             <LabeledLines lines={overseasCitizensServices.lines} />
           </Card>
+
+          <StateDeptWhatsAppCard variant="compact" />
 
           <Card padded={false} className="px-4 py-2">
             <Disclosure label="What consular officers can and can't do">

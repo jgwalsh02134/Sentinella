@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import AlertsPanel from "@/components/AlertsPanel";
 import OfficialWarningsPanel from "@/components/OfficialWarningsPanel";
 import SeasonalWeatherLink from "@/components/SeasonalWeatherLink";
+import StateDeptWhatsAppCard from "@/components/StateDeptWhatsAppCard";
 import UsAdvisoriesPanel from "@/components/UsAdvisoriesPanel";
 import NavTile from "@/components/ui/NavTile";
 import SectionHeader from "@/components/ui/SectionHeader";
@@ -40,6 +41,9 @@ export default function AlertsPage() {
         <SectionHeader title="Official — U.S. Department of State" />
         <div className="mt-3">
           <UsAdvisoriesPanel />
+        </div>
+        <div className="mt-3">
+          <StateDeptWhatsAppCard variant="compact" title="Get these on WhatsApp" />
         </div>
       </section>
     </main>
