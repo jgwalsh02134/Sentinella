@@ -1,5 +1,3 @@
-import type { Step } from "@/data/emergency";
-
 export type Embassy = {
   country: string;
   name: string;
@@ -117,21 +115,3 @@ export const consularHelp = {
   ],
 } as const;
 
-export const lostDocumentSteps: Step[] = [
-  {
-    lead: "Report the loss or theft",
-    rest: "at any Carabinieri or Polizia station and get the written report (denuncia). You will need it for the embassy and for insurance.",
-  },
-  {
-    lead: "Contact your embassy or consulate",
-    rest: "for an emergency travel document. Bring the denuncia, photos if you have them, and any copy of the lost passport.",
-  },
-  {
-    lead: "Block your cards:",
-    rest: "if any were taken, call your bank's international blocking line immediately — keep that number stored outside your wallet.",
-  },
-  {
-    lead: "Keep a paper copy",
-    rest: "and an offline photo of your passport, insurance card, and itinerary, separate from the originals.",
-  },
-];

@@ -156,13 +156,13 @@ export const poisonCenters: PoisonCenter[] = [
   },
   {
     city: "Rome",
-    hospital: "Policlinico Gemelli",
+    hospital: "Policlinico Gemelli (24h)",
     phone: "+39 06 305 4343",
     dial: "+39063054343",
   },
   {
     city: "Milan",
-    hospital: "Ospedale Niguarda",
+    hospital: "Ospedale Niguarda (24h)",
     phone: "+39 02 6610 1029",
     dial: "+390266101029",
   },
@@ -185,22 +185,26 @@ export const callScript: Step[] = [
 ];
 
 /**
- * Being robbed in Italy is an Italian-institution process: the stamped
- * police report (denuncia) is the document everything downstream —
- * insurance claims, passport replacement — depends on.
+ * ONE merged sequence for theft and lost documents — the stamped police
+ * report (denuncia) is the document everything downstream (insurance,
+ * passport replacement) depends on. No duplicated steps anywhere else.
  */
 export const robbed = {
-  summary: "File a police report (denuncia) — insurance and passport replacement require it.",
+  title: "Robbed, or passport gone",
   steps: [
-    { lead: "Crime in progress:", rest: "call 112." },
+    { lead: "Danger now?", rest: "Call 112." },
     {
-      lead: "Then file the denuncia",
-      rest: "at any Polizia di Stato Questura or Carabinieri station.",
+      lead: "File the denuncia",
+      rest: "at any Polizia or Carabinieri station; keep the stamped copy — insurance and passport both need it.",
+    },
+    { lead: "Cards taken?", rest: "Call your bank's blocking line." },
+    {
+      lead: "Passport:",
+      rest: "go to the Florence consulate (Rome if closer) with the denuncia and photos — emergency passports are same-day.",
     },
     {
-      lead: "Keep the stamped copy",
-      rest: "— insurers and the consulate will ask for it.",
+      lead: "Keep a paper copy",
+      rest: "and an offline photo of documents, separate from the originals.",
     },
   ] as Step[],
-  tip: "English varies; use your hotel or a translation app.",
 } as const;

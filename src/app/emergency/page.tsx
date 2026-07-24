@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Car, Hospital, Map, Navigation } from "lucide-react";
+import { Car, Hospital, Map, Smartphone } from "lucide-react";
 import CallPlate from "@/components/ui/CallPlate";
 import ActionRow from "@/components/ui/ActionRow";
 import Callout from "@/components/ui/Callout";
@@ -14,11 +14,9 @@ import SealBadge from "@/components/SealBadge";
 import StateDeptWhatsAppCard from "@/components/StateDeptWhatsAppCard";
 import ShareLocation from "@/components/ShareLocation";
 import TelText from "@/components/TelText";
-import WhereAreUCard from "@/components/WhereAreUCard";
 import AustraliaFlag from "@/components/AustraliaFlag";
 import CanadaFlag from "@/components/CanadaFlag";
 import IrelandFlag from "@/components/IrelandFlag";
-import ItalyFlag from "@/components/ItalyFlag";
 import NewZealandFlag from "@/components/NewZealandFlag";
 import UkFlag from "@/components/UkFlag";
 import UsFlag from "@/components/UsFlag";
@@ -32,9 +30,8 @@ import {
   type LabeledLine,
   type Step,
 } from "@/data/emergency";
-import { consularHelp, embassies, lostDocumentSteps, type Embassy } from "@/data/embassies";
+import { consularHelp, embassies, type Embassy } from "@/data/embassies";
 import { romeEmergencyRooms, type EmergencyRoom } from "@/data/emergencyRooms";
-import { policeStations, stationEmergencyNote } from "@/data/police";
 import { safetyPois } from "@/data/safetyPois";
 import { appleMapsDirectionsUrl } from "@/lib/maps";
 
@@ -360,80 +357,11 @@ export default function EmergencyPage() {
         </div>
       </section>
 
-      {/* f. If it goes wrong. */}
-      <section id="robbed" className="mt-8 scroll-mt-4" aria-label="If you're robbed">
-        <SectionHeader
-          title={
-            <span className="flex items-center gap-2">
-              <ItalyFlag /> If you&apos;re robbed
-            </span>
-          }
-          intro={robbed.summary}
-        />
+      {/* f. If it goes wrong — ONE merged sequence, no duplicated steps. */}
+      <section id="robbed" className="mt-8 scroll-mt-4" aria-label="If it goes wrong">
+        <SectionHeader title={robbed.title} />
         <Card className="mt-3">
           <NumberedSteps steps={robbed.steps} />
-          <p className="mt-3 border-t border-default pt-3 text-subhead">
-            Passport taken?{" "}
-            <a href="#lost-passport" className="text-link">
-              Continue below
-            </a>
-            .
-          </p>
-        </Card>
-        {/* Same typed data the map markers use — one source of truth. */}
-        <Card className="mt-3">
-          <Disclosure
-            label="Where to file — stations in Rome, Florence &amp; Siena"
-            sublabel={stationEmergencyNote}
-          >
-            <ul className="mt-2">
-              {policeStations.map((station, i) => (
-                <li
-                  key={station.id}
-                  className={`py-3 ${i > 0 ? "border-t border-default" : ""}`}
-                >
-                  <p className="text-callout font-bold">
-                    {station.name}{" "}
-                    <span className="font-normal text-secondary">· {station.city}</span>
-                  </p>
-                  <p className="mt-0.5 text-footnote text-secondary">{station.address}</p>
-                  {station.notes ? (
-                    <p className="mt-0.5 text-footnote text-secondary">{station.notes}</p>
-                  ) : null}
-                  <p className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-subhead">
-                    {station.dial ? (
-                      <a
-                        href={`tel:${station.dial}`}
-                        className="inline-flex min-h-control items-center font-mono font-semibold tabular-nums underline underline-offset-2"
-                      >
-                        {station.phone}
-                      </a>
-                    ) : null}
-                    <a
-                      href={appleMapsDirectionsUrl(`${station.address}, Italy`)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex min-h-control items-center gap-1.5 text-link"
-                    >
-                      <Icon icon={Navigation} size="sm" /> Directions
-                    </a>
-                  </p>
-                </li>
-              ))}
-            </ul>
-            <p className="text-footnote text-secondary">
-              Directions need a connection; calls work on the phone network. Station contacts
-              verified July 2026 — verify before relying on them.
-            </p>
-          </Disclosure>
-        </Card>
-        <Callout className="mt-3">{robbed.tip}</Callout>
-      </section>
-
-      <section id="lost-passport" className="mt-8 scroll-mt-4" aria-label="Lost documents">
-        <SectionHeader title="Passport lost or stolen" />
-        <Card className="mt-3">
-          <NumberedSteps steps={lostDocumentSteps} />
         </Card>
       </section>
 
@@ -447,7 +375,14 @@ export default function EmergencyPage() {
           title="Offline map"
           subtitle="Your position on a downloaded map — no connection needed"
         />
-        <WhereAreUCard headingLevel={3} />
+        {/* One row only — the full app card lives in the Guide (single
+            source of truth). */}
+        <ListRow
+          href="/guide/basics#where-are-u"
+          icon={<Icon icon={Smartphone} size="lg" />}
+          title="112 Where ARE U"
+          subtitle="Official 112 app — sends GPS"
+        />
         {/* THE one verification caveat for all hardcoded numbers on this page. */}
         <Callout>
           Numbers and medical contacts verified July 2026 —{" "}

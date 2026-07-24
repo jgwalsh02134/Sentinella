@@ -19,7 +19,11 @@ export default function GuideBasicsPage() {
             <InfoCard item={item} />
             {/* The shared 112 Where ARE U card — one source of truth with
                 the Emergency screen — rides right after the 112 item. */}
-            {i === 0 ? <WhereAreUCard headingLevel={2} /> : null}
+            {i === 0 ? (
+              <div id="where-are-u" className="scroll-mt-4">
+                <WhereAreUCard headingLevel={2} />
+              </div>
+            ) : null}
           </Fragment>
         ))}
       </div>
