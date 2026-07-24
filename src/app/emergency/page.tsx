@@ -3,6 +3,7 @@ import Link from "next/link";
 import CallPlate from "@/components/CallPlate";
 import ShareLocation from "@/components/ShareLocation";
 import TelText from "@/components/TelText";
+import VerifiedCaveat from "@/components/VerifiedCaveat";
 import AustraliaFlag from "@/components/AustraliaFlag";
 import IrelandFlag from "@/components/IrelandFlag";
 import NewZealandFlag from "@/components/NewZealandFlag";
@@ -42,7 +43,7 @@ export default function EmergencyPage() {
         {primary.map((n) => (
           <div key={n.dial}>
             <CallPlate number={n.number} dial={n.dial} name={n.name} nameIt={n.nameIt} tier={n.tier} />
-            <p className="mt-1.5 px-1 text-footnote text-secondary">{n.detail}</p>
+            <p className="mt-2 px-1 text-footnote text-secondary">{n.detail}</p>
           </div>
         ))}
         <div className="plate border border-default bg-card p-5">
@@ -64,7 +65,7 @@ export default function EmergencyPage() {
         <ShareLocation />
         <Link href="/map" className="plate mt-3 block border border-default bg-card p-4">
           <p className="text-headline">Offline map →</p>
-          <p className="mt-0.5 text-subhead text-secondary">
+          <p className="mt-1 text-subhead text-secondary">
             See your position on a downloaded city map — no connection needed.
           </p>
         </Link>
@@ -73,8 +74,8 @@ export default function EmergencyPage() {
       <section className="mt-6" aria-label="112 companion app">
         <div className="plate border border-default bg-card p-5">
           <h2 className="text-headline">{whereAreUApp.title}</h2>
-          <p className="body-copy mt-1.5 text-secondary">{whereAreUApp.body}</p>
-          <ul className="mt-2 space-y-1.5">
+          <p className="body-copy mt-2 text-secondary">{whereAreUApp.body}</p>
+          <ul className="mt-2 space-y-2">
             {whereAreUApp.bullets.map((b) => (
               <li key={b} className="body-copy text-secondary">
                 {b}
@@ -98,7 +99,7 @@ export default function EmergencyPage() {
         {services.map((n) => (
           <div key={n.dial}>
             <CallPlate number={n.number} dial={n.dial} name={n.name} nameIt={n.nameIt} tier={n.tier} />
-            <p className="mt-1.5 px-1 text-footnote text-secondary">{n.detail}</p>
+            <p className="mt-2 px-1 text-footnote text-secondary">{n.detail}</p>
           </div>
         ))}
       </section>
@@ -108,7 +109,7 @@ export default function EmergencyPage() {
         {support.map((n) => (
           <div key={n.dial}>
             <CallPlate number={n.number} dial={n.dial} name={n.name} nameIt={n.nameIt} tier={n.tier} />
-            <p className="mt-1.5 px-1 text-footnote text-secondary">{n.detail}</p>
+            <p className="mt-2 px-1 text-footnote text-secondary">{n.detail}</p>
           </div>
         ))}
         {poisonCenters.map((p) => (
@@ -130,18 +131,13 @@ export default function EmergencyPage() {
             </a>
           </div>
         ))}
-        <p className="callout">
-          Support and poison-control numbers verified July 2026 —{" "}
-          <strong className="font-bold">verify against official sources before relying on them.</strong>
-        </p>
+        <VerifiedCaveat action="verify against official sources before relying on them.">
+          Support and poison-control numbers verified July 2026
+        </VerifiedCaveat>
       </section>
 
       <section className="mt-8" aria-label="Embassies and consulates">
         <h2 className="title-section">Embassies & consulates</h2>
-        <p className="callout mt-2">
-          Switchboard numbers only, verified July 2026. After-hours consular emergency lines differ —{" "}
-          <strong className="font-bold">verify yours on the official site before travel.</strong>
-        </p>
         <div className="mt-3 space-y-3">
           {embassies.map((e) => {
             const FlagIcon = flagIcons[e.country];
@@ -151,8 +147,12 @@ export default function EmergencyPage() {
                 {FlagIcon ? <FlagIcon /> : <span aria-hidden="true">{e.flag}</span>}{" "}
                 {e.name}
               </h3>
-              <p className="mt-0.5 text-subhead text-secondary">{e.address}</p>
-              <p className="mt-0.5 font-mono text-callout font-semibold tabular-nums">{e.phone}</p>
+              <p className="mt-1 text-subhead text-secondary">{e.address}</p>
+              <p className="mt-1 font-mono text-callout font-semibold tabular-nums">
+                <a href={`tel:${e.dial}`} className="underline underline-offset-2">
+                  {e.phone}
+                </a>
+              </p>
               {e.notes ? (
                 <p className="mt-1 text-subhead text-secondary">
                   <TelText text={e.notes} />
@@ -194,12 +194,15 @@ export default function EmergencyPage() {
             );
           })}
         </div>
+        <VerifiedCaveat action="verify yours on the official site before travel.">
+          Switchboard numbers verified July 2026. After-hours consular emergency lines differ
+        </VerifiedCaveat>
       </section>
 
       <section className="mt-8" aria-label="Lost documents">
         <h2 className="title-section">Passport lost or stolen</h2>
         <div className="plate mt-2 border border-default bg-card p-5">
-          <ol className="space-y-2.5">
+          <ol className="space-y-3">
             {lostDocumentSteps.map((step, i) => (
               <li key={step.lead} className="body-copy flex gap-3">
                 <span className="font-mono font-bold text-verde">{i + 1}</span>

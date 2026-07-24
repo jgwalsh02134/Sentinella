@@ -94,7 +94,7 @@ export default function BottomNav() {
               key={tab.href}
               href={tab.href}
               aria-current={active ? "page" : undefined}
-              className={`flex min-h-[3.5rem] flex-1 flex-col items-center justify-center gap-0.5 pt-2 pb-1 ${color}`}
+              className={`flex min-h-[3.5rem] flex-1 flex-col items-center justify-center gap-1 pt-2 pb-1 ${color}`}
             >
               {tab.icon(active)}
               <span className={`text-nav-label ${active ? "font-bold" : "font-medium"}`}>

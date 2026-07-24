@@ -208,7 +208,7 @@ export default function MapView() {
             <p className="mt-1 font-mono text-title font-bold tabular-nums text-verde-deep">
               {fix.lat.toFixed(5)}, {fix.lng.toFixed(5)}
             </p>
-            <p className="mt-0.5 text-footnote text-secondary">Accurate to ~{Math.round(fix.accuracyM)} m.</p>
+            <p className="mt-1 text-footnote text-secondary">Accurate to ~{Math.round(fix.accuracyM)} m.</p>
           </>
         ) : (
           <p className="mt-1 text-body text-secondary">
@@ -243,7 +243,7 @@ export default function MapView() {
                     <span className="block text-callout font-bold">
                       {city.name} <span className="font-normal text-secondary">· {city.nameIt}</span>
                       {isActive ? (
-                        <span className="ml-2 inline-block rounded-full bg-verde-tint px-2 py-0.5 text-caption font-bold uppercase tracking-wide text-verde-deep">
+                        <span className="ml-2 inline-block rounded-full bg-verde-tint px-2 py-1 text-caption font-bold uppercase tracking-wide text-verde-deep">
                           Viewing
                         </span>
                       ) : null}

@@ -66,7 +66,7 @@ export default async function StatusPage({ params }: { params: { token: string }
       {latest && meta ? (
         <div className="plate mt-5 border border-default bg-card p-5">
           <span
-            className={`inline-block rounded-full px-4 py-1.5 text-callout font-bold uppercase tracking-wide ${meta.chip}`}
+            className={`inline-block rounded-full px-4 py-2 text-callout font-bold uppercase tracking-wide ${meta.chip}`}
           >
             {meta.label}
           </span>

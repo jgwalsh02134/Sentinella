@@ -40,7 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="page-shell mx-auto min-h-dvh w-full max-w-md px-4 pt-4">
           {children}
           <footer className="mt-10 flex items-start gap-3 border-t border-default pt-4 text-footnote text-secondary">
-            <Crest size={28} className="mt-0.5 shrink-0" />
+            <Crest size={28} decorative className="mt-1 shrink-0" />
             <span>
             Sentinella is an informational tool. In an emergency, always call{" "}
             <a href="tel:112" className="font-bold text-danger">

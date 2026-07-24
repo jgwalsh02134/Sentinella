@@ -125,7 +125,7 @@ export default function CheckinPanel() {
       {nearby.length > 0 ? (
         <div className="rounded-xl bg-ambra-tint p-4" role="status">
           <p className="text-callout font-bold text-ambra">Alerts and advisories near your position</p>
-          <ul className="mt-1.5 space-y-1">
+          <ul className="mt-2 space-y-1">
             {nearby.map((a) => (
               <li key={a.title} className="text-subhead text-ambra">
                 {a.badge ? <span className="font-bold uppercase">{a.badge} · </span> : null}
@@ -261,7 +261,7 @@ export default function CheckinPanel() {
                   <span className={`h-2.5 w-2.5 rounded-full ${statusMeta[c.status].dot}`} aria-hidden="true" />
                   <span className="text-callout font-bold">{statusMeta[c.status].label}</span>
                   {c.isAuto ? (
-                    <span className="rounded-full border border-default px-2 py-0.5 text-caption font-semibold uppercase tracking-wide text-secondary">
+                    <span className="rounded-full border border-default px-2 py-1 text-caption font-semibold uppercase tracking-wide text-secondary">
                       Auto
                     </span>
                   ) : null}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PrepareChecklist from "@/components/PrepareChecklist";
+import VerifiedCaveat from "@/components/VerifiedCaveat";
 import { lastVerified } from "@/data/predeparture";
 
 export const metadata: Metadata = { title: "Before you fly" };
@@ -21,10 +22,9 @@ export default function PreparePage() {
         </p>
       </header>
 
-      <p className="mt-4 rounded-xl bg-ambra-tint p-3 text-callout font-semibold text-ambra">
-        Last verified: {lastVerified}. Entry rules and health guidance shift — recheck anything
-        critical close to departure.
-      </p>
+      <VerifiedCaveat className="mt-4" action="recheck anything critical close to departure.">
+        Last verified {lastVerified}. Entry rules and health guidance shift
+      </VerifiedCaveat>
 
       <div className="mt-5">
         <PrepareChecklist />

@@ -18,16 +18,24 @@ export default function Crest({
   size = 40,
   className = "",
   priority = false,
+  decorative = false,
 }: {
   /** Rendered height in px. */
   size?: number;
   className?: string;
   priority?: boolean;
+  /**
+   * True for repeat placements (the footer): empty alt + aria-hidden so
+   * screen readers don't announce "Sentinella crest" twice per page. The
+   * header crest stays meaningful.
+   */
+  decorative?: boolean;
 }) {
   return (
     <Image
       src="/brand/crest-ui.png"
-      alt="Sentinella crest"
+      alt={decorative ? "" : "Sentinella crest"}
+      aria-hidden={decorative || undefined}
       width={Math.round(size * ASPECT)}
       height={size}
       priority={priority}

@@ -82,11 +82,11 @@ function InfoCard({ item }: { item: InfoItem }) {
   return (
     <article className="plate border border-default border-l-4 border-l-accent bg-card p-5">
       <h3 className="text-headline">{item.title}</h3>
-      <p className="body-copy mt-1.5 text-secondary">
+      <p className="body-copy mt-2 text-secondary">
         <LeadBody text={item.body} />
       </p>
       {item.bullets?.length ? (
-        <ul className="mt-2 space-y-1.5">
+        <ul className="mt-2 space-y-2">
           {item.bullets.map((b) => (
             <li key={b} className="body-copy text-secondary">
               <ColonLead text={b} />
@@ -95,7 +95,7 @@ function InfoCard({ item }: { item: InfoItem }) {
         </ul>
       ) : null}
       {item.warning ? (
-        <p className="callout mt-2.5">
+        <p className="callout mt-3">
           <TelText text={item.warning} />
         </p>
       ) : null}
@@ -170,7 +170,7 @@ export default function GuideTabs() {
           scams.map((s) => (
             <article key={s.title} className="plate border border-default border-l-4 border-l-accent bg-card p-5">
               <h3 className="text-headline">{s.title}</h3>
-              <p className="mt-0.5 text-caption font-semibold uppercase tracking-wide text-secondary">
+              <p className="mt-1 text-caption font-semibold uppercase tracking-wide text-secondary">
                 {s.where}
               </p>
               <p className="body-copy mt-2 text-secondary">{s.how}</p>
@@ -193,7 +193,7 @@ export default function GuideTabs() {
                     <p className="mt-1 text-title text-accent-deep">
                       <ItalyFlag /> <i lang="it">{p.it}</i>
                     </p>
-                    <p className="mt-0.5 text-subhead italic text-secondary">{p.say}</p>
+                    <p className="mt-1 text-subhead italic text-secondary">{p.say}</p>
                   </div>
                 ))}
               </div>
@@ -204,9 +204,9 @@ export default function GuideTabs() {
           regions.map((r) => (
             <article key={r.name} className="plate border border-default border-l-4 border-l-accent bg-card p-5">
               <h3 className="title-section">{r.name}</h3>
-              <p className="body-copy mt-0.5 font-medium text-accent">{r.headline}</p>
+              <p className="body-copy mt-1 font-medium text-accent">{r.headline}</p>
               <h4 className="eyebrow mt-3">Watch for</h4>
-              <ul className="mt-1 space-y-1.5">
+              <ul className="mt-1 space-y-2">
                 {r.watch.map((w) => (
                   <li key={w} className="body-copy text-secondary">
                     <ColonLead text={w} />
@@ -214,7 +214,7 @@ export default function GuideTabs() {
                 ))}
               </ul>
               <h4 className="eyebrow mt-3">Moving around</h4>
-              <ul className="mt-1 space-y-1.5">
+              <ul className="mt-1 space-y-2">
                 {r.move.map((m) => (
                   <li key={m} className="body-copy text-secondary">
                     <ColonLead text={m} />
@@ -224,7 +224,7 @@ export default function GuideTabs() {
               {r.sections?.map((sec) => (
                 <div key={sec.label}>
                   <h4 className="eyebrow mt-3">{sec.label}</h4>
-                  <ul className="mt-1 space-y-1.5">
+                  <ul className="mt-1 space-y-2">
                     {sec.bullets.map((b) => (
                       <li key={b} className="body-copy text-secondary">
                         <ColonLead text={b} />

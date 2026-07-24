@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { CloudRain, Sun } from "lucide-react";
 import Icon from "@/components/Icon";
 import TelText from "@/components/TelText";
+import VerifiedCaveat from "@/components/VerifiedCaveat";
 import { allertaMeteoCard, heatCard, weatherLastVerified, type WeatherCard } from "@/data/weather";
 import { isHeatSeason } from "@/lib/season";
 
@@ -34,8 +35,8 @@ export default function SeasonalWeatherCard() {
       className="plate border border-default bg-card p-5"
       data-accent={card.id === "allerta" ? "azzurro" : undefined}
     >
-      <div className="flex items-start gap-2.5">
-        <span className={card.id === "heat" ? "mt-0.5 text-icon-warning" : "mt-0.5 text-icon-info"}>
+      <div className="flex items-start gap-3">
+        <span className={card.id === "heat" ? "mt-1 text-icon-warning" : "mt-1 text-icon-info"}>
           <Icon icon={card.id === "heat" ? Sun : CloudRain} size="lg" />
         </span>
         <div className="min-w-0">
@@ -47,7 +48,7 @@ export default function SeasonalWeatherCard() {
       <p className="body-copy mt-2 text-secondary">{card.intro}</p>
 
       {card.levels ? (
-        <ul className="mt-3 space-y-1.5">
+        <ul className="mt-3 space-y-2">
           {card.levels.map((level) => (
             <li key={level.code} className="body-copy text-secondary">
               <strong className="font-bold text-primary">{level.code}</strong> — {level.meaning}
@@ -84,10 +85,7 @@ export default function SeasonalWeatherCard() {
         ))}
       </div>
 
-      <p className="mt-3 text-footnote text-secondary">
-        Links and schedules last verified {weatherLastVerified} —{" "}
-        <strong className="font-bold">verify against official sources before travel.</strong>
-      </p>
+      <VerifiedCaveat>Links and schedules last verified {weatherLastVerified}</VerifiedCaveat>
     </article>
   );
 }

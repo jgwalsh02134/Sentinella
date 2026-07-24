@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import VerifiedCaveat from "@/components/VerifiedCaveat";
 import { predeparture } from "@/data/predeparture";
 
 /**
@@ -75,7 +76,7 @@ export default function PrepareChecklist() {
                   >
                     <span
                       aria-hidden="true"
-                      className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 ${
+                      className={`mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 ${
                         done ? "border-accent bg-accent text-on-accent" : "border-default bg-card"
                       }`}
                     >
@@ -121,10 +122,7 @@ export default function PrepareChecklist() {
               );
             })}
           </ul>
-          <p className="callout mt-3">
-            Rules, prices, and coverage change —{" "}
-            <strong className="font-bold">verify against official sources before travel.</strong>
-          </p>
+          <VerifiedCaveat>Rules, prices, and coverage change</VerifiedCaveat>
         </section>
       ))}
     </div>
