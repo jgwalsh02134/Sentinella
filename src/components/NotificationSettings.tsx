@@ -139,12 +139,12 @@ export default function NotificationSettings() {
     // permission button that cannot work. The install card on this screen
     // (InstallGuide) walks through Share → Add to Home Screen.
     return (
-      <div className="plate border border-line bg-white p-4">
+      <div className="plate border border-default bg-card p-4">
         <h2 className="text-sm font-bold">Notifications</h2>
-        <p className="mt-1 text-sm leading-relaxed text-mist">
+        <p className="mt-1 text-sm leading-relaxed text-secondary">
           On iPhone, notifications need iOS 16.4 or later <em>and</em> Sentinella installed to your
           home screen — Safari tabs can't receive them. Install first (Safari:{" "}
-          <strong className="font-bold text-ink">Share → Add to Home Screen</strong>, steps in the
+          <strong className="font-bold text-primary">Share → Add to Home Screen</strong>, steps in the
           card below), then turn notifications on from the installed app.
         </p>
       </div>
@@ -153,9 +153,9 @@ export default function NotificationSettings() {
 
   if (!supported) {
     return (
-      <div className="plate border border-line bg-white p-4">
+      <div className="plate border border-default bg-card p-4">
         <h2 className="text-sm font-bold">Notifications</h2>
-        <p className="mt-1 text-sm leading-relaxed text-mist">
+        <p className="mt-1 text-sm leading-relaxed text-secondary">
           This browser doesn't support push notifications.
         </p>
       </div>
@@ -163,11 +163,11 @@ export default function NotificationSettings() {
   }
 
   return (
-    <div className="plate border border-line bg-white p-4">
+    <div className="plate border border-default bg-card p-4">
       <div className="flex min-h-[2.75rem] items-center gap-3">
         <div className="flex-1">
           <h2 className="text-sm font-bold">Notifications</h2>
-          <p className="text-xs text-mist">
+          <p className="text-xs text-secondary">
             {enabled ? "On for this device." : "Alerts and reminders, even with the app closed."}
           </p>
         </div>
@@ -185,16 +185,16 @@ export default function NotificationSettings() {
             className={`relative h-8 w-[3.25rem] rounded-full transition-colors motion-reduce:transition-none ${enabled ? "bg-verde" : "bg-line"}`}
           >
             <span
-              className={`absolute top-1 h-6 w-6 rounded-full bg-white shadow transition-transform motion-reduce:transition-none ${enabled ? "translate-x-[1.5rem]" : "translate-x-1"}`}
+              className={`absolute top-1 h-6 w-6 rounded-full bg-card shadow transition-transform motion-reduce:transition-none ${enabled ? "translate-x-[1.5rem]" : "translate-x-1"}`}
             />
           </span>
         </button>
       </div>
 
-      {error ? <p className="mt-2 text-sm font-medium text-signal-deep">{error}</p> : null}
+      {error ? <p className="mt-2 text-sm font-medium text-danger">{error}</p> : null}
 
       {enabled && prefs ? (
-        <div className="mt-3 space-y-1 border-t border-line pt-3">
+        <div className="mt-3 space-y-1 border-t border-default pt-3">
           {PREF_LABELS.map(({ key, label, detail }) => (
             <label key={key} className="flex min-h-[2.75rem] cursor-pointer items-center gap-3">
               <input
@@ -205,7 +205,7 @@ export default function NotificationSettings() {
               />
               <span>
                 <span className="block text-sm font-semibold">{label}</span>
-                <span className="block text-xs text-mist">{detail}</span>
+                <span className="block text-xs text-secondary">{detail}</span>
               </span>
             </label>
           ))}

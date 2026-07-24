@@ -50,9 +50,9 @@ export default function ReminderSettings() {
   }
 
   return (
-    <div className="plate border border-line bg-white p-5">
+    <div className="plate border border-default bg-card p-5">
       <h2 className="text-sm font-bold">Check-in reminders</h2>
-      <p className="mt-1 text-xs leading-relaxed text-mist">
+      <p className="mt-1 text-xs leading-relaxed text-secondary">
         Get a nudge when you haven't checked in for a while. If a reminder goes unanswered for an
         hour, your admins are notified — that's the safety net.
       </p>
@@ -68,7 +68,7 @@ export default function ReminderSettings() {
               disabled={hours === null}
               onClick={() => void select(opt.hours)}
               className={`min-h-[2.75rem] rounded-xl border-2 text-sm font-bold transition-colors disabled:border-neutral-300 disabled:text-tertiary ${
-                selected ? "border-verde bg-verde text-white" : "border-line bg-white text-mist"
+                selected ? "border-verde bg-verde text-white" : "border-default bg-card text-secondary"
               }`}
             >
               {opt.label}
@@ -76,10 +76,10 @@ export default function ReminderSettings() {
           );
         })}
       </div>
-      <p className="mt-2 text-xs text-mist">
+      <p className="mt-2 text-xs text-secondary">
         Reminders arrive as notifications — turn those on from the card on the home screen.
       </p>
-      {error ? <p className="mt-2 text-sm font-medium text-signal-deep">{error}</p> : null}
+      {error ? <p className="mt-2 text-sm font-medium text-danger">{error}</p> : null}
     </div>
   );
 }

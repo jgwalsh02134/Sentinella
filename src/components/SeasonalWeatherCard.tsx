@@ -25,12 +25,12 @@ export default function SeasonalWeatherCard() {
   }, []);
 
   if (!card) {
-    return <div className="plate min-h-[8rem] border border-line bg-white p-5" aria-hidden="true" />;
+    return <div className="plate min-h-[8rem] border border-default bg-card p-5" aria-hidden="true" />;
   }
 
   return (
     <article
-      className="plate border border-line bg-white p-5"
+      className="plate border border-default bg-card p-5"
       data-accent={card.id === "allerta" ? "azzurro" : undefined}
     >
       <div className="flex items-start gap-2.5">
@@ -43,13 +43,13 @@ export default function SeasonalWeatherCard() {
         </div>
       </div>
 
-      <p className="body-copy mt-2 text-mist">{card.intro}</p>
+      <p className="body-copy mt-2 text-secondary">{card.intro}</p>
 
       {card.levels ? (
         <ul className="mt-3 space-y-1.5">
           {card.levels.map((level) => (
-            <li key={level.code} className="body-copy text-mist">
-              <strong className="font-bold text-ink">{level.code}</strong> — {level.meaning}
+            <li key={level.code} className="body-copy text-secondary">
+              <strong className="font-bold text-primary">{level.code}</strong> — {level.meaning}
             </li>
           ))}
         </ul>
@@ -57,7 +57,7 @@ export default function SeasonalWeatherCard() {
 
       <ul className="mt-3 space-y-2">
         {card.points.map((point) => (
-          <li key={point} className="body-copy text-mist">
+          <li key={point} className="body-copy text-secondary">
             {point}
           </li>
         ))}
@@ -81,7 +81,7 @@ export default function SeasonalWeatherCard() {
         ))}
       </div>
 
-      <p className="mt-3 text-xs leading-relaxed text-mist">
+      <p className="mt-3 text-xs leading-relaxed text-secondary">
         Links and schedules last verified {weatherLastVerified} —{" "}
         <strong className="font-bold">verify against official sources before travel.</strong>
       </p>

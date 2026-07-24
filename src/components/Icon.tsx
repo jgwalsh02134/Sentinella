@@ -4,8 +4,8 @@ import type { LucideIcon } from "lucide-react";
  * The one way icons enter this UI. Standardizes size, stroke, color, and
  * accessibility so every screen reads the same:
  *
- * - color is always currentColor — set the text token (text-mist,
- *   text-verde, text-ink) on the surrounding element, never a literal hex
+ * - color is always currentColor — set the text token (text-secondary,
+ *   text-verde, text-primary) on the surrounding element, never a literal hex
  *   on the icon. Signal red only inside genuine emergency components.
  * - every icon is aria-hidden; the adjacent text or the parent control's
  *   aria-label carries the meaning. An icon is never the sole conveyor.

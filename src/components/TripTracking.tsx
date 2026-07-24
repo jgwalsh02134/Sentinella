@@ -161,11 +161,11 @@ export default function TripTracking({ onAutoCheckIn }: Props) {
         </div>
       ) : null}
 
-      <div className="plate border border-line bg-white p-5">
+      <div className="plate border border-default bg-card p-5">
         <div className="flex min-h-[2.75rem] items-center gap-3">
           <div className="flex-1">
             <h2 className="text-sm font-bold">Track my trip</h2>
-            <p className="text-xs text-mist">Automatic safe check-ins while this screen is open.</p>
+            <p className="text-xs text-secondary">Automatic safe check-ins while this screen is open.</p>
           </div>
           <button
             type="button"
@@ -180,7 +180,7 @@ export default function TripTracking({ onAutoCheckIn }: Props) {
               className={`relative h-8 w-[3.25rem] rounded-full transition-colors motion-reduce:transition-none ${active ? "bg-verde" : "bg-line"}`}
             >
               <span
-                className={`absolute top-1 h-6 w-6 rounded-full bg-white shadow transition-transform motion-reduce:transition-none ${active ? "translate-x-[1.5rem]" : "translate-x-1"}`}
+                className={`absolute top-1 h-6 w-6 rounded-full bg-card shadow transition-transform motion-reduce:transition-none ${active ? "translate-x-[1.5rem]" : "translate-x-1"}`}
               />
             </span>
           </button>
@@ -202,9 +202,9 @@ export default function TripTracking({ onAutoCheckIn }: Props) {
           </div>
         ) : null}
 
-        {error ? <p className="mt-3 text-sm font-medium text-signal-deep">{error}</p> : null}
+        {error ? <p className="mt-3 text-sm font-medium text-danger">{error}</p> : null}
 
-        <p className="mt-3 text-xs leading-relaxed text-mist">
+        <p className="mt-3 text-xs leading-relaxed text-secondary">
           Tracking pauses when the screen locks or you leave the app — iPhone doesn't allow web apps
           to track in the background.
         </p>

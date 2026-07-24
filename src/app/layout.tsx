@@ -39,11 +39,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <div className="page-shell mx-auto min-h-dvh w-full max-w-md px-4 pt-4">
           {children}
-          <footer className="mt-10 flex items-start gap-3 border-t border-line pt-4 text-xs leading-relaxed text-mist">
+          <footer className="mt-10 flex items-start gap-3 border-t border-default pt-4 text-xs leading-relaxed text-secondary">
             <Crest size={28} className="mt-0.5 shrink-0" />
             <span>
             Sentinella is an informational tool. In an emergency, always call{" "}
-            <a href="tel:112" className="font-bold text-signal-deep">
+            <a href="tel:112" className="font-bold text-danger">
               112
             </a>
             . Verify contact numbers against official sources before relying on them.

@@ -15,7 +15,7 @@ export default function PreparePage() {
       <header>
         <p className="eyebrow">Prepare</p>
         <h1 className="title-page">Before you fly</h1>
-        <p className="body-copy mt-1 text-mist">
+        <p className="body-copy mt-1 text-secondary">
           Pre-departure checklist for a US → Italy trip. Tap items off as you go — progress is saved
           on this device.
         </p>

@@ -112,12 +112,12 @@ export default function InstallGuide() {
 
   return (
     <section className="mt-6" aria-label="Add to home screen">
-      <div className="plate relative border border-line bg-white p-4">
+      <div className="plate relative border border-default bg-card p-4">
         <button
           type="button"
           onClick={dismiss}
           aria-label="Dismiss install suggestion"
-          className="absolute right-1 top-1 flex h-11 w-11 items-center justify-center rounded-xl text-mist"
+          className="absolute right-1 top-1 flex h-11 w-11 items-center justify-center rounded-xl text-secondary"
         >
           <svg
             viewBox="0 0 24 24"
@@ -133,7 +133,7 @@ export default function InstallGuide() {
         </button>
 
         <h2 className="pr-10 text-sm font-bold">Get Sentinella on your home screen</h2>
-        <p className="mt-1 pr-10 text-sm leading-relaxed text-mist">
+        <p className="mt-1 pr-10 text-sm leading-relaxed text-secondary">
           Installed, it opens full screen, keeps working offline, and stays one tap from 112.
         </p>
 
@@ -149,16 +149,16 @@ export default function InstallGuide() {
           <ol className="mt-3 space-y-2">
             <li className="flex gap-3 text-sm leading-relaxed">
               <span className="font-mono font-bold text-verde">1</span>
-              <span className="text-mist">
-                Tap the <strong className="whitespace-nowrap text-ink">Share <ShareGlyph /></strong>{" "}
+              <span className="text-secondary">
+                Tap the <strong className="whitespace-nowrap text-primary">Share <ShareGlyph /></strong>{" "}
                 button in Safari&apos;s toolbar.
               </span>
             </li>
             <li className="flex gap-3 text-sm leading-relaxed">
               <span className="font-mono font-bold text-verde">2</span>
-              <span className="text-mist">
+              <span className="text-secondary">
                 Choose{" "}
-                <strong className="whitespace-nowrap text-ink">
+                <strong className="whitespace-nowrap text-primary">
                   Add to Home Screen <AddGlyph />
                 </strong>
                 .

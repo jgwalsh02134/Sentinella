@@ -49,3 +49,54 @@ DATABASE_URL, AUTH_SECRET, INVITE_CODES (comma-separated), ADMIN_EMAILS
 Signage plates (.plate + CallPlate component) are the signature element — emergency
 numbers rendered like Italian road signs with large monospace numerals. Keep new
 surfaces consistent with this system rather than introducing new card styles.
+
+## Color system (Core Palette + Semantic Layer)
+
+Core palette — seven hues + a neutral ramp, defined ONLY in
+src/app/globals.css :root as RGB triplets and consumed by
+tailwind.config.ts as rgb(var()/<alpha-value>). Every hue has the same
+five steps: 100 subtle bg · 200 tint · 600 base · 700 strong/pressed ·
+900 deep text. Hues: verde (brand), signal (emergency), ambra (warning),
+azzurro (info/links), terracotta (warm decorative), glicine
+(language/culture), oliva (muted secondary). Neutrals run 0–950;
+paper/line/mist/ink are aliases of 50/200/600/950.
+
+Semantic layer — four usage groups, deliberately NOT per-component:
+- text: primary / secondary / tertiary / brand / link / on-accent /
+  danger / warning / success / info
+- fill: page / card / sunken / brand(+strong) / <status>-subtle
+- icon: mirrors text, delivered via currentColor as text-icon-*
+- border: default / strong / focus
+
+Accent slot — the dynamic mechanism. Components say bg-accent,
+bg-accent-subtle, bg-accent-strong, text-accent, text-accent-deep,
+text-on-accent, border-accent; a data-accent attribute on any ancestor
+binds which hue that means. Bindings: verde (default/brand), azzurro,
+terracotta, glicine, oliva. Assigned domains: Guide tabs —
+Basics=oliva, Scams=terracotta, Phrases=glicine, Cities=azzurro,
+Health=verde; /prepare — Entry rules=azzurro, Global Entry=oliva,
+Health=glicine, Setup=terracotta; official-source sections=azzurro;
+weather: heat=ambra (warning domain), autumn=azzurro. The .eyebrow
+class is accent-aware.
+
+THE RED RULE (unchanged, now encoded): solid signal FILLS are for
+emergency actions only — CallPlate, call-112 nudges, the Emergency
+tab, check-in "help". Errors and destructive affordances use
+text-danger + fill-danger-subtle + border, never a solid red button.
+Terracotta is decorative and NEVER means danger/warning; ambra owns
+warning.
+
+States: pressed = the -700 step of the bound token; hover only
+compiles under @media(hover:hover) (future.hoverOnlyWhenSupported);
+focus is one global ring (2px border-focus over a white underlay —
+legible on paper, white, and signal); disabled = sunken/neutral tokens,
+never opacity hacks; selected = accent-subtle fill + accent text.
+Color is never the only signal — every status/category also has its
+label or icon.
+
+New UI uses semantic + accent tokens only. A new accent domain rebinds
+the slot with data-accent; never invent one-off colors, never write
+raw hex in components. Sanctioned hex exceptions: flag/crest artwork,
+src/lib/mapStyle.ts (canvas cartography), and the PWA themeColor in
+layout.tsx. Dark mode later = swap the :root variables; do not
+hardcode around them.

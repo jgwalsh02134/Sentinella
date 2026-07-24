@@ -36,7 +36,7 @@ export default function RegisterForm({ invitesRequired }: { invitesRequired: boo
   }
 
   return (
-    <form onSubmit={submit} className="plate mt-5 space-y-3 border border-line bg-white p-5">
+    <form onSubmit={submit} className="plate mt-5 space-y-3 border border-default bg-card p-5">
       {invitesRequired ? (
         <label className="block">
           <span className="eyebrow">Invite code</span>
@@ -44,7 +44,7 @@ export default function RegisterForm({ invitesRequired }: { invitesRequired: boo
             required
             value={inviteCode}
             onChange={(e) => setInviteCode(e.target.value)}
-            className="mt-1 min-h-[3rem] w-full rounded-xl border border-line px-4 font-mono text-base uppercase outline-none focus:border-verde"
+            className="mt-1 min-h-[3rem] w-full rounded-xl border border-default px-4 font-mono text-base uppercase outline-none focus:border-verde"
           />
         </label>
       ) : null}
@@ -55,7 +55,7 @@ export default function RegisterForm({ invitesRequired }: { invitesRequired: boo
           autoComplete="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="mt-1 min-h-[3rem] w-full rounded-xl border border-line px-4 text-base outline-none focus:border-verde"
+          className="mt-1 min-h-[3rem] w-full rounded-xl border border-default px-4 text-base outline-none focus:border-verde"
         />
       </label>
       <label className="block">
@@ -66,7 +66,7 @@ export default function RegisterForm({ invitesRequired }: { invitesRequired: boo
           autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 min-h-[3rem] w-full rounded-xl border border-line px-4 text-base outline-none focus:border-verde"
+          className="mt-1 min-h-[3rem] w-full rounded-xl border border-default px-4 text-base outline-none focus:border-verde"
         />
       </label>
       <label className="block">
@@ -78,11 +78,11 @@ export default function RegisterForm({ invitesRequired }: { invitesRequired: boo
           autoComplete="new-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 min-h-[3rem] w-full rounded-xl border border-line px-4 text-base outline-none focus:border-verde"
+          className="mt-1 min-h-[3rem] w-full rounded-xl border border-default px-4 text-base outline-none focus:border-verde"
         />
-        <span className="mt-1 block text-xs text-mist">At least 8 characters.</span>
+        <span className="mt-1 block text-xs text-secondary">At least 8 characters.</span>
       </label>
-      {error ? <p className="text-sm font-medium text-signal-deep">{error}</p> : null}
+      {error ? <p className="text-sm font-medium text-danger">{error}</p> : null}
       <button
         type="submit"
         disabled={busy}
@@ -90,7 +90,7 @@ export default function RegisterForm({ invitesRequired }: { invitesRequired: boo
       >
         {busy ? "Creating…" : "Create account"}
       </button>
-      <p className="text-sm text-mist">
+      <p className="text-sm text-secondary">
         Already registered?{" "}
         <Link href="/login" className="text-link">
           Sign in

@@ -32,7 +32,7 @@ export default function EmergencyPage() {
       <header>
         <p className="eyebrow">Emergency</p>
         <h1 className="title-page">One tap to help</h1>
-        <p className="body-copy mt-1 text-mist">
+        <p className="body-copy mt-1 text-secondary">
           Every plate below is a phone number. All core lines are free and work from any phone, with
           or without a local SIM.
         </p>
@@ -42,14 +42,14 @@ export default function EmergencyPage() {
         {primary.map((n) => (
           <CallPlate key={n.dial} {...n} />
         ))}
-        <div className="plate border border-line bg-white p-5">
+        <div className="plate border border-default bg-card p-5">
           <h2 className="eyebrow">When the operator answers</h2>
           <ol className="mt-2 space-y-2">
             {callScript.map((step, i) => (
               <li key={step.lead} className="body-copy flex gap-3">
                 <span className="font-mono font-bold text-verde">{i + 1}</span>
-                <span className="text-mist">
-                  <strong className="font-bold text-ink">{step.lead}</strong> {step.rest}
+                <span className="text-secondary">
+                  <strong className="font-bold text-primary">{step.lead}</strong> {step.rest}
                 </span>
               </li>
             ))}
@@ -59,21 +59,21 @@ export default function EmergencyPage() {
 
       <section className="mt-6" aria-label="Share your position">
         <ShareLocation />
-        <Link href="/map" className="plate mt-3 block border border-line bg-white p-4">
+        <Link href="/map" className="plate mt-3 block border border-default bg-card p-4">
           <p className="text-sm font-bold">Offline map →</p>
-          <p className="mt-0.5 text-xs leading-relaxed text-mist">
+          <p className="mt-0.5 text-xs leading-relaxed text-secondary">
             See where you are on a downloaded city map — works without a connection.
           </p>
         </Link>
       </section>
 
       <section className="mt-6" aria-label="112 companion app">
-        <div className="plate border border-line bg-white p-5">
+        <div className="plate border border-default bg-card p-5">
           <h2 className="text-base font-bold leading-snug">{whereAreUApp.title}</h2>
-          <p className="body-copy mt-1.5 text-mist">{whereAreUApp.body}</p>
+          <p className="body-copy mt-1.5 text-secondary">{whereAreUApp.body}</p>
           <ul className="mt-2 space-y-1.5">
             {whereAreUApp.bullets.map((b) => (
-              <li key={b} className="body-copy text-mist">
+              <li key={b} className="body-copy text-secondary">
                 {b}
               </li>
             ))}
@@ -86,7 +86,7 @@ export default function EmergencyPage() {
           >
             {whereAreUApp.link.label}
           </a>
-          <p className="mt-2 text-xs leading-relaxed text-mist">{whereAreUApp.note}</p>
+          <p className="mt-2 text-xs leading-relaxed text-secondary">{whereAreUApp.note}</p>
         </div>
       </section>
 
@@ -137,16 +137,16 @@ export default function EmergencyPage() {
           {embassies.map((e) => {
             const FlagIcon = flagIcons[e.country];
             return (
-            <div key={e.name} className="plate break-words border border-line bg-white p-4">
+            <div key={e.name} className="plate break-words border border-default bg-card p-4">
               <p className="text-base font-bold">
                 {FlagIcon ? <FlagIcon /> : <span aria-hidden="true">{e.flag}</span>}{" "}
                 {e.name}
               </p>
-              <p className="mt-0.5 text-sm text-mist">{e.address}</p>
+              <p className="mt-0.5 text-sm text-secondary">{e.address}</p>
               <p className="mt-0.5 font-mono text-sm font-semibold tabular-nums">{e.phone}</p>
-              {e.notes ? <p className="mt-1 text-xs leading-relaxed text-mist">{e.notes}</p> : null}
+              {e.notes ? <p className="mt-1 text-xs leading-relaxed text-secondary">{e.notes}</p> : null}
               {e.email ? (
-                <p className="mt-1 text-xs leading-relaxed text-mist">
+                <p className="mt-1 text-xs leading-relaxed text-secondary">
                   Email:{" "}
                   <a href={`mailto:${e.email}`} className="text-link break-all">
                     {e.email}
@@ -185,13 +185,13 @@ export default function EmergencyPage() {
 
       <section className="mt-6" aria-label="Lost documents">
         <h2 className="eyebrow">Passport lost or stolen</h2>
-        <div className="plate mt-2 border border-line bg-white p-5">
+        <div className="plate mt-2 border border-default bg-card p-5">
           <ol className="space-y-2.5">
             {lostDocumentSteps.map((step, i) => (
               <li key={step.lead} className="body-copy flex gap-3">
                 <span className="font-mono font-bold text-verde">{i + 1}</span>
-                <span className="text-mist">
-                  <strong className="font-bold text-ink">{step.lead}</strong> {step.rest}
+                <span className="text-secondary">
+                  <strong className="font-bold text-primary">{step.lead}</strong> {step.rest}
                 </span>
               </li>
             ))}

@@ -196,22 +196,22 @@ export default function MapView() {
     <div>
       <div
         ref={containerRef}
-        className="plate mt-5 h-[60dvh] min-h-[20rem] overflow-hidden border border-line bg-white"
+        className="plate mt-5 h-[60dvh] min-h-[20rem] overflow-hidden border border-default bg-card"
         role="application"
         aria-label="City map"
       />
 
-      <div className="plate mt-3 border border-line bg-white p-4">
+      <div className="plate mt-3 border border-default bg-card p-4">
         <h2 className="eyebrow">Your position</h2>
         {fix ? (
           <>
             <p className="mt-1 font-mono text-lg font-bold tabular-nums text-verde-deep">
               {fix.lat.toFixed(5)}, {fix.lng.toFixed(5)}
             </p>
-            <p className="mt-0.5 text-xs text-mist">Accurate to ~{Math.round(fix.accuracyM)} m.</p>
+            <p className="mt-0.5 text-xs text-secondary">Accurate to ~{Math.round(fix.accuracyM)} m.</p>
           </>
         ) : (
-          <p className="mt-1 text-sm leading-relaxed text-mist">
+          <p className="mt-1 text-sm leading-relaxed text-secondary">
             {locating
               ? "Getting a fix… without cell service the first one can take a minute — stand outdoors with a clear view of the sky."
               : "Tap the location button on the map for the blue dot and your coordinates. GPS works with no signal; the first fix without cell service can take a minute outdoors."}
@@ -221,18 +221,18 @@ export default function MapView() {
 
       <section className="mt-5" aria-label="Offline maps">
         <h2 className="eyebrow">Offline maps</h2>
-        <p className="mt-1 text-xs leading-relaxed text-mist">
+        <p className="mt-1 text-xs leading-relaxed text-secondary">
           Download a city before you travel and the map works with no connection. Each pack covers
           the metro area with streets down to building level.
         </p>
-        <div className="plate mt-2 border border-line bg-white">
+        <div className="plate mt-2 border border-default bg-card">
           {MAP_PACKS.map((city, i) => {
             const isDownloaded = downloaded.has(city.id);
             const pct = progress[city.id];
             const isDownloading = pct !== undefined;
             const isActive = city.id === activeCityId;
             return (
-              <div key={city.id} className={i > 0 ? "border-t border-line" : ""}>
+              <div key={city.id} className={i > 0 ? "border-t border-default" : ""}>
                 <div className="flex min-h-[3.5rem] items-center gap-3 p-3">
                   <button
                     type="button"
@@ -241,14 +241,14 @@ export default function MapView() {
                     aria-label={`Show ${city.name} on the map`}
                   >
                     <span className="block text-sm font-bold">
-                      {city.name} <span className="font-normal text-mist">· {city.nameIt}</span>
+                      {city.name} <span className="font-normal text-secondary">· {city.nameIt}</span>
                       {isActive ? (
                         <span className="ml-2 rounded-full bg-verde-tint px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-verde-deep">
                           Viewing
                         </span>
                       ) : null}
                     </span>
-                    <span className="block text-xs text-mist">
+                    <span className="block text-xs text-secondary">
                       {isDownloading
                         ? `Downloading… ${Math.round((pct ?? 0) * 100)}%`
                         : isDownloaded
@@ -271,7 +271,7 @@ export default function MapView() {
                       }`}
                     >
                       <span
-                        className={`absolute top-1 h-6 w-6 rounded-full bg-white shadow transition-transform motion-reduce:transition-none ${
+                        className={`absolute top-1 h-6 w-6 rounded-full bg-card shadow transition-transform motion-reduce:transition-none ${
                           isDownloaded || isDownloading ? "translate-x-[1.5rem]" : "translate-x-1"
                         }`}
                       />
@@ -295,7 +295,7 @@ export default function MapView() {
             );
           })}
         </div>
-        <p className="mt-2 text-xs leading-relaxed text-mist">
+        <p className="mt-2 text-xs leading-relaxed text-secondary">
           Downloads live in this browser's storage. iOS may evict them if the device runs low on
           space — re-download before you travel. Outside a downloaded city the map needs a
           connection. Map data © OpenStreetMap contributors.

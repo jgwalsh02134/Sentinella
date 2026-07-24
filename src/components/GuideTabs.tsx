@@ -54,7 +54,7 @@ function LeadBody({ text }: { text: string }) {
   if (!split) return <>{text}</>;
   return (
     <>
-      <strong className="font-bold text-ink">{split[0]}</strong> {split[1]}
+      <strong className="font-bold text-primary">{split[0]}</strong> {split[1]}
     </>
   );
 }
@@ -65,7 +65,7 @@ function ColonLead({ text }: { text: string }) {
   if (idx === -1 || idx > 40) return <>{text}</>;
   return (
     <>
-      <strong className="font-bold text-ink">{text.slice(0, idx + 1)}</strong>
+      <strong className="font-bold text-primary">{text.slice(0, idx + 1)}</strong>
       {text.slice(idx + 1)}
     </>
   );
@@ -74,15 +74,15 @@ function ColonLead({ text }: { text: string }) {
 /** Basics and Health share one card layout. */
 function InfoCard({ item }: { item: InfoItem }) {
   return (
-    <article className="plate border border-line border-l-4 border-l-accent bg-white p-5">
+    <article className="plate border border-default border-l-4 border-l-accent bg-card p-5">
       <h3 className="text-base font-bold leading-snug">{item.title}</h3>
-      <p className="body-copy mt-1.5 text-mist">
+      <p className="body-copy mt-1.5 text-secondary">
         <LeadBody text={item.body} />
       </p>
       {item.bullets?.length ? (
         <ul className="mt-2 space-y-1.5">
           {item.bullets.map((b) => (
-            <li key={b} className="body-copy text-mist">
+            <li key={b} className="body-copy text-secondary">
               <ColonLead text={b} />
             </li>
           ))}
@@ -158,12 +158,12 @@ export default function GuideTabs() {
 
         {tab === "Scams" &&
           scams.map((s) => (
-            <article key={s.title} className="plate border border-line border-l-4 border-l-accent bg-white p-5">
+            <article key={s.title} className="plate border border-default border-l-4 border-l-accent bg-card p-5">
               <h3 className="text-base font-bold leading-snug">{s.title}</h3>
-              <p className="mt-0.5 text-xs font-semibold uppercase tracking-wide text-mist">
+              <p className="mt-0.5 text-xs font-semibold uppercase tracking-wide text-secondary">
                 {s.where}
               </p>
-              <p className="body-copy mt-2 text-mist">{s.how}</p>
+              <p className="body-copy mt-2 text-secondary">{s.how}</p>
               <p className="body-copy mt-2 rounded-xl bg-accent-subtle p-3 text-accent-deep">
                 <strong className="font-bold">Counter:</strong> {s.counter}
               </p>
@@ -176,14 +176,14 @@ export default function GuideTabs() {
               <h3 className="eyebrow mt-2">{group.label}</h3>
               <div className="mt-2 space-y-2">
                 {group.phrases.map((p) => (
-                  <div key={p.it} className="plate border border-line border-l-4 border-l-accent bg-white p-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-mist">
+                  <div key={p.it} className="plate border border-default border-l-4 border-l-accent bg-card p-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-secondary">
                       {p.en}
                     </p>
                     <p className="mt-1 text-lg font-bold leading-snug text-accent-deep">
                       <ItalyFlag /> <i lang="it">{p.it}</i>
                     </p>
-                    <p className="mt-0.5 text-sm italic text-mist">{p.say}</p>
+                    <p className="mt-0.5 text-sm italic text-secondary">{p.say}</p>
                   </div>
                 ))}
               </div>
@@ -192,13 +192,13 @@ export default function GuideTabs() {
 
         {tab === "Cities" &&
           regions.map((r) => (
-            <article key={r.name} className="plate border border-line border-l-4 border-l-accent bg-white p-5">
+            <article key={r.name} className="plate border border-default border-l-4 border-l-accent bg-card p-5">
               <h3 className="title-section">{r.name}</h3>
               <p className="body-copy mt-0.5 font-medium text-accent">{r.headline}</p>
               <h4 className="eyebrow mt-3">Watch for</h4>
               <ul className="mt-1 space-y-1.5">
                 {r.watch.map((w) => (
-                  <li key={w} className="body-copy text-mist">
+                  <li key={w} className="body-copy text-secondary">
                     <ColonLead text={w} />
                   </li>
                 ))}
@@ -206,7 +206,7 @@ export default function GuideTabs() {
               <h4 className="eyebrow mt-3">Moving around</h4>
               <ul className="mt-1 space-y-1.5">
                 {r.move.map((m) => (
-                  <li key={m} className="body-copy text-mist">
+                  <li key={m} className="body-copy text-secondary">
                     <ColonLead text={m} />
                   </li>
                 ))}
@@ -216,7 +216,7 @@ export default function GuideTabs() {
                   <h4 className="eyebrow mt-3">{sec.label}</h4>
                   <ul className="mt-1 space-y-1.5">
                     {sec.bullets.map((b) => (
-                      <li key={b} className="body-copy text-mist">
+                      <li key={b} className="body-copy text-secondary">
                         <ColonLead text={b} />
                       </li>
                     ))}

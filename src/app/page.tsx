@@ -45,7 +45,7 @@ export default async function HomePage() {
           nameIt="Numero Unico di Emergenza"
           tier="primary"
         />
-        <Link href="/emergency" className="mt-2 block text-right text-sm font-semibold text-signal-deep">
+        <Link href="/emergency" className="mt-2 block text-right text-sm font-semibold text-danger">
           All emergency numbers & embassies →
         </Link>
       </section>
@@ -53,35 +53,35 @@ export default async function HomePage() {
       <section className="mt-6" aria-label="Quick actions">
         <h2 className="eyebrow">Right now</h2>
         <div className="mt-2 grid grid-cols-2 gap-3">
-          <Link href="/checkin" className="plate border border-line bg-white p-4">
+          <Link href="/checkin" className="plate border border-default bg-card p-4">
             <span className="block text-verde">
               <Icon icon={MapPin} size="lg" />
             </span>
             <span className="mt-1 block text-sm font-bold">Check in</span>
-            <span className="block text-xs text-mist">Log that you're safe</span>
+            <span className="block text-xs text-secondary">Log that you're safe</span>
           </Link>
-          <Link href="/guide" className="plate border border-line bg-white p-4">
+          <Link href="/guide" className="plate border border-default bg-card p-4">
             <span className="block text-verde">
               <Icon icon={Shield} size="lg" />
             </span>
             <span className="mt-1 block text-sm font-bold">Field guide</span>
-            <span className="block text-xs text-mist">Scams, phrases, cities</span>
+            <span className="block text-xs text-secondary">Scams, phrases, cities</span>
           </Link>
-          <Link href="/map" className="plate col-span-2 border border-line bg-white p-4">
+          <Link href="/map" className="plate col-span-2 border border-default bg-card p-4">
             <span className="block text-verde">
               <Icon icon={Map} size="lg" />
             </span>
             <span className="mt-1 block text-sm font-bold">Offline map</span>
-            <span className="block text-xs text-mist">
+            <span className="block text-xs text-secondary">
               Download city maps and see where you are, no signal needed
             </span>
           </Link>
-          <Link href="/prepare" className="plate col-span-2 border border-line bg-white p-4">
+          <Link href="/prepare" className="plate col-span-2 border border-default bg-card p-4">
             <span className="block text-verde">
               <Icon icon={Plane} size="lg" />
             </span>
             <span className="mt-1 block text-sm font-bold">Before you fly</span>
-            <span className="block text-xs text-mist">US → Italy pre-departure checklist</span>
+            <span className="block text-xs text-secondary">US → Italy pre-departure checklist</span>
           </Link>
         </div>
       </section>
@@ -113,8 +113,8 @@ export default async function HomePage() {
 
       {!session ? (
         <section className="mt-6">
-          <div className="plate border border-line bg-white p-4">
-            <p className="text-sm leading-relaxed text-mist">
+          <div className="plate border border-default bg-card p-4">
+            <p className="text-sm leading-relaxed text-secondary">
               {inviteOnly ? "Have an invite code? " : "New here? "}
               <Link href="/register" className="text-link">
                 Create your account

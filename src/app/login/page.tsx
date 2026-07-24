@@ -36,7 +36,7 @@ function LoginForm() {
   }
 
   return (
-    <form onSubmit={submit} className="plate mt-5 space-y-3 border border-line bg-white p-5">
+    <form onSubmit={submit} className="plate mt-5 space-y-3 border border-default bg-card p-5">
       <label className="block">
         <span className="eyebrow">Email</span>
         <input
@@ -45,7 +45,7 @@ function LoginForm() {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 min-h-[3rem] w-full rounded-xl border border-line px-4 text-base outline-none focus:border-verde"
+          className="mt-1 min-h-[3rem] w-full rounded-xl border border-default px-4 text-base outline-none focus:border-verde"
         />
       </label>
       <label className="block">
@@ -56,10 +56,10 @@ function LoginForm() {
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 min-h-[3rem] w-full rounded-xl border border-line px-4 text-base outline-none focus:border-verde"
+          className="mt-1 min-h-[3rem] w-full rounded-xl border border-default px-4 text-base outline-none focus:border-verde"
         />
       </label>
-      {error ? <p className="text-sm font-medium text-signal-deep">{error}</p> : null}
+      {error ? <p className="text-sm font-medium text-danger">{error}</p> : null}
       <button
         type="submit"
         disabled={busy}
@@ -67,7 +67,7 @@ function LoginForm() {
       >
         {busy ? "Signing in…" : "Sign in"}
       </button>
-      <p className="text-sm text-mist">
+      <p className="text-sm text-secondary">
         New here?{" "}
         <Link href="/register" className="text-link">
           Create an account
@@ -87,7 +87,7 @@ export default function LoginPage() {
         </div>
         <p className="eyebrow">Sign in</p>
         <h1 className="title-page">Welcome back</h1>
-        <p className="body-copy mt-1 text-mist">
+        <p className="body-copy mt-1 text-secondary">
           Signing in unlocks check-ins. Emergency numbers and the guide never require an account.
         </p>
       </header>

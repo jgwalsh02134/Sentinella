@@ -81,9 +81,9 @@ export default function ShareLocation() {
   }
 
   return (
-    <div className="plate border border-line bg-white p-5">
+    <div className="plate border border-default bg-card p-5">
       <h2 className="eyebrow">Your position</h2>
-      <p className="mt-1 text-sm leading-relaxed text-mist">
+      <p className="mt-1 text-sm leading-relaxed text-secondary">
         Get your coordinates to read to a 112 operator, or send them to a contact.
       </p>
 
@@ -92,7 +92,7 @@ export default function ShareLocation() {
           <p className="font-mono text-lg font-bold tabular-nums text-verde-deep">
             {fix.lat.toFixed(5)}, {fix.lng.toFixed(5)}
           </p>
-          <p className="mt-1 text-xs text-mist">
+          <p className="mt-1 text-xs text-secondary">
             Accurate to ~{Math.round(fix.accuracyM)} m ·{" "}
             <a href={mapsUrl(fix)} target="_blank" rel="noreferrer" className="text-link">
               Open in Maps
@@ -101,7 +101,7 @@ export default function ShareLocation() {
         </div>
       ) : null}
 
-      {error ? <p className="mt-3 text-sm font-medium text-signal-deep">{error}</p> : null}
+      {error ? <p className="mt-3 text-sm font-medium text-danger">{error}</p> : null}
       {copied ? <p className="mt-3 text-sm font-semibold text-verde">Copied — paste it anywhere.</p> : null}
 
       <div className="mt-4 flex gap-3">

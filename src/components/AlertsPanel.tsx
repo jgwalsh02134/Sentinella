@@ -91,7 +91,7 @@ export default function AlertsPanel() {
   return (
     <div className="space-y-4">
       {isAdmin ? (
-        <div className="plate border border-line bg-white p-4">
+        <div className="plate border border-default bg-card p-4">
           <button
             type="button"
             onClick={() => setShowForm((v) => !v)}
@@ -106,7 +106,7 @@ export default function AlertsPanel() {
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Title"
                 maxLength={140}
-                className="min-h-[3rem] w-full rounded-xl border border-line px-4 text-base outline-none focus:border-verde"
+                className="min-h-[3rem] w-full rounded-xl border border-default px-4 text-base outline-none focus:border-verde"
               />
               <textarea
                 value={body}
@@ -114,14 +114,14 @@ export default function AlertsPanel() {
                 placeholder="What travelers should know and do"
                 maxLength={2000}
                 rows={4}
-                className="w-full rounded-xl border border-line px-4 py-3 text-base outline-none focus:border-verde"
+                className="w-full rounded-xl border border-default px-4 py-3 text-base outline-none focus:border-verde"
               />
               <div className="grid grid-cols-2 gap-3">
                 <select
                   value={severity}
                   onChange={(e) => setSeverity(e.target.value as Severity)}
                   aria-label="Severity"
-                  className="min-h-[3rem] rounded-xl border border-line bg-white px-3 text-base outline-none focus:border-verde"
+                  className="min-h-[3rem] rounded-xl border border-default bg-card px-3 text-base outline-none focus:border-verde"
                 >
                   <option value="info">Info</option>
                   <option value="advisory">Advisory</option>
@@ -133,10 +133,10 @@ export default function AlertsPanel() {
                   placeholder="Region"
                   maxLength={80}
                   aria-label="Region"
-                  className="min-h-[3rem] rounded-xl border border-line px-4 text-base outline-none focus:border-verde"
+                  className="min-h-[3rem] rounded-xl border border-default px-4 text-base outline-none focus:border-verde"
                 />
               </div>
-              {formError ? <p className="text-sm font-medium text-signal-deep">{formError}</p> : null}
+              {formError ? <p className="text-sm font-medium text-danger">{formError}</p> : null}
               <button
                 type="button"
                 onClick={publish}
@@ -151,17 +151,17 @@ export default function AlertsPanel() {
       ) : null}
 
       {loading ? (
-        <p className="text-sm text-mist">Loading advisories…</p>
+        <p className="text-sm text-secondary">Loading advisories…</p>
       ) : offline ? (
-        <div className="plate border border-line bg-white p-5">
-          <p className="text-sm leading-relaxed text-mist">
+        <div className="plate border border-default bg-card p-5">
+          <p className="text-sm leading-relaxed text-secondary">
             Advisories need a connection and couldn't load. The Emergency and Guide screens keep
             working offline.
           </p>
         </div>
       ) : alerts.length === 0 ? (
-        <div className="plate border border-line bg-white p-5">
-          <p className="text-sm leading-relaxed text-mist">
+        <div className="plate border border-default bg-card p-5">
+          <p className="text-sm leading-relaxed text-secondary">
             No active advisories. When one is published it appears here — check back before travel
             days and after any major news.
           </p>
@@ -169,18 +169,18 @@ export default function AlertsPanel() {
       ) : (
         <ul className="space-y-3">
           {alerts.map((a) => (
-            <li key={a.id} className="plate border border-line bg-white p-5">
+            <li key={a.id} className="plate border border-default bg-card p-5">
               <div className="flex items-center gap-2">
                 <span
                   className={`rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide ${severityMeta[a.severity].badge}`}
                 >
                   {severityMeta[a.severity].label}
                 </span>
-                <span className="text-xs font-semibold text-mist">{a.region}</span>
-                <span className="ml-auto text-xs text-mist">{formatWhen(a.createdAt)}</span>
+                <span className="text-xs font-semibold text-secondary">{a.region}</span>
+                <span className="ml-auto text-xs text-secondary">{formatWhen(a.createdAt)}</span>
               </div>
               <h2 className="mt-2 break-words text-base font-bold leading-snug">{a.title}</h2>
-              <p className="body-copy mt-1 break-words text-mist">{a.body}</p>
+              <p className="body-copy mt-1 break-words text-secondary">{a.body}</p>
             </li>
           ))}
         </ul>

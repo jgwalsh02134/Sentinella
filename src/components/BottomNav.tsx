@@ -79,7 +79,7 @@ export default function BottomNav() {
   return (
     <nav
       aria-label="Main"
-      className="bottom-nav-safe fixed inset-x-0 bottom-0 z-40 border-t border-line bg-white/95 backdrop-blur"
+      className="bottom-nav-safe fixed inset-x-0 bottom-0 z-40 border-t border-default bg-card/95 backdrop-blur"
     >
       <div className="mx-auto flex max-w-md">
         {tabs.map((tab) => {
@@ -88,7 +88,7 @@ export default function BottomNav() {
             ? "text-signal"
             : active
               ? "text-verde"
-              : "text-mist";
+              : "text-secondary";
           return (
             <Link
               key={tab.href}

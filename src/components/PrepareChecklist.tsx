@@ -65,7 +65,7 @@ export default function PrepareChecklist() {
             {section.items.map((item) => {
               const done = checked.has(item.id);
               return (
-                <li key={item.id} className="plate border border-line border-l-4 border-l-accent bg-white p-4">
+                <li key={item.id} className="plate border border-default border-l-4 border-l-accent bg-card p-4">
                   <button
                     type="button"
                     role="checkbox"
@@ -76,7 +76,7 @@ export default function PrepareChecklist() {
                     <span
                       aria-hidden="true"
                       className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 ${
-                        done ? "border-accent bg-accent text-on-accent" : "border-line bg-white"
+                        done ? "border-accent bg-accent text-on-accent" : "border-default bg-card"
                       }`}
                     >
                       {done ? (
@@ -94,12 +94,12 @@ export default function PrepareChecklist() {
                       ) : null}
                     </span>
                     <span
-                      className={`text-base font-bold leading-snug ${done ? "text-mist line-through" : ""}`}
+                      className={`text-base font-bold leading-snug ${done ? "text-secondary line-through" : ""}`}
                     >
                       {item.title}
                     </span>
                   </button>
-                  <p className="body-copy mt-2 whitespace-pre-line break-words pl-9 text-mist">
+                  <p className="body-copy mt-2 whitespace-pre-line break-words pl-9 text-secondary">
                     {item.body}
                   </p>
                   {item.links.length > 0 ? (

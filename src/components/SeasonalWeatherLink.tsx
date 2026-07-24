@@ -24,7 +24,7 @@ export default function SeasonalWeatherLink() {
   return (
     <Link
       href="/guide"
-      className="plate flex min-h-[3.5rem] items-center gap-3 border border-line bg-white p-4"
+      className="plate flex min-h-[3.5rem] items-center gap-3 border border-default bg-card p-4"
     >
       <span className={heat ? "text-icon-warning" : "text-icon-info"}>
         <Icon icon={heat ? Sun : CloudRain} size="lg" />
@@ -33,7 +33,7 @@ export default function SeasonalWeatherLink() {
         <span className="block text-sm font-bold leading-snug">
           {heat ? "Heat bulletins — today's bollino and advice" : "Allerta meteo — color codes and today's outlook"}
         </span>
-        <span className="block text-xs text-mist">Seasonal weather safety · in the field guide</span>
+        <span className="block text-xs text-secondary">Seasonal weather safety · in the field guide</span>
       </span>
       <span className={`text-sm font-bold ${heat ? "text-warning" : "text-info"}`} aria-hidden="true">
         →
