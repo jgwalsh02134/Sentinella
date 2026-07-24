@@ -96,6 +96,22 @@ Or with the GitHub CLI: `gh repo create sentinella --private --source=. --push`.
 
 Every push to `main` redeploys. Migrations you generate locally (`npm run db:generate` after schema changes, committed under `drizzle/`) are applied on the next deploy.
 
+### Scheduled jobs (advisories + reminders)
+
+Two authenticated endpoints do the recurring work; schedule them with Railway cron services in the same project:
+
+- `GET /api/cron/refresh-advisories` — refreshes the official U.S. feeds and push-notifies new items. Run **every 6 hours**.
+- `GET /api/cron/checkin-reminders` — sends overdue check-in reminders and escalates unanswered ones to admins. Run **every 15 minutes**.
+
+Both require `Authorization: Bearer ${CRON_SECRET}`. Set `CRON_SECRET` (e.g. `openssl rand -hex 32`) on the app service first, then for each job: **New → Empty Service**, set the Docker image to `curlimages/curl:latest`, add a `CRON_SECRET` variable referencing the app's (`${{Sentinella.CRON_SECRET}}`), set the **Cron Schedule** (`0 */6 * * *` for advisories, `*/15 * * * *` for reminders), and set the start command to the matching curl:
+
+```bash
+curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://<your-app>.up.railway.app/api/cron/refresh-advisories
+curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://<your-app>.up.railway.app/api/cron/checkin-reminders
+```
+
+The same commands (with the secret filled in) are also the manual test: a JSON summary comes back — `{"state":"ok","embassy":"ok","newItems":0}` / `{"reminded":0,"escalated":0}` — and anything else means check the app service logs.
+
 ## Project structure
 
 ```
