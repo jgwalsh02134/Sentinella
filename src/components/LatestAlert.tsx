@@ -145,7 +145,7 @@ export default function LatestAlert() {
     <Link href="/alerts" prefetch={false} className="plate block border border-default bg-card p-4">
       <span className="flex items-center gap-2">
         <Badge tone={candidate.tone}>{candidate.badge}</Badge>
-        <span className="min-w-0 truncate text-footnote font-semibold text-secondary">
+        <span className="min-w-0 break-words text-footnote font-semibold text-secondary">
           {candidate.region}
         </span>
       </span>
