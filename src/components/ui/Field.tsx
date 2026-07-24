@@ -58,9 +58,15 @@ export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSel
 );
 
 /** Inline error under a field or form — signal TEXT, never a red fill. */
-export function FieldError({ children }: { children: ReactNode }) {
+export function FieldError({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
   return (
-    <p role="alert" className="text-callout font-medium text-danger">
+    <p role="alert" className={`text-callout font-medium text-danger ${className}`}>
       {children}
     </p>
   );

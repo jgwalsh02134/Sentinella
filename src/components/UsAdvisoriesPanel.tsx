@@ -1,7 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { CloudOff } from "lucide-react";
 import TelText from "@/components/TelText";
+import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
+import Callout from "@/components/ui/Callout";
+import Card from "@/components/ui/Card";
+import Disclosure from "@/components/ui/Disclosure";
+import EmptyState from "@/components/ui/EmptyState";
+import { SkeletonCard } from "@/components/ui/Skeleton";
 import { ADVISORY_LEVEL_NAMES } from "@/lib/advisory-levels";
 import { readLastFix } from "@/lib/lastFix";
 import { nearestRegion } from "@/lib/region-geo";
@@ -29,11 +37,11 @@ type Payload = {
  * Level 1–2 use the working/caution tints; levels 3–4 use the signal tint —
  * genuine emergency-adjacent signaling, the allowed use of red.
  */
-const LEVEL_BADGE: Record<number, string> = {
-  1: "bg-success-subtle text-success",
-  2: "bg-warning-subtle text-warning",
-  3: "bg-danger-subtle text-danger",
-  4: "bg-danger-subtle text-danger",
+const LEVEL_TONE: Record<number, "success" | "caution" | "critical"> = {
+  1: "success",
+  2: "caution",
+  3: "critical",
+  4: "critical",
 };
 
 const SOURCE_LABEL: Record<Item["source"], string> = {
@@ -58,12 +66,12 @@ function formatWhen(iso: string): string {
 
 export default function UsAdvisoriesPanel() {
   const [data, setData] = useState<Payload | null>(null);
-  const [state, setState] = useState<"loading" | "ready" | "offline">("loading");
+  const [state, setState] = useState<"loading" | "ready" | "error">("loading");
   const [nearRegion, setNearRegion] = useState<string | null>(null);
 
-  useEffect(() => {
+  const load = useCallback(() => {
     let cancelled = false;
-
+    setState("loading");
     fetch("/api/advisories/us")
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error())))
       .then((payload: Payload) => {
@@ -72,8 +80,16 @@ export default function UsAdvisoriesPanel() {
         setState("ready");
       })
       .catch(() => {
-        if (!cancelled) setState("offline");
+        if (!cancelled) setState("error");
       });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    const cancel = load();
+    let cancelled = false;
 
     // "Near you" needs a position: a fix shared this session, else the
     // latest check-in with coordinates (signed-in users only; 401 is fine).
@@ -94,9 +110,10 @@ export default function UsAdvisoriesPanel() {
     }
 
     return () => {
+      cancel();
       cancelled = true;
     };
-  }, []);
+  }, [load]);
 
   const lists = useMemo(() => {
     const items = (data?.items ?? []).filter((i) => i.source !== "state_advisory");
@@ -107,16 +124,27 @@ export default function UsAdvisoriesPanel() {
     };
   }, [data, nearRegion]);
 
-  if (state === "loading") return <p className="text-body text-secondary">Checking official sources…</p>;
-
-  if (state === "offline" || !data) {
+  if (state === "loading") {
     return (
-      <div className="plate border border-default bg-card p-4">
-        <p className="body-copy text-secondary">
-          Official advisories need a connection and couldn't load. The Emergency and Guide screens
-          keep working offline.
-        </p>
+      <div className="space-y-3">
+        <SkeletonCard lines={2} />
+        <SkeletonCard lines={2} />
       </div>
+    );
+  }
+
+  if (state === "error" || !data) {
+    return (
+      <EmptyState
+        icon={CloudOff}
+        title="Couldn't reach the advisory service"
+        body="Official advisories need a connection. The Emergency and Guide screens keep working offline."
+        action={
+          <Button variant="secondary" size="md" onClick={load}>
+            Try again
+          </Button>
+        }
+      />
     );
   }
 
@@ -125,57 +153,55 @@ export default function UsAdvisoriesPanel() {
   return (
     <div className="space-y-3">
       {adv?.level ? (
-        <div className="plate border border-default bg-card p-4">
+        <Card>
           <div className="flex items-center gap-2">
-            <span
-              className={`rounded-full px-2.5 py-1 text-caption font-bold uppercase tracking-wide ${LEVEL_BADGE[adv.level] ?? "bg-warning-subtle text-warning"}`}
-            >
-              Level {adv.level}
-            </span>
+            <Badge tone={LEVEL_TONE[adv.level] ?? "caution"}>Level {adv.level}</Badge>
             <span className="text-footnote font-semibold text-secondary">Italy Travel Advisory</span>
           </div>
           <p className="mt-2 text-title tracking-tight">
             {ADVISORY_LEVEL_NAMES[adv.level] ?? adv.title}
           </p>
           <p className="mt-1 text-footnote text-secondary">Issued {formatDate(adv.publishedAt)}</p>
-          {adv.body ? <p className="body-copy mt-2 break-words text-secondary">{adv.body.split("\n")[0]}</p> : null}
-          <a href={adv.url} target="_blank" rel="noreferrer" className="text-link mt-2 block text-callout">
-            Read the official advisory on travel.state.gov →
+          {adv.body ? (
+            <p className="body-copy mt-2 break-words text-secondary">{adv.body.split("\n")[0]}</p>
+          ) : null}
+          <a href={adv.url} target="_blank" rel="noreferrer" className="text-link mt-2 inline-block py-1 text-callout">
+            Read the official advisory on travel.state.gov
           </a>
-        </div>
+        </Card>
       ) : (
-        <div className="plate border border-default bg-card p-4">
+        <Card>
           <p className="body-copy text-secondary">
             The current Italy advisory level hasn't been fetched yet. It appears after the first
             successful check of travel.state.gov.
           </p>
-        </div>
+        </Card>
       )}
 
       {data.stale ? (
-        <p className="callout">
+        <Callout>
           Couldn't reach the .gov sources recently — showing the last copies retrieved
           {data.lastCheckedAt ? ` ${formatWhen(data.lastCheckedAt)}` : ""}. Verify against the
           official links before acting.
-        </p>
+        </Callout>
       ) : null}
 
       {lists.near.length > 0 ? (
         <>
-          <h3 className="eyebrow pt-1">Near you — {nearRegion}</h3>
+          <h3 className="pt-1 text-headline">Near you — {nearRegion}</h3>
           <AdvisoryList items={lists.near} />
         </>
       ) : null}
 
       {lists.rest.length > 0 ? (
         <>
-          {lists.near.length > 0 ? <h3 className="eyebrow pt-1">Elsewhere in Italy</h3> : null}
+          {lists.near.length > 0 ? <h3 className="pt-1 text-headline">Elsewhere in Italy</h3> : null}
           <AdvisoryList items={lists.rest} />
         </>
       ) : lists.near.length === 0 ? (
-        <div className="plate border border-default bg-card p-4">
+        <Card>
           <p className="body-copy text-secondary">No embassy or consulate advisories on file yet.</p>
-        </div>
+        </Card>
       ) : null}
 
       <p className="text-footnote text-secondary">
@@ -190,39 +216,31 @@ function AdvisoryList({ items }: { items: Item[] }) {
   return (
     <ul className="space-y-3">
       {items.map((item) => (
-        <li key={item.id} className="plate border border-default bg-card p-4">
+        <Card key={item.id} as="li">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-info-subtle px-2.5 py-1 text-caption font-bold uppercase tracking-wide text-info">
-              Official
-            </span>
+            <Badge tone="info">Official</Badge>
             {item.regions.map((r) => (
-              <span
-                key={r}
-                className="rounded-full border border-default px-2.5 py-1 text-caption font-semibold text-secondary"
-              >
+              <Badge key={r} tone="neutral">
                 {r}
-              </span>
+              </Badge>
             ))}
             <span className="ml-auto text-footnote text-secondary">{formatDate(item.publishedAt)}</span>
           </div>
           <h3 className="mt-2 break-words text-headline">{item.title}</h3>
           {item.body ? (
-            <details className="mt-1">
-              <summary className="cursor-pointer text-callout font-semibold text-info">
-                Details
-              </summary>
+            <Disclosure label={<span className="text-callout font-semibold text-info">Details</span>} className="mt-1">
               <p className="body-copy mt-1 whitespace-pre-line break-words text-secondary">
                 <TelText text={item.body} />
               </p>
-            </details>
+            </Disclosure>
           ) : null}
           <p className="mt-2 text-footnote text-secondary">
             {SOURCE_LABEL[item.source]} ·{" "}
             <a href={item.url} target="_blank" rel="noreferrer" className="text-link">
-              Official notice →
+              Official notice
             </a>
           </p>
-        </li>
+        </Card>
       ))}
     </ul>
   );

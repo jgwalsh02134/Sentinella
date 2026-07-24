@@ -8,6 +8,14 @@ import { MAP_PACKS, type MapPack } from "@/data/mapPacks";
 import { safetyPois, type SafetyPoi } from "@/data/safetyPois";
 import { buildMapStyle } from "@/lib/mapStyle";
 import { appleMapsDirectionsUrl } from "@/lib/maps";
+import ActionRow, { type Action } from "@/components/ui/ActionRow";
+import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
+import Callout from "@/components/ui/Callout";
+import Card from "@/components/ui/Card";
+import { Field, FieldError, Input } from "@/components/ui/Field";
+import SectionHeader from "@/components/ui/SectionHeader";
+import Switch from "@/components/ui/Switch";
 import { bearingDeg, cardinal, formatKm, haversineKm } from "@/lib/geo";
 import { saveLastFix } from "@/lib/lastFix";
 
@@ -394,7 +402,7 @@ export default function MapView() {
       <div className="relative mt-5">
         <div
           ref={containerRef}
-          className="plate h-[60dvh] min-h-[20rem] overflow-hidden border border-default bg-card"
+          className="plate h-[60dvh] min-h-80 overflow-hidden border border-default bg-card"
           role="application"
           aria-label="City map with safety locations"
         />
@@ -422,9 +430,7 @@ export default function MapView() {
         ) : null}
       </div>
       {mapNotice ? (
-        <p className="callout mt-2" role="status">
-          {mapNotice}
-        </p>
+        <Callout className="mt-2">{mapNotice}</Callout>
       ) : null}
       {nearestEr ? (
         <p className="mt-2 rounded-xl bg-verde-tint px-3 py-2 text-callout font-semibold text-verde-deep" role="status">
@@ -439,7 +445,7 @@ export default function MapView() {
         offline; tap one for call and directions.
       </p>
 
-      <div className="plate mt-3 border border-default bg-card p-4">
+      <Card className="mt-3">
         <h2 className="text-headline">Your position</h2>
         {fix ? (
           <>
@@ -456,7 +462,7 @@ export default function MapView() {
           </p>
         )}
         {gpsNotice ? (
-          <p className="mt-2 text-callout font-medium text-ambra" role="status">
+          <p className="mt-2 text-callout font-medium text-warning" role="status">
             {gpsNotice}
           </p>
         ) : null}
@@ -472,51 +478,41 @@ export default function MapView() {
                 </span>
               ) : null}
             </p>
-            <button
-              type="button"
-              onClick={removeBase}
-              className="min-h-[2.75rem] rounded-xl px-3 text-callout font-bold text-danger active:bg-danger-subtle"
-            >
+            <Button variant="destructive" size="md" onClick={removeBase}>
               Remove
-            </button>
+            </Button>
           </div>
         ) : fix ? (
           <div className="mt-3 border-t border-default pt-3">
-            <label className="block">
-              <span className="eyebrow">Save this spot</span>
-              <span className="mt-1 flex gap-2">
-                <input
+            <Field label="Save this spot">
+              <span className="flex gap-2">
+                <Input
                   type="text"
                   value={baseName}
                   onChange={(e) => setBaseName(e.target.value)}
                   maxLength={24}
-                  className="min-h-[2.75rem] w-0 min-w-0 flex-1 rounded-xl border border-default bg-card px-3 text-body"
+                  className="w-0 min-w-0 flex-1"
                   aria-label="Name for this spot"
                 />
-                <button
-                  type="button"
-                  onClick={saveBase}
-                  className="min-h-[2.75rem] shrink-0 rounded-xl bg-verde px-4 text-callout font-bold text-white active:bg-verde-deep"
-                >
-                  Save
-                </button>
+                <Button variant="primary" size="md" onClick={saveBase} className="shrink-0">
+                  Save spot
+                </Button>
               </span>
-            </label>
+            </Field>
             <p className="mt-2 text-footnote text-secondary">
               Saves on this device only. A chip on the map then points back here — which way is
               the hotel, at a glance.
             </p>
           </div>
         ) : null}
-      </div>
+      </Card>
 
       <section className="mt-8" aria-label="Offline maps">
-        <h2 className="title-section">Offline maps</h2>
-        <p className="mt-1 text-subhead text-secondary">
-          Download before you travel and the map works with no connection. Rome covers the metro
-          area to building level; Tuscany covers the hill towns and the roads between them.
-        </p>
-        <div className="plate mt-2 border border-default bg-card">
+        <SectionHeader
+          title="Offline maps"
+          intro="Download before you travel and the map works with no connection. Rome covers the metro area to building level; Tuscany covers the hill towns and the roads between them."
+        />
+        <Card padded={false} className="mt-3">
           {MAP_PACKS.map((city, i) => {
             const isDownloaded = downloaded.has(city.id);
             const pct = progress[city.id];
@@ -524,7 +520,7 @@ export default function MapView() {
             const isActive = city.id === activeCityId;
             return (
               <div key={city.id} className={i > 0 ? "border-t border-default" : ""}>
-                <div className="flex min-h-[3.5rem] items-center gap-3 p-3">
+                <div className="flex min-h-14 items-center gap-3 p-3">
                   <button
                     type="button"
                     onClick={() => void selectCity(city)}
@@ -534,9 +530,9 @@ export default function MapView() {
                     <span className="block text-callout font-bold">
                       {city.name} <span className="font-normal text-secondary">· {city.nameIt}</span>
                       {isActive ? (
-                        <span className="ml-2 inline-block rounded-full bg-verde-tint px-2 py-1 text-caption font-bold uppercase tracking-wide text-verde-deep">
+                        <Badge tone="success" className="ml-2">
                           Viewing
-                        </span>
+                        </Badge>
                       ) : null}
                     </span>
                     <span className="block text-footnote text-secondary">
@@ -547,27 +543,11 @@ export default function MapView() {
                           : `${formatSize(city.sizeBytes)} download`}
                     </span>
                   </button>
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={isDownloaded || isDownloading}
-                    aria-label={`Offline map for ${city.name}`}
-                    onClick={() => void togglePack(city)}
-                    className="flex h-11 w-14 shrink-0 items-center justify-center rounded-xl"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`relative h-8 w-[3.25rem] rounded-full transition-colors motion-reduce:transition-none ${
-                        isDownloaded || isDownloading ? "bg-verde" : "bg-line"
-                      }`}
-                    >
-                      <span
-                        className={`absolute top-1 h-6 w-6 rounded-full border border-default bg-card transition-transform motion-reduce:transition-none ${
-                          isDownloaded || isDownloading ? "translate-x-[1.5rem]" : "translate-x-1"
-                        }`}
-                      />
-                    </span>
-                  </button>
+                  <Switch
+                    checked={isDownloaded || isDownloading}
+                    onChange={() => void togglePack(city)}
+                    label={`Offline map for ${city.name}`}
+                  />
                 </div>
                 {isDownloading ? (
                   <div className="px-3 pb-3" aria-hidden="true">
@@ -581,22 +561,23 @@ export default function MapView() {
                 ) : null}
                 {errors[city.id] ? (
                   <div className="px-3 pb-3">
-                    <p className="text-callout font-medium text-ambra">{errors[city.id]}</p>
+                    <FieldError>{errors[city.id]}</FieldError>
                     {!isDownloaded && !isDownloading ? (
-                      <button
-                        type="button"
+                      <Button
+                        variant="secondary"
+                        size="md"
                         onClick={() => void togglePack(city)}
-                        className="mt-2 min-h-[2.75rem] rounded-xl border-2 border-verde px-4 text-callout font-bold text-verde active:bg-verde-tint"
+                        className="mt-2"
                       >
                         Download again
-                      </button>
+                      </Button>
                     ) : null}
                   </div>
                 ) : null}
               </div>
             );
           })}
-        </div>
+        </Card>
         <p className="mt-2 text-footnote text-secondary">
           Downloads live in this browser's storage. iOS may evict them if the device runs low on
           space — re-download before you travel. Outside a downloaded area the map needs a
@@ -630,34 +611,24 @@ export default function MapView() {
                 </svg>
               </button>
             </div>
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              {selectedPoi.dial ? (
-                <a
-                  href={`tel:${selectedPoi.dial}`}
-                  className="flex min-h-[2.75rem] items-center justify-center rounded-xl bg-verde text-callout font-bold text-white active:bg-verde-deep"
-                >
-                  Call
-                </a>
-              ) : null}
-              <a
-                href={appleMapsDirectionsUrl(`${selectedPoi.address}, Italy`)}
-                target="_blank"
-                rel="noreferrer"
-                className={`flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde text-callout font-bold text-verde active:bg-verde-tint ${
-                  selectedPoi.dial ? "" : "col-span-2"
-                }`}
-              >
-                Directions
-              </a>
-              {selectedPoi.poisonDial && selectedPoi.poisonDial !== selectedPoi.dial ? (
-                <a
-                  href={`tel:${selectedPoi.poisonDial}`}
-                  className="col-span-2 flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde text-callout font-bold text-verde active:bg-verde-tint"
-                >
-                  Poison control — {selectedPoi.poisonPhone}
-                </a>
-              ) : null}
-            </div>
+            <ActionRow
+              className="mt-3"
+              actions={
+                [
+                  selectedPoi.dial ? { label: "Call", href: `tel:${selectedPoi.dial}` } : null,
+                  {
+                    label: "Get directions",
+                    href: appleMapsDirectionsUrl(`${selectedPoi.address}, Italy`),
+                  },
+                  selectedPoi.poisonDial && selectedPoi.poisonDial !== selectedPoi.dial
+                    ? {
+                        label: `Poison control — ${selectedPoi.poisonPhone}`,
+                        href: `tel:${selectedPoi.poisonDial}`,
+                      }
+                    : null,
+                ].filter(Boolean) as Action[]
+              }
+            />
             <p className="mt-2 text-footnote text-secondary">
               Calls work offline via the phone network. Directions need a connection.
             </p>

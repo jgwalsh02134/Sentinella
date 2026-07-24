@@ -1,7 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { ShieldCheck, WifiOff } from "lucide-react";
+import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
+import EmptyState from "@/components/ui/EmptyState";
+import { SkeletonCard } from "@/components/ui/Skeleton";
 
 type TeamAlert = {
   id: string;
@@ -21,10 +26,12 @@ type OfficialItem = {
   fetchedAt: string;
 };
 
+type BadgeTone = "info" | "caution" | "critical" | "success";
+
 type Candidate = {
   title: string;
   badge: string;
-  badgeClass: string;
+  tone: BadgeTone;
   region: string;
   /** 3 = act now, 2 = caution, 1 = informational; ties break by recency. */
   rank: number;
@@ -33,10 +40,10 @@ type Candidate = {
 
 /* Team severities display as Info/Caution/Critical — "advisory" is
    reserved app-wide for official government guidance. */
-const TEAM_BADGE: Record<TeamAlert["severity"], { rank: number; label: string; className: string }> = {
-  info: { rank: 1, label: "Info", className: "bg-info-subtle text-info" },
-  advisory: { rank: 2, label: "Caution", className: "bg-warning-subtle text-warning" },
-  critical: { rank: 3, label: "Critical", className: "bg-danger-subtle text-danger" },
+const TEAM_BADGE: Record<TeamAlert["severity"], { rank: number; label: string; tone: BadgeTone }> = {
+  info: { rank: 1, label: "Info", tone: "info" },
+  advisory: { rank: 2, label: "Caution", tone: "caution" },
+  critical: { rank: 3, label: "Critical", tone: "critical" },
 };
 
 function teamCandidate(alert: TeamAlert): Candidate {
@@ -44,7 +51,7 @@ function teamCandidate(alert: TeamAlert): Candidate {
   return {
     title: alert.title,
     badge: meta.label,
-    badgeClass: meta.className,
+    tone: meta.tone,
     region: alert.region,
     rank: meta.rank,
     at: new Date(alert.createdAt).getTime(),
@@ -53,16 +60,11 @@ function teamCandidate(alert: TeamAlert): Candidate {
 
 function officialCandidate(item: OfficialItem): Candidate {
   const rank = item.source === "state_advisory" ? Math.min(item.level ?? 1, 3) : 2;
-  const badgeClass =
-    rank >= 3
-      ? "bg-danger-subtle text-danger"
-      : rank === 2
-        ? "bg-warning-subtle text-warning"
-        : "bg-success-subtle text-success";
+  const tone: BadgeTone = rank >= 3 ? "critical" : rank === 2 ? "caution" : "success";
   return {
     title: item.title,
     badge: item.level ? `Official · Level ${item.level}` : "Official",
-    badgeClass,
+    tone,
     region: item.regions.length ? item.regions.join(", ") : "Italy",
     rank,
     at: new Date(item.publishedAt ?? item.fetchedAt).getTime(),
@@ -74,8 +76,9 @@ export default function LatestAlert() {
   const [candidate, setCandidate] = useState<Candidate | null>(null);
   const [state, setState] = useState<"loading" | "ready" | "offline">("loading");
 
-  useEffect(() => {
+  const load = useCallback(() => {
     let cancelled = false;
+    setState("loading");
 
     Promise.allSettled([
       fetch("/api/alerts").then((r) => (r.ok ? r.json() : Promise.reject(new Error()))),
@@ -106,61 +109,48 @@ export default function LatestAlert() {
     };
   }, []);
 
+  useEffect(() => load(), [load]);
+
   if (state === "loading") {
-    // Placeholder keeps the section from rendering as a bare heading.
-    return <div className="plate min-h-[4rem] border border-default bg-card p-4" aria-hidden="true" />;
+    return <SkeletonCard lines={1} />;
   }
 
   if (state === "offline") {
     return (
-      <div className="plate border border-default bg-card p-4">
-        <p className="text-headline">You're offline</p>
-        <p className="mt-1 text-subhead text-secondary">
-          Advisories update when you reconnect. Emergency numbers and the guide still work.
-        </p>
-      </div>
+      <EmptyState
+        icon={WifiOff}
+        title="Advisories couldn't load"
+        body="They update when you reconnect. Emergency numbers and the guide still work."
+        action={
+          <Button variant="secondary" size="md" onClick={load}>
+            Try again
+          </Button>
+        }
+      />
     );
   }
 
   if (!candidate) {
     return (
-      <div className="plate flex items-center gap-3 border border-default bg-card p-4">
-        <span
-          aria-hidden="true"
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-success-subtle text-success"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            className="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="m5 13 4 4L19 7" />
-          </svg>
-        </span>
-        <span className="min-w-0">
-          <span className="block text-headline">No active advisories</span>
-          <span className="block text-footnote text-secondary">Nothing needs your attention right now.</span>
-        </span>
-      </div>
+      <EmptyState
+        icon={ShieldCheck}
+        tone="success"
+        title="No active advisories"
+        body="Nothing needs your attention right now."
+      />
     );
   }
 
   return (
-    <Link href="/alerts" className="plate block border border-default bg-card p-4">
+    <Link href="/alerts" prefetch={false} className="plate block border border-default bg-card p-4">
       <span className="flex items-center gap-2">
-        <span
-          className={`rounded-full px-2.5 py-1 text-caption font-bold uppercase tracking-wide ${candidate.badgeClass}`}
-        >
-          {candidate.badge}
+        <Badge tone={candidate.tone}>{candidate.badge}</Badge>
+        <span className="min-w-0 truncate text-footnote font-semibold text-secondary">
+          {candidate.region}
         </span>
-        <span className="min-w-0 truncate text-footnote font-semibold text-secondary">{candidate.region}</span>
       </span>
       <span className="mt-2 block break-words text-headline">{candidate.title}</span>
-      <span className="mt-1 block text-footnote font-semibold text-info">See all →</span>
+      <span className="text-link mt-1 inline-block text-footnote">See all alerts</span>
     </Link>
   );
 }

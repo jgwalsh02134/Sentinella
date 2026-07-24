@@ -5,6 +5,8 @@ import { db } from "@/db";
 import { checkIns, users } from "@/db/schema";
 import DstNote from "@/components/DstNote";
 import TelText from "@/components/TelText";
+import Card from "@/components/ui/Card";
+import SectionHeader from "@/components/ui/SectionHeader";
 import { nearestRegion } from "@/lib/region-geo";
 import { relativeTime } from "@/lib/relative-time";
 import { formatDualDateTime } from "@/lib/timezones";
@@ -58,13 +60,10 @@ export default async function StatusPage({ params }: { params: { token: string }
 
   return (
     <main>
-      <header>
-        <p className="eyebrow">Traveler status</p>
-        <h1 className="title-page">{firstName}</h1>
-      </header>
+      <SectionHeader level={1} eyebrow="Traveler status" title={firstName} />
 
       {latest && meta ? (
-        <div className="plate mt-5 border border-default bg-card p-4">
+        <Card className="mt-5">
           <span
             className={`inline-block rounded-full px-4 py-2 text-callout font-bold uppercase tracking-wide ${meta.chip}`}
           >
@@ -86,13 +85,13 @@ export default async function StatusPage({ params }: { params: { token: string }
           <div className="mt-3">
             <DstNote />
           </div>
-        </div>
+        </Card>
       ) : (
-        <div className="plate mt-5 border border-default bg-card p-4">
+        <Card className="mt-5">
           <p className="body-copy text-secondary">
             {firstName} hasn't checked in yet. This page updates the moment they do.
           </p>
-        </div>
+        </Card>
       )}
 
       <p className="mt-4 text-footnote text-secondary">

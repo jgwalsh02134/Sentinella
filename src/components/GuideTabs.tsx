@@ -1,9 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import ItalyFlag from "@/components/ItalyFlag";
 import SeasonalWeatherCard from "@/components/SeasonalWeatherCard";
 import TelText from "@/components/TelText";
+import WhereAreUCard from "@/components/WhereAreUCard";
+import Callout from "@/components/ui/Callout";
+import Card from "@/components/ui/Card";
+import SectionHeader from "@/components/ui/SectionHeader";
 import { scams } from "@/data/scams";
 import { phraseGroups } from "@/data/phrases";
 import { regions } from "@/data/regions";
@@ -32,6 +36,20 @@ const tabAccents: Record<Tab, string> = {
   Cities: "azzurro",
   Health: "verde",
 };
+
+/** Tab ↔ URL hash, so tabs deep-link and survive reload. */
+const tabHash: Record<Tab, string> = {
+  Basics: "basics",
+  Scams: "scams",
+  Phrases: "phrases",
+  Cities: "cities",
+  Health: "health",
+};
+
+function tabFromHash(hash: string): Tab | null {
+  const clean = hash.replace(/^#/, "").toLowerCase();
+  return tabs.find((t) => tabHash[t] === clean) ?? null;
+}
 
 /**
  * Split off the first sentence so an item's lead can render bold and the
@@ -77,10 +95,33 @@ function ColonLead({ text }: { text: string }) {
   );
 }
 
+/** Official external resources render as links, not as fake buttons —
+ *  buttons are for actions; these open reading material in the browser. */
+function ResourceLinks({ links }: { links: { label: string; url: string }[] }) {
+  return (
+    <p className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
+      {links.map((link) => {
+        const external = !link.url.startsWith("/");
+        return (
+          <a
+            key={link.url}
+            href={link.url}
+            target={external ? "_blank" : undefined}
+            rel={external ? "noopener noreferrer" : undefined}
+            className="text-link inline-block py-1 text-callout"
+          >
+            {link.label}
+          </a>
+        );
+      })}
+    </p>
+  );
+}
+
 /** Basics and Health share one card layout. */
 function InfoCard({ item }: { item: InfoItem }) {
   return (
-    <article className="plate border border-default border-l-4 border-l-accent bg-card p-4">
+    <Card as="article" accentEdge>
       <h3 className="text-headline">{item.title}</h3>
       <p className="body-copy mt-2 text-secondary">
         <LeadBody text={item.body} />
@@ -95,34 +136,35 @@ function InfoCard({ item }: { item: InfoItem }) {
         </ul>
       ) : null}
       {item.warning ? (
-        <p className="callout mt-3">
+        <Callout className="mt-3">
           <TelText text={item.warning} />
-        </p>
+        </Callout>
       ) : null}
-      {item.links?.length ? (
-        <div className="mt-3 flex flex-wrap gap-2">
-          {item.links.map((link) => {
-            const external = !link.url.startsWith("/");
-            return (
-              <a
-                key={link.url}
-                href={link.url}
-                target={external ? "_blank" : undefined}
-                rel={external ? "noopener noreferrer" : undefined}
-                className="flex min-h-[2.75rem] min-w-0 items-center justify-center rounded-xl border-2 border-accent px-4 text-center text-callout font-bold text-accent active:bg-accent-subtle"
-              >
-                {link.label}
-              </a>
-            );
-          })}
-        </div>
-      ) : null}
-    </article>
+      {item.links?.length ? <ResourceLinks links={item.links} /> : null}
+    </Card>
   );
 }
 
 export default function GuideTabs() {
   const [tab, setTab] = useState<Tab>("Basics");
+
+  // Deep-linking: #scams opens the Scams tab, and the current tab is
+  // always reflected in the hash so reload and share keep the place.
+  useEffect(() => {
+    const initial = tabFromHash(window.location.hash);
+    if (initial) setTab(initial);
+    const onHashChange = () => {
+      const next = tabFromHash(window.location.hash);
+      if (next) setTab(next);
+    };
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
+
+  function select(next: Tab) {
+    setTab(next);
+    window.history.replaceState(null, "", `#${tabHash[next]}`);
+  }
 
   return (
     <div>
@@ -139,9 +181,11 @@ export default function GuideTabs() {
               role="tab"
               aria-selected={active}
               data-accent={tabAccents[t]}
-              onClick={() => setTab(t)}
-              className={`min-h-[2.75rem] shrink-0 rounded-full border-2 px-5 text-callout font-bold transition-colors ${
-                active ? "border-accent bg-accent-subtle text-accent" : "border-default bg-card text-secondary"
+              onClick={() => select(t)}
+              className={`min-h-control shrink-0 rounded-full border px-5 text-callout font-bold transition-colors duration-150 ease-out ${
+                active
+                  ? "border-transparent bg-accent-subtle text-accent-deep"
+                  : "border-default bg-card text-secondary"
               }`}
             >
               {t}
@@ -151,109 +195,95 @@ export default function GuideTabs() {
       </div>
 
       <div data-accent={tabAccents[tab]}>
-      <header className="mt-4">
-        <p className="eyebrow text-accent">{tab}</p>
-        <h2 className="title-section">{tabHeadings[tab]}</h2>
-      </header>
+        <SectionHeader className="mt-5" eyebrow={tab} title={tabHeadings[tab]} />
 
-      <div className="mt-3 space-y-3">
-        {tab === "Basics" && (
-          <>
-            <SeasonalWeatherCard />
-            {basicsItems.map((item) => (
-              <InfoCard key={item.title} item={item} />
-            ))}
-          </>
-        )}
-
-        {tab === "Scams" &&
-          scams.map((s) => (
-            <article key={s.title} className="plate border border-default border-l-4 border-l-accent bg-card p-4">
-              <h3 className="text-headline">{s.title}</h3>
-              <p className="mt-1 text-caption font-semibold uppercase tracking-wide text-secondary">
-                {s.where}
-              </p>
-              <p className="body-copy mt-2 text-secondary">{s.how}</p>
-              <p className="body-copy mt-2 rounded-xl bg-accent-subtle p-3 text-accent-deep">
-                <strong className="font-bold">Counter:</strong> {s.counter}
-              </p>
-            </article>
-          ))}
-
-        {tab === "Phrases" &&
-          phraseGroups.map((group) => (
-            <section key={group.label} aria-label={group.label}>
-              <h3 className="eyebrow mt-2">{group.label}</h3>
-              <div className="mt-2 space-y-2">
-                {group.phrases.map((p) => (
-                  <div key={p.it} className="plate border border-default border-l-4 border-l-accent bg-card p-4">
-                    <p className="text-caption font-semibold uppercase tracking-wide text-secondary">
-                      {p.en}
-                    </p>
-                    <p className="mt-1 text-title text-accent-deep">
-                      <ItalyFlag /> <i lang="it">{p.it}</i>
-                    </p>
-                    <p className="mt-1 text-subhead italic text-secondary">{p.say}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
-          ))}
-
-        {tab === "Cities" &&
-          regions.map((r) => (
-            <article key={r.name} className="plate border border-default border-l-4 border-l-accent bg-card p-4">
-              <h3 className="title-section">{r.name}</h3>
-              <p className="body-copy mt-1 font-medium text-accent">{r.headline}</p>
-              <h4 className="eyebrow mt-3">Watch for</h4>
-              <ul className="mt-1 space-y-2">
-                {r.watch.map((w) => (
-                  <li key={w} className="body-copy text-secondary">
-                    <ColonLead text={w} />
-                  </li>
-                ))}
-              </ul>
-              <h4 className="eyebrow mt-3">Moving around</h4>
-              <ul className="mt-1 space-y-2">
-                {r.move.map((m) => (
-                  <li key={m} className="body-copy text-secondary">
-                    <ColonLead text={m} />
-                  </li>
-                ))}
-              </ul>
-              {r.sections?.map((sec) => (
-                <div key={sec.label}>
-                  <h4 className="eyebrow mt-3">{sec.label}</h4>
-                  <ul className="mt-1 space-y-2">
-                    {sec.bullets.map((b) => (
-                      <li key={b} className="body-copy text-secondary">
-                        <ColonLead text={b} />
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+        <div className="mt-3 space-y-3">
+          {tab === "Basics" && (
+            <>
+              <SeasonalWeatherCard />
+              {basicsItems.map((item, i) => (
+                <Fragment key={item.title}>
+                  <InfoCard item={item} />
+                  {i === 0 ? <WhereAreUCard headingLevel={3} /> : null}
+                </Fragment>
               ))}
-              {r.links?.length ? (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {r.links.map((link) => (
-                    <a
-                      key={link.url}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex min-h-[2.75rem] min-w-0 items-center justify-center rounded-xl border-2 border-accent px-4 text-center text-callout font-bold text-accent active:bg-accent-subtle"
-                    >
-                      {link.label}
-                    </a>
+            </>
+          )}
+
+          {tab === "Scams" &&
+            scams.map((s) => (
+              <Card key={s.title} as="article" accentEdge>
+                <h3 className="text-headline">{s.title}</h3>
+                <p className="mt-1 text-caption font-semibold uppercase tracking-wide text-secondary">
+                  {s.where}
+                </p>
+                <p className="body-copy mt-2 text-secondary">{s.how}</p>
+                <p className="body-copy mt-2 rounded-xl bg-accent-subtle p-3 text-accent-deep">
+                  <strong className="font-bold">Counter:</strong> {s.counter}
+                </p>
+              </Card>
+            ))}
+
+          {tab === "Phrases" &&
+            phraseGroups.map((group) => (
+              <section key={group.label} aria-label={group.label}>
+                <h3 className="mt-2 text-headline">{group.label}</h3>
+                <div className="mt-2 space-y-2">
+                  {group.phrases.map((p) => (
+                    <Card key={p.it} accentEdge>
+                      <p className="text-caption font-semibold uppercase tracking-wide text-secondary">
+                        {p.en}
+                      </p>
+                      <p className="mt-1 text-title text-accent-deep">
+                        <ItalyFlag /> <i lang="it">{p.it}</i>
+                      </p>
+                      <p className="mt-1 text-subhead italic text-secondary">{p.say}</p>
+                    </Card>
                   ))}
                 </div>
-              ) : null}
-              {r.caveat ? <p className="callout mt-3">{r.caveat}</p> : null}
-            </article>
-          ))}
+              </section>
+            ))}
 
-        {tab === "Health" && healthItems.map((item) => <InfoCard key={item.title} item={item} />)}
-      </div>
+          {tab === "Cities" &&
+            regions.map((r) => (
+              <Card key={r.name} as="article" accentEdge>
+                <h3 className="title-section">{r.name}</h3>
+                <p className="body-copy mt-1 font-medium text-accent">{r.headline}</p>
+                <h4 className="eyebrow mt-3">Watch for</h4>
+                <ul className="mt-1 space-y-2">
+                  {r.watch.map((w) => (
+                    <li key={w} className="body-copy text-secondary">
+                      <ColonLead text={w} />
+                    </li>
+                  ))}
+                </ul>
+                <h4 className="eyebrow mt-3">Moving around</h4>
+                <ul className="mt-1 space-y-2">
+                  {r.move.map((m) => (
+                    <li key={m} className="body-copy text-secondary">
+                      <ColonLead text={m} />
+                    </li>
+                  ))}
+                </ul>
+                {r.sections?.map((sec) => (
+                  <div key={sec.label}>
+                    <h4 className="eyebrow mt-3">{sec.label}</h4>
+                    <ul className="mt-1 space-y-2">
+                      {sec.bullets.map((b) => (
+                        <li key={b} className="body-copy text-secondary">
+                          <ColonLead text={b} />
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+                {r.links?.length ? <ResourceLinks links={r.links} /> : null}
+                {r.caveat ? <Callout className="mt-3">{r.caveat}</Callout> : null}
+              </Card>
+            ))}
+
+          {tab === "Health" && healthItems.map((item) => <InfoCard key={item.title} item={item} />)}
+        </div>
       </div>
     </div>
   );

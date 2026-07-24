@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Card from "@/components/ui/Card";
+import { FieldError } from "@/components/ui/Field";
+import Switch from "@/components/ui/Switch";
 import { saveLastFix } from "@/lib/lastFix";
 import { distanceKm } from "@/lib/region-geo";
 
@@ -151,39 +154,24 @@ export default function TripTracking({ onAutoCheckIn }: Props) {
           role="status"
           aria-live="polite"
         >
-          <span className="relative flex h-2.5 w-2.5" aria-hidden="true">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-verde opacity-60 motion-reduce:animate-none" />
-            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-verde" />
-          </span>
+          <span className="h-2.5 w-2.5 rounded-full bg-verde" aria-hidden="true" />
           <span className="text-footnote font-semibold text-verde-deep">
             Trip tracking on — auto check-in every 5 min or 250 m
           </span>
         </div>
       ) : null}
 
-      <div className="plate border border-default bg-card p-4">
-        <div className="flex min-h-[2.75rem] items-center gap-3">
+      <Card>
+        <div className="flex min-h-control items-center gap-3">
           <div className="flex-1">
             <h2 className="text-headline">Track my trip</h2>
             <p className="text-footnote text-secondary">Automatic safe check-ins while this screen is open.</p>
           </div>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={active}
-            aria-label="Track my trip"
-            onClick={() => (active ? stop() : start())}
-            className="flex h-11 w-14 shrink-0 items-center justify-center rounded-xl"
-          >
-            <span
-              aria-hidden="true"
-              className={`relative h-8 w-[3.25rem] rounded-full transition-colors motion-reduce:transition-none ${active ? "bg-verde" : "bg-line"}`}
-            >
-              <span
-                className={`absolute top-1 h-6 w-6 rounded-full border border-default bg-card transition-transform motion-reduce:transition-none ${active ? "translate-x-[1.5rem]" : "translate-x-1"}`}
-              />
-            </span>
-          </button>
+          <Switch
+            checked={active}
+            onChange={() => (active ? stop() : start())}
+            label="Track my trip"
+          />
         </div>
 
         {active ? (
@@ -202,13 +190,13 @@ export default function TripTracking({ onAutoCheckIn }: Props) {
           </div>
         ) : null}
 
-        {error ? <p className="mt-3 text-callout font-medium text-danger">{error}</p> : null}
+        {error ? <FieldError className="mt-3">{error}</FieldError> : null}
 
         <p className="mt-3 text-footnote text-secondary">
           Tracking pauses when the screen locks or you leave the app — iPhone doesn't allow web apps
           to track in the background.
         </p>
-      </div>
+      </Card>
     </>
   );
 }

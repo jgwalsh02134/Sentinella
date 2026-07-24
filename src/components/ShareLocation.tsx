@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
+import { FieldError } from "@/components/ui/Field";
 import { saveLastFix } from "@/lib/lastFix";
 
 type Fix = {
@@ -81,14 +84,14 @@ export default function ShareLocation() {
   }
 
   return (
-    <div className="plate border border-default bg-card p-4">
+    <Card>
       <h2 className="text-headline">Your position</h2>
-      <p className="mt-1 text-body text-secondary">
+      <p className="mt-2 text-body text-secondary">
         Read your coordinates to a 112 operator, or send them to a contact.
       </p>
 
       {fix ? (
-        <div className="mt-4 break-words rounded-xl bg-verde-tint p-4">
+        <div className="mt-3 break-words rounded-xl bg-verde-tint p-4">
           <p className="font-mono text-title font-bold tabular-nums text-verde-deep">
             {fix.lat.toFixed(5)}, {fix.lng.toFixed(5)}
           </p>
@@ -101,28 +104,29 @@ export default function ShareLocation() {
         </div>
       ) : null}
 
-      {error ? <p className="mt-3 text-callout font-medium text-danger">{error}</p> : null}
-      {copied ? <p className="mt-3 text-callout font-semibold text-verde">Copied — paste it anywhere.</p> : null}
+      {error ? <FieldError className="mt-3">{error}</FieldError> : null}
+      {copied ? (
+        <p className="mt-3 text-callout font-semibold text-success" role="status">
+          Copied — paste it anywhere.
+        </p>
+      ) : null}
 
-      <div className="mt-4 flex gap-3">
-        <button
-          type="button"
+      <div className="mt-3 flex gap-3">
+        <Button
+          variant={fix ? "secondary" : "primary"}
+          size="md"
           onClick={locate}
           disabled={busy}
-          className="min-h-[3rem] min-w-0 flex-1 rounded-xl bg-verde px-4 font-semibold text-white active:bg-brand-strong disabled:bg-sunken disabled:text-tertiary"
+          className="min-w-0 flex-1"
         >
           {busy ? "Locating…" : fix ? "Refresh position" : "Get my position"}
-        </button>
+        </Button>
         {fix ? (
-          <button
-            type="button"
-            onClick={share}
-            className="min-h-[3rem] min-w-0 flex-1 rounded-xl border-2 border-verde px-4 font-semibold text-verde active:bg-accent-subtle"
-          >
-            Share
-          </button>
+          <Button variant="primary" size="md" onClick={() => void share()} className="min-w-0 flex-1">
+            Share position
+          </Button>
         ) : null}
       </div>
-    </div>
+    </Card>
   );
 }

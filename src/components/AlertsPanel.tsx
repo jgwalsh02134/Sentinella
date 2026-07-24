@@ -1,7 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { Bell, CloudOff } from "lucide-react";
 import TelText from "@/components/TelText";
+import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
+import EmptyState from "@/components/ui/EmptyState";
+import { Field, FieldError, Input, Select, Textarea } from "@/components/ui/Field";
+import { SkeletonCard } from "@/components/ui/Skeleton";
 
 type Severity = "info" | "advisory" | "critical";
 
@@ -17,10 +24,10 @@ type Alert = {
 /* Display labels only — the stored severity values are unchanged. The
    middle tier shows as "Caution" because "advisory" is reserved app-wide
    for official government guidance (see the glossary in .cursorrules). */
-const severityMeta: Record<Severity, { label: string; badge: string }> = {
-  info: { label: "Info", badge: "bg-info-subtle text-info" },
-  advisory: { label: "Caution", badge: "bg-warning-subtle text-warning" },
-  critical: { label: "Critical", badge: "bg-danger-subtle text-danger" },
+const severityMeta: Record<Severity, { label: string; tone: "info" | "caution" | "critical" }> = {
+  info: { label: "Info", tone: "info" },
+  advisory: { label: "Caution", tone: "caution" },
+  critical: { label: "Critical", tone: "critical" },
 };
 
 function formatWhen(iso: string) {
@@ -34,8 +41,8 @@ function formatWhen(iso: string) {
 
 export default function AlertsPanel() {
   const [alerts, setAlerts] = useState<Alert[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [offline, setOffline] = useState(false);
+  const [state, setState] = useState<"loading" | "ready" | "error">("loading");
+  const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
 
   const [showForm, setShowForm] = useState(false);
@@ -46,19 +53,28 @@ export default function AlertsPanel() {
   const [publishing, setPublishing] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const load = useCallback(() => {
     let cancelled = false;
+    setState("loading");
     fetch("/api/alerts")
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error())))
       .then((data) => {
-        if (!cancelled) setAlerts(data.alerts ?? []);
+        if (cancelled) return;
+        setAlerts(data.alerts ?? []);
+        setUpdatedAt(new Date());
+        setState("ready");
       })
       .catch(() => {
-        if (!cancelled) setOffline(true);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) setState("error");
       });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    const cancel = load();
+    let cancelled = false;
     fetch("/api/me")
       .then((r) => r.json())
       .then((data) => {
@@ -66,9 +82,10 @@ export default function AlertsPanel() {
       })
       .catch(() => undefined);
     return () => {
+      cancel();
       cancelled = true;
     };
-  }, []);
+  }, [load]);
 
   async function publish() {
     setPublishing(true);
@@ -93,93 +110,90 @@ export default function AlertsPanel() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {isAdmin ? (
-        <div className="plate border border-default bg-card p-4">
-          <button
-            type="button"
+        <Card>
+          <Button
+            variant="secondary"
+            size="md"
             onClick={() => setShowForm((v) => !v)}
-            className="min-h-[2.75rem] w-full rounded-xl border-2 border-verde font-semibold text-verde active:bg-accent-subtle"
+            className="w-full"
           >
             {showForm ? "Close" : "Publish an alert"}
-          </button>
+          </Button>
           {showForm ? (
             <div className="mt-4 space-y-3">
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Title"
-                maxLength={140}
-                className="min-h-[3rem] w-full rounded-xl border border-default px-4 text-body outline-none focus:border-verde"
-              />
-              <textarea
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                placeholder="What travelers should know and do"
-                maxLength={2000}
-                rows={4}
-                className="w-full rounded-xl border border-default px-4 py-3 text-body outline-none focus:border-verde"
-              />
-              <div className="grid grid-cols-2 gap-3">
-                <select
-                  value={severity}
-                  onChange={(e) => setSeverity(e.target.value as Severity)}
-                  aria-label="Severity"
-                  className="min-h-[3rem] rounded-xl border border-default bg-card px-3 text-body outline-none focus:border-verde"
-                >
-                  <option value="info">Info</option>
-                  <option value="advisory">Caution</option>
-                  <option value="critical">Critical</option>
-                </select>
-                <input
-                  value={region}
-                  onChange={(e) => setRegion(e.target.value)}
-                  placeholder="Region"
-                  maxLength={80}
-                  aria-label="Region"
-                  className="min-h-[3rem] rounded-xl border border-default px-4 text-body outline-none focus:border-verde"
+              <Field label="Title">
+                <Input
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  maxLength={140}
                 />
+              </Field>
+              <Field label="Message">
+                <Textarea
+                  value={body}
+                  onChange={(e) => setBody(e.target.value)}
+                  placeholder="What travelers should know and do"
+                  maxLength={2000}
+                  rows={4}
+                />
+              </Field>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Severity">
+                  <Select value={severity} onChange={(e) => setSeverity(e.target.value as Severity)}>
+                    <option value="info">Info</option>
+                    <option value="advisory">Caution</option>
+                    <option value="critical">Critical</option>
+                  </Select>
+                </Field>
+                <Field label="Region">
+                  <Input value={region} onChange={(e) => setRegion(e.target.value)} maxLength={80} />
+                </Field>
               </div>
-              {formError ? <p className="text-callout font-medium text-danger">{formError}</p> : null}
-              <button
-                type="button"
-                onClick={publish}
+              {formError ? <FieldError>{formError}</FieldError> : null}
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => void publish()}
                 disabled={publishing || !title.trim() || !body.trim()}
-                className="min-h-[3rem] w-full rounded-xl bg-verde font-bold text-white active:bg-brand-strong disabled:bg-sunken disabled:text-tertiary"
+                className="w-full"
               >
-                {publishing ? "Publishing…" : "Publish"}
-              </button>
+                {publishing ? "Publishing…" : "Publish alert"}
+              </Button>
             </div>
           ) : null}
-        </div>
+        </Card>
       ) : null}
 
-      {loading ? (
-        <p className="text-body text-secondary">Loading alerts…</p>
-      ) : offline ? (
-        <div className="plate border border-default bg-card p-4">
-          <p className="text-body text-secondary">
-            Alerts need a connection and couldn't load. The Emergency and Guide screens keep
-            working offline.
-          </p>
-        </div>
+      {state === "loading" ? (
+        <>
+          <SkeletonCard lines={2} />
+          <SkeletonCard lines={2} />
+        </>
+      ) : state === "error" ? (
+        <EmptyState
+          icon={CloudOff}
+          title="Couldn't reach the advisory service"
+          body="Team alerts need a connection. The Emergency and Guide screens keep working offline."
+          action={
+            <Button variant="secondary" size="md" onClick={load}>
+              Try again
+            </Button>
+          }
+        />
       ) : alerts.length === 0 ? (
-        <div className="plate border border-default bg-card p-4">
-          <p className="text-body text-secondary">
-            No active alerts. When one is published it appears here — check back before travel
-            days and after any major news.
-          </p>
-        </div>
+        <EmptyState
+          icon={Bell}
+          title="No active alerts"
+          body="When an admin publishes one it appears here — check back before travel days and after any major news."
+        />
       ) : (
         <ul className="space-y-3">
           {alerts.map((a) => (
-            <li key={a.id} className="plate border border-default bg-card p-4">
+            <Card key={a.id} as="li">
               <div className="flex items-center gap-2">
-                <span
-                  className={`rounded-full px-2.5 py-1 text-caption font-bold uppercase tracking-wide ${severityMeta[a.severity].badge}`}
-                >
-                  {severityMeta[a.severity].label}
-                </span>
+                <Badge tone={severityMeta[a.severity].tone}>{severityMeta[a.severity].label}</Badge>
                 <span className="text-footnote font-semibold text-secondary">{a.region}</span>
                 <span className="ml-auto text-footnote text-secondary">{formatWhen(a.createdAt)}</span>
               </div>
@@ -187,10 +201,17 @@ export default function AlertsPanel() {
               <p className="body-copy mt-1 break-words text-secondary">
                 <TelText text={a.body} />
               </p>
-            </li>
+            </Card>
           ))}
         </ul>
       )}
+
+      {state === "ready" && updatedAt ? (
+        <p className="text-footnote text-secondary">
+          Last updated{" "}
+          {updatedAt.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}.
+        </p>
+      ) : null}
     </div>
   );
 }

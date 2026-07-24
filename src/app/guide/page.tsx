@@ -1,23 +1,22 @@
 import type { Metadata } from "next";
 import GuideTabs from "@/components/GuideTabs";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 export const metadata: Metadata = { title: "Field guide" };
 
 export default function GuidePage() {
   return (
     <main>
-      <header>
-        <p className="eyebrow">Field guide</p>
-        <h1 className="title-page">Know it before you need it</h1>
-        <p className="body-copy mt-1 text-secondary">
-          Situational basics, the scams that actually run, emergency Italian, city briefings, and
-          how healthcare works. Loads once, then works offline.
-        </p>
-        <p className="mt-1 text-footnote text-secondary">
-          External links open in your browser and need a connection — the guide itself doesn&apos;t.
-        </p>
-      </header>
-      <div className="mt-4">
+      <SectionHeader
+        level={1}
+        eyebrow="Field guide"
+        title="Know it before you need it"
+        intro="Situational basics, the scams that actually run, emergency Italian, city briefings, and how healthcare works. Loads once, then works offline."
+      />
+      <p className="mt-2 text-footnote text-secondary">
+        External links open in your browser and need a connection — the guide itself doesn&apos;t.
+      </p>
+      <div className="mt-5">
         <GuideTabs />
       </div>
     </main>

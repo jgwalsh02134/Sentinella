@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Card from "@/components/ui/Card";
+import { FieldError } from "@/components/ui/Field";
+import Switch from "@/components/ui/Switch";
 
 type Preferences = {
   notifyOfficial: boolean;
@@ -139,64 +142,52 @@ export default function NotificationSettings() {
     // permission button that cannot work. The install card on this screen
     // (InstallGuide) walks through Share → Add to Home Screen.
     return (
-      <div className="plate border border-default bg-card p-4">
+      <Card>
         <h2 className="text-headline">Notifications</h2>
-        <p className="mt-1 text-subhead text-secondary">
+        <p className="mt-2 text-subhead text-secondary">
           On iPhone, notifications need iOS 16.4 or later <em>and</em> Sentinella installed to your
           home screen — Safari tabs can't receive them. Install first (Safari:{" "}
           <strong className="font-bold text-primary">Share → Add to Home Screen</strong>, steps in the
           card below), then turn notifications on from the installed app.
         </p>
-      </div>
+      </Card>
     );
   }
 
   if (!supported) {
     return (
-      <div className="plate border border-default bg-card p-4">
+      <Card>
         <h2 className="text-headline">Notifications</h2>
-        <p className="mt-1 text-subhead text-secondary">
+        <p className="mt-2 text-subhead text-secondary">
           This browser doesn't support push notifications.
         </p>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="plate border border-default bg-card p-4">
-      <div className="flex min-h-[2.75rem] items-center gap-3">
+    <Card>
+      <div className="flex min-h-control items-center gap-3">
         <div className="flex-1">
           <h2 className="text-headline">Notifications</h2>
           <p className="text-footnote text-secondary">
             {enabled ? "On for this device." : "Alerts and reminders, even with the app closed."}
           </p>
         </div>
-        <button
-          type="button"
-          role="switch"
-          aria-checked={enabled}
-          aria-label="Notifications"
+        <Switch
+          checked={enabled}
+          onChange={() => void toggle()}
+          label="Notifications"
           disabled={busy}
-          onClick={() => void toggle()}
-          className="flex h-11 w-14 shrink-0 items-center justify-center rounded-xl disabled:border-neutral-300 disabled:text-tertiary"
-        >
-          <span
-            aria-hidden="true"
-            className={`relative h-8 w-[3.25rem] rounded-full transition-colors motion-reduce:transition-none ${enabled ? "bg-verde" : "bg-line"}`}
-          >
-            <span
-              className={`absolute top-1 h-6 w-6 rounded-full border border-default bg-card transition-transform motion-reduce:transition-none ${enabled ? "translate-x-[1.5rem]" : "translate-x-1"}`}
-            />
-          </span>
-        </button>
+        />
       </div>
 
-      {error ? <p className="mt-2 text-callout font-medium text-danger">{error}</p> : null}
+      {error ? <FieldError className="mt-2">{error}</FieldError> : null}
 
       {enabled && prefs ? (
         <div className="mt-3 space-y-1 border-t border-default pt-3">
           {PREF_LABELS.map(({ key, label, detail }) => (
-            <label key={key} className="flex min-h-[2.75rem] cursor-pointer items-center gap-3">
+            <label key={key} className="flex min-h-control cursor-pointer items-center gap-3">
               <input
                 type="checkbox"
                 checked={prefs[key]}
@@ -211,6 +202,6 @@ export default function NotificationSettings() {
           ))}
         </div>
       ) : null}
-    </div>
+    </Card>
   );
 }

@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
+import { FieldError } from "@/components/ui/Field";
 
 /**
  * "Share with family": one revocable public link to /status/<token>
@@ -84,9 +87,9 @@ export default function ShareStatusLink() {
   if (!loaded) return null;
 
   return (
-    <div className="plate border border-default bg-card p-4">
+    <Card>
       <h2 className="text-headline">Share with family</h2>
-      <p className="mt-1 text-subhead text-secondary">
+      <p className="mt-2 text-subhead text-secondary">
         A private link that shows your latest check-in status and approximate area — never exact
         coordinates. Anyone with the link can view it; revoke it any time.
       </p>
@@ -95,36 +98,39 @@ export default function ShareStatusLink() {
         <>
           <p className="text-link mt-2 break-all text-footnote">{url}</p>
           <div className="mt-3 flex gap-3">
-            <button
-              type="button"
+            <Button
+              variant="secondary"
+              size="md"
               onClick={() => void shareOrCopy(url)}
               disabled={busy}
-              className="min-h-[2.75rem] flex-1 rounded-xl bg-brand font-semibold text-on-accent active:bg-brand-strong disabled:bg-sunken disabled:text-tertiary"
+              className="min-w-0 flex-1"
             >
               {copied ? "Copied" : "Share link"}
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              variant="destructive"
+              size="md"
               onClick={() => void revoke()}
               disabled={busy}
-              className="min-h-[2.75rem] flex-1 rounded-xl border-2 border-strong font-semibold text-secondary active:bg-sunken disabled:border-neutral-300 disabled:text-tertiary"
+              className="min-w-0 flex-1"
             >
               Revoke link
-            </button>
+            </Button>
           </div>
         </>
       ) : (
-        <button
-          type="button"
+        <Button
+          variant="secondary"
+          size="md"
           onClick={() => void create()}
           disabled={busy}
-          className="mt-3 min-h-[2.75rem] w-full rounded-xl border-2 border-accent font-semibold text-accent active:bg-accent-subtle disabled:border-neutral-300 disabled:text-tertiary"
+          className="mt-3 w-full"
         >
           {busy ? "Creating…" : "Create share link"}
-        </button>
+        </Button>
       )}
 
-      {error ? <p className="mt-2 text-callout font-medium text-danger">{error}</p> : null}
-    </div>
+      {error ? <FieldError className="mt-2">{error}</FieldError> : null}
+    </Card>
   );
 }

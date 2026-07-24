@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CloudRain, Sun } from "lucide-react";
 import Icon from "@/components/Icon";
+import ListRow from "@/components/ui/ListRow";
 import { isHeatSeason } from "@/lib/season";
 
 /**
@@ -22,22 +22,19 @@ export default function SeasonalWeatherLink() {
   if (heat === null) return null;
 
   return (
-    <Link
-      href="/guide"
-      className="plate flex min-h-[3.5rem] items-center gap-3 border border-default bg-card p-4"
-    >
-      <span className={heat ? "text-icon-warning" : "text-icon-info"}>
-        <Icon icon={heat ? Sun : CloudRain} size="lg" />
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="block text-headline">
-          {heat ? "Heat bulletins — today's bollino and advice" : "Allerta meteo — color codes and today's outlook"}
+    <ListRow
+      href="/guide#basics"
+      icon={
+        <span className={heat ? "text-icon-warning" : "text-icon-info"}>
+          <Icon icon={heat ? Sun : CloudRain} size="lg" />
         </span>
-        <span className="block text-footnote text-secondary">Seasonal weather safety · in the field guide</span>
-      </span>
-      <span className={`text-callout font-bold ${heat ? "text-warning" : "text-info"}`} aria-hidden="true">
-        →
-      </span>
-    </Link>
+      }
+      title={
+        heat
+          ? "Heat bulletins — today's bollino and advice"
+          : "Allerta meteo — color codes and today's outlook"
+      }
+      subtitle="Seasonal weather safety · in the field guide"
+    />
   );
 }

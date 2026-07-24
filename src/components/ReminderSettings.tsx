@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Card from "@/components/ui/Card";
+import { FieldError } from "@/components/ui/Field";
+import Segmented from "@/components/ui/Segmented";
 
 /**
  * Check-in reminder interval, stored on the user row. The cron job nudges
@@ -50,36 +53,24 @@ export default function ReminderSettings() {
   }
 
   return (
-    <div className="plate border border-default bg-card p-4">
+    <Card>
       <h2 className="text-headline">Check-in reminders</h2>
-      <p className="mt-1 text-subhead text-secondary">
+      <p className="mt-2 text-subhead text-secondary">
         Get a nudge when you haven't checked in for a while. If a reminder goes unanswered for an
         hour, your admins are notified — that's the safety net.
       </p>
-      <div className="mt-3 grid grid-cols-4 gap-2" role="radiogroup" aria-label="Reminder interval">
-        {OPTIONS.map((opt) => {
-          const selected = hours === opt.hours;
-          return (
-            <button
-              key={opt.hours}
-              type="button"
-              role="radio"
-              aria-checked={selected}
-              disabled={hours === null}
-              onClick={() => void select(opt.hours)}
-              className={`min-h-[2.75rem] rounded-xl border-2 text-callout font-bold transition-colors disabled:border-neutral-300 disabled:text-tertiary ${
-                selected ? "border-verde bg-verde text-white" : "border-default bg-card text-secondary"
-              }`}
-            >
-              {opt.label}
-            </button>
-          );
-        })}
-      </div>
+      <Segmented
+        className="mt-3"
+        label="Reminder interval"
+        value={hours ?? 0}
+        onChange={(next) => void select(next)}
+        disabled={hours === null}
+        options={OPTIONS.map((opt) => ({ value: opt.hours as number, label: opt.label }))}
+      />
       <p className="mt-2 text-footnote text-secondary">
         Reminders arrive as notifications — turn those on from the card on the home screen.
       </p>
-      {error ? <p className="mt-2 text-callout font-medium text-danger">{error}</p> : null}
-    </div>
+      {error ? <FieldError className="mt-2">{error}</FieldError> : null}
+    </Card>
   );
 }

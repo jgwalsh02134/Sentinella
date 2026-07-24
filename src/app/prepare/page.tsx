@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import PrepareChecklist from "@/components/PrepareChecklist";
-import VerifiedCaveat from "@/components/VerifiedCaveat";
+import Callout from "@/components/ui/Callout";
+import SectionHeader from "@/components/ui/SectionHeader";
 import { lastVerified } from "@/data/predeparture";
 
 export const metadata: Metadata = { title: "Before you fly" };
@@ -13,18 +14,18 @@ export const metadata: Metadata = { title: "Before you fly" };
 export default function PreparePage() {
   return (
     <main>
-      <header>
-        <p className="eyebrow">Prepare</p>
-        <h1 className="title-page">Before you fly</h1>
-        <p className="body-copy mt-1 text-secondary">
-          Pre-departure checklist for a US → Italy trip. Tap items off as you go — progress is saved
-          on this device.
-        </p>
-      </header>
+      <SectionHeader
+        level={1}
+        eyebrow="Prepare"
+        title="Before you fly"
+        intro="Pre-departure checklist for a US → Italy trip. Tap items off as you go — progress is saved on this device."
+      />
 
-      <VerifiedCaveat className="mt-4" action="recheck anything critical close to departure.">
-        Last verified {lastVerified}. Entry rules and health guidance shift
-      </VerifiedCaveat>
+      {/* THE one caveat for the whole screen — per-section repeats deleted. */}
+      <Callout className="mt-4">
+        Last verified {lastVerified} —{" "}
+        <strong className="font-bold">recheck entry rules close to departure.</strong>
+      </Callout>
 
       <div className="mt-5">
         <PrepareChecklist />

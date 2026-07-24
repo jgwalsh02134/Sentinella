@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
 
 /**
  * "Get Sentinella on your home screen" card.
@@ -112,7 +114,7 @@ export default function InstallGuide() {
 
   return (
     <section className="mt-6" aria-label="Add to home screen">
-      <div className="plate relative border border-default bg-card p-4">
+      <Card className="relative">
         <button
           type="button"
           onClick={dismiss}
@@ -133,18 +135,19 @@ export default function InstallGuide() {
         </button>
 
         <h2 className="pr-10 text-headline">Get Sentinella on your home screen</h2>
-        <p className="mt-1 pr-10 text-subhead text-secondary">
+        <p className="mt-2 pr-10 text-subhead text-secondary">
           Installed, it opens full screen, keeps working offline, and stays one tap from 112.
         </p>
 
         {installEvent ? (
-          <button
-            type="button"
+          <Button
+            variant="secondary"
+            size="lg"
             onClick={() => void install()}
-            className="mt-3 min-h-[3rem] w-full rounded-xl bg-verde font-bold text-white active:bg-verde-deep"
+            className="mt-3 w-full"
           >
             Install app
-          </button>
+          </Button>
         ) : (
           <ol className="mt-3 space-y-2">
             <li className="flex gap-3 text-body">
@@ -166,7 +169,7 @@ export default function InstallGuide() {
             </li>
           </ol>
         )}
-      </div>
+      </Card>
     </section>
   );
 }

@@ -68,15 +68,11 @@ export const healthItems: InfoItem[] = [
 ];
 
 export const basicsItems: InfoItem[] = [
+  // The "112 Where ARE U" companion app renders right after this item via
+  // the shared WhereAreUCard — one source of truth with the Emergency screen.
   {
     title: "112 works everywhere",
-    body: "One number for everything, from any phone, free, with interpreters. The official '112 Where ARE U' app can send your GPS position to the operator automatically in the regions that support it — worth installing alongside this one.",
-    links: [
-      // Official listings: publisher is AREU (Azienda Regionale Emergenza
-      // Urgenza), linked from where.areu.lombardia.it.
-      { label: "App Store — 112 Where ARE U", url: "https://apps.apple.com/app/112-where-are-u/id888964800" },
-      { label: "Google Play — 112 Where ARE U", url: "https://play.google.com/store/apps/details?id=it.Beta80Group.whereareu" },
-    ],
+    body: "One number for everything, from any phone, free, with interpreters.",
   },
   {
     title: "Your iPhone's built-in safety net",

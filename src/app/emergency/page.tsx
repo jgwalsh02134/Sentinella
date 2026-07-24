@@ -1,17 +1,23 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Map } from "lucide-react";
 import CallPlate from "@/components/ui/CallPlate";
+import ActionRow from "@/components/ui/ActionRow";
+import Callout from "@/components/ui/Callout";
+import Card from "@/components/ui/Card";
+import Disclosure from "@/components/ui/Disclosure";
+import ListRow from "@/components/ui/ListRow";
+import SectionHeader from "@/components/ui/SectionHeader";
+import Icon from "@/components/Icon";
 import ShareLocation from "@/components/ShareLocation";
 import TelText from "@/components/TelText";
-import VerifiedCaveat from "@/components/VerifiedCaveat";
+import WhereAreUCard from "@/components/WhereAreUCard";
 import AustraliaFlag from "@/components/AustraliaFlag";
 import IrelandFlag from "@/components/IrelandFlag";
 import NewZealandFlag from "@/components/NewZealandFlag";
 import UkFlag from "@/components/UkFlag";
 import UsFlag from "@/components/UsFlag";
-import WhereAreUCard from "@/components/WhereAreUCard";
 import { callScript, emergencyNumbers, poisonCenters } from "@/data/emergency";
-import { embassies, lostDocumentSteps } from "@/data/embassies";
+import { embassies, lostDocumentSteps, type Embassy } from "@/data/embassies";
 import { appleMapsDirectionsUrl } from "@/lib/maps";
 
 /** Countries with SVG flag icons; the rest fall back to their emoji flag. */
@@ -25,29 +31,77 @@ const flagIcons: Record<string, (props: { className?: string }) => JSX.Element> 
 
 export const metadata: Metadata = { title: "Emergency" };
 
+/** One embassy entry — used both as a full card and as a row inside the
+ *  "Other embassies" disclosure. Actions keep their names everywhere. */
+function EmbassyBody({ embassy, headingLevel }: { embassy: Embassy; headingLevel: 3 | 4 }) {
+  const FlagIcon = flagIcons[embassy.country];
+  const Heading = `h${headingLevel}` as "h3" | "h4";
+  return (
+    <>
+      <Heading className="text-headline">
+        {FlagIcon ? <FlagIcon /> : <span aria-hidden="true">{embassy.flag}</span>} {embassy.name}
+      </Heading>
+      <p className="mt-1 text-subhead text-secondary">{embassy.address}</p>
+      <p className="mt-1 font-mono text-callout font-semibold tabular-nums">
+        <a href={`tel:${embassy.dial}`} className="underline underline-offset-2">
+          {embassy.phone}
+        </a>
+      </p>
+      {embassy.notes ? (
+        <p className="mt-1 text-subhead text-secondary">
+          <TelText text={embassy.notes} />
+        </p>
+      ) : null}
+      {embassy.email ? (
+        <p className="mt-1 text-subhead text-secondary">
+          Email:{" "}
+          <a href={`mailto:${embassy.email}`} className="text-link break-all">
+            {embassy.email}
+          </a>
+        </p>
+      ) : null}
+      <ActionRow
+        className="mt-3"
+        actions={[
+          { label: "Call", href: `tel:${embassy.dial}` },
+          { label: "Get directions", href: appleMapsDirectionsUrl(`${embassy.address}, Italy`) },
+          { label: "Website", href: embassy.website },
+        ]}
+      />
+    </>
+  );
+}
+
 export default function EmergencyPage() {
   const primary = emergencyNumbers.filter((n) => n.tier === "primary");
   const services = emergencyNumbers.filter((n) => n.tier === "service");
   const support = emergencyNumbers.filter((n) => n.tier === "support");
+  // The two US posts render first as full cards; the rest collapse.
+  const usEmbassies = embassies.filter((e) => e.country === "United States");
+  const otherEmbassies = embassies.filter((e) => e.country !== "United States");
 
   return (
     <main>
-      <header>
-        <p className="eyebrow">Emergency</p>
-        <h1 className="title-page">One tap to help</h1>
-        <p className="body-copy mt-1 text-secondary">
-          Tap any plate to call. Core lines are free from any phone, even without a SIM.
-        </p>
-      </header>
+      <SectionHeader
+        level={1}
+        eyebrow="Emergency"
+        title="One tap to help"
+        intro="Tap any plate to call. Core lines are free from any phone, even without a SIM."
+      />
 
       <section className="mt-5 space-y-3" aria-label="Primary emergency number">
         {primary.map((n) => (
-          <div key={n.dial}>
-            <CallPlate number={n.number} dial={n.dial} name={n.name} nameIt={n.nameIt} tier={n.tier} />
-            <p className="mt-2 px-1 text-footnote text-secondary">{n.detail}</p>
-          </div>
+          <CallPlate
+            key={n.dial}
+            number={n.number}
+            dial={n.dial}
+            name={n.name}
+            nameIt={n.nameIt}
+            tier={n.tier}
+            footnote={n.detail}
+          />
         ))}
-        <div className="plate border border-default bg-card p-4">
+        <Card>
           <h2 className="text-headline">When the operator answers</h2>
           <ol className="mt-2 space-y-2">
             {callScript.map((step, i) => (
@@ -59,142 +113,126 @@ export default function EmergencyPage() {
               </li>
             ))}
           </ol>
-        </div>
+        </Card>
       </section>
 
-      <section className="mt-6" aria-label="Share your position">
+      <section className="mt-8 space-y-3" aria-label="Share your position">
         <ShareLocation />
-        <Link href="/map" className="plate mt-3 block border border-default bg-card p-4">
-          <p className="text-headline">Offline map →</p>
-          <p className="mt-1 text-subhead text-secondary">
-            See your position on a downloaded city map — no connection needed.
-          </p>
-        </Link>
+        <ListRow
+          href="/map"
+          icon={<Icon icon={Map} size="lg" />}
+          title="Offline map"
+          subtitle="Your position on a downloaded map — no connection needed"
+        />
       </section>
 
-      <section className="mt-6" aria-label="112 companion app">
+      <section className="mt-8" aria-label="112 companion app">
         <WhereAreUCard />
       </section>
 
       <section className="mt-8 space-y-3" aria-label="Emergency services">
-        <h2 className="title-section">Direct service lines</h2>
+        <SectionHeader title="Direct service lines" />
         {services.map((n) => (
-          <div key={n.dial}>
-            <CallPlate number={n.number} dial={n.dial} name={n.name} nameIt={n.nameIt} tier={n.tier} />
-            <p className="mt-2 px-1 text-footnote text-secondary">{n.detail}</p>
-          </div>
+          <CallPlate
+            key={n.dial}
+            number={n.number}
+            dial={n.dial}
+            name={n.name}
+            nameIt={n.nameIt}
+            tier={n.tier}
+            footnote={n.detail}
+          />
         ))}
       </section>
 
       <section className="mt-8 space-y-3" aria-label="Support lines">
-        <h2 className="title-section">Support lines</h2>
+        <SectionHeader title="Support lines" />
         {support.map((n) => (
-          <div key={n.dial}>
-            <CallPlate number={n.number} dial={n.dial} name={n.name} nameIt={n.nameIt} tier={n.tier} />
-            <p className="mt-2 px-1 text-footnote text-secondary">{n.detail}</p>
-          </div>
+          <CallPlate
+            key={n.dial}
+            number={n.number}
+            dial={n.dial}
+            name={n.name}
+            nameIt={n.nameIt}
+            tier={n.tier}
+            footnote={n.detail}
+          />
         ))}
         {poisonCenters.map((p) => (
-          <div key={p.dial} className="space-y-2">
-            <CallPlate
-              number={p.phone.replace("+39 ", "")}
-              dial={p.dial}
-              name={`Poison control — ${p.city}`}
-              nameIt={p.hospital}
-              tier="support"
+          <Card key={p.dial} as="article">
+            <h3 className="text-headline">Poison control — {p.city}</h3>
+            <p className="mt-1 text-subhead text-secondary">{p.hospital}</p>
+            <p className="mt-1 font-mono text-callout font-semibold tabular-nums">
+              <a href={`tel:${p.dial}`} className="underline underline-offset-2">
+                {p.phone}
+              </a>
+            </p>
+            <ActionRow
+              className="mt-3"
+              actions={[
+                { label: "Call", href: `tel:${p.dial}` },
+                {
+                  label: "Get directions",
+                  href: appleMapsDirectionsUrl(
+                    `${p.hospital.replace(/\s*\([^)]*\)/g, "")}, ${p.city}, Italy`,
+                  ),
+                },
+              ]}
             />
-            <a
-              href={appleMapsDirectionsUrl(`${p.hospital.replace(/\s*\([^)]*\)/g, "")}, ${p.city}, Italy`)}
-              target="_blank"
-              rel="noreferrer"
-              className="flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde text-callout font-bold text-verde active:bg-verde-tint"
-            >
-              Directions — {p.hospital}
-            </a>
-          </div>
+          </Card>
         ))}
-        <VerifiedCaveat action="verify against official sources before relying on them.">
-          Support and poison-control numbers verified July 2026
-        </VerifiedCaveat>
+        <Callout>
+          Support and poison-control numbers verified July 2026 —{" "}
+          <strong className="font-bold">
+            verify against official sources before relying on them.
+          </strong>
+        </Callout>
       </section>
 
       <section className="mt-8" aria-label="Embassies and consulates">
-        <h2 className="title-section">Embassies & consulates</h2>
+        <SectionHeader title="Embassies & consulates" />
         <div className="mt-3 space-y-3">
-          {embassies.map((e) => {
-            const FlagIcon = flagIcons[e.country];
-            return (
-            <div key={e.name} className="plate break-words border border-default bg-card p-4">
-              <h3 className="text-headline">
-                {FlagIcon ? <FlagIcon /> : <span aria-hidden="true">{e.flag}</span>}{" "}
-                {e.name}
-              </h3>
-              <p className="mt-1 text-subhead text-secondary">{e.address}</p>
-              <p className="mt-1 font-mono text-callout font-semibold tabular-nums">
-                <a href={`tel:${e.dial}`} className="underline underline-offset-2">
-                  {e.phone}
-                </a>
-              </p>
-              {e.notes ? (
-                <p className="mt-1 text-subhead text-secondary">
-                  <TelText text={e.notes} />
-                </p>
-              ) : null}
-              {e.email ? (
-                <p className="mt-1 text-subhead text-secondary">
-                  Email:{" "}
-                  <a href={`mailto:${e.email}`} className="text-link break-all">
-                    {e.email}
-                  </a>
-                </p>
-              ) : null}
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                <a
-                  href={`tel:${e.dial}`}
-                  className="flex min-h-[2.75rem] items-center justify-center rounded-xl bg-verde text-callout font-bold text-white active:bg-verde-deep"
-                >
-                  Call
-                </a>
-                <a
-                  href={appleMapsDirectionsUrl(`${e.address}, Italy`)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde text-callout font-bold text-verde active:bg-verde-tint"
-                >
-                  Directions
-                </a>
-                <a
-                  href={e.website}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="col-span-2 flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde text-callout font-bold text-verde active:bg-verde-tint"
-                >
-                  Website
-                </a>
+          {usEmbassies.map((embassy) => (
+            <Card key={embassy.name} as="article" className="break-words">
+              <EmbassyBody embassy={embassy} headingLevel={3} />
+            </Card>
+          ))}
+          <Card padded={false} className="px-4 py-2">
+            <Disclosure
+              label="Other embassies"
+              sublabel="UK, Canada, Australia, Ireland, New Zealand"
+            >
+              <div className="break-words pb-2">
+                {otherEmbassies.map((embassy) => (
+                  <div key={embassy.name} className="border-t border-default pb-1 pt-3">
+                    <EmbassyBody embassy={embassy} headingLevel={4} />
+                  </div>
+                ))}
               </div>
-            </div>
-            );
-          })}
+            </Disclosure>
+          </Card>
         </div>
-        <VerifiedCaveat action="verify yours on the official site before travel.">
-          Switchboard numbers verified July 2026. After-hours consular emergency lines differ
-        </VerifiedCaveat>
+        <Callout className="mt-3">
+          Switchboard numbers verified July 2026. After-hours consular emergency lines differ —{" "}
+          <strong className="font-bold">verify yours on the official site before travel.</strong>
+        </Callout>
       </section>
 
       <section className="mt-8" aria-label="Lost documents">
-        <h2 className="title-section">Passport lost or stolen</h2>
-        <div className="plate mt-2 border border-default bg-card p-4">
+        <SectionHeader title="Passport lost or stolen" />
+        <Card className="mt-3">
           <ol className="space-y-3">
             {lostDocumentSteps.map((step, i) => (
               <li key={step.lead} className="body-copy flex gap-3">
                 <span className="font-mono font-bold text-verde">{i + 1}</span>
                 <span className="min-w-0 text-secondary">
-                  <strong className="font-bold text-primary">{step.lead}</strong> {step.rest}
+                  <strong className="font-bold text-primary">{step.lead}</strong>{" "}
+                  <TelText text={step.rest} />
                 </span>
               </li>
             ))}
           </ol>
-        </div>
+        </Card>
       </section>
     </main>
   );

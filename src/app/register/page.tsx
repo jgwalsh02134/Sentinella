@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Crest from "@/components/Crest";
+import SectionHeader from "@/components/ui/SectionHeader";
 import { invitesRequired } from "@/lib/invites";
 import RegisterForm from "./RegisterForm";
 
@@ -13,18 +14,19 @@ export default function RegisterPage() {
 
   return (
     <main>
-      <header>
-        <div className="flex justify-center pb-3 pt-1">
-          <Crest size={72} priority />
-        </div>
-        <p className="eyebrow">Create account</p>
-        <h1 className="title-page">Join your traveler group</h1>
-        <p className="body-copy mt-1 text-secondary">
-          {required
+      <div className="flex justify-center pb-3 pt-1">
+        <Crest size={72} priority />
+      </div>
+      <SectionHeader
+        level={1}
+        eyebrow="Create account"
+        title="Join your traveler group"
+        intro={
+          required
             ? "Access is by invite code — the app is limited to a specific group even though it's reachable on the open web."
-            : "Create an account to check in and see your trip history. Emergency numbers and the guide never need one."}
-        </p>
-      </header>
+            : "Create an account to check in and see your trip history. Emergency numbers and the guide never need one."
+        }
+      />
 
       <RegisterForm invitesRequired={required} />
     </main>

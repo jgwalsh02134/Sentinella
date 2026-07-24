@@ -1,18 +1,17 @@
 import CallPlate from "@/components/ui/CallPlate";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 export const metadata = { title: "Offline" };
 
 export default function OfflinePage() {
   return (
     <main>
-      <header>
-        <p className="eyebrow">Offline</p>
-        <h1 className="title-page">No connection — you're still covered</h1>
-        <p className="body-copy mt-1 text-secondary">
-          This page wasn't cached yet, but calls don't need data. The core numbers are below; the
-          Emergency and Guide screens work offline if you've opened them before.
-        </p>
-      </header>
+      <SectionHeader
+        level={1}
+        eyebrow="Offline"
+        title="No connection — you're still covered"
+        intro="This page wasn't cached yet, but calls don't need data. The core numbers are below; the Emergency and Guide screens work offline if you've opened them before."
+      />
       <div className="mt-5 space-y-3">
         <CallPlate number="112" dial="112" name="All emergencies" nameIt="Numero Unico di Emergenza" tier="primary" />
         <CallPlate number="113" dial="113" name="State Police" nameIt="Polizia di Stato" />

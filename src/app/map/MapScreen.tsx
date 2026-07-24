@@ -6,10 +6,7 @@ import dynamic from "next/dynamic";
 const MapView = dynamic(() => import("@/components/MapView"), {
   ssr: false,
   loading: () => (
-    <div
-      className="plate mt-5 h-[60dvh] min-h-[20rem] animate-pulse border border-default bg-card motion-reduce:animate-none"
-      aria-hidden="true"
-    />
+    <div className="skeleton plate mt-5 h-[60dvh] min-h-80 border border-default" aria-hidden="true" />
   ),
 });
 
