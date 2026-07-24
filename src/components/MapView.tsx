@@ -54,6 +54,38 @@ maplibregl.addProtocol("pmtiles", protocol.tile);
 const ACTIVE_CITY_KEY = "sentinella-active-city";
 const HOME_BASE_KEY = "sentinella-home-base";
 
+function packContains(pack: MapPack, lng: number, lat: number): boolean {
+  const [w, s, e, n] = pack.bbox;
+  return lng >= w && lng <= e && lat >= s && lat <= n;
+}
+
+/**
+ * Auto-selection: the best pack for a point. Core packs (deep city detail)
+ * always beat the region pack; downloaded beats streamable; deeper maxzoom
+ * breaks remaining ties. Offline, only downloaded packs are candidates.
+ * Returns null when nothing covers the point — the caller keeps the
+ * current source rather than blanking the map.
+ */
+function bestPackFor(
+  lng: number,
+  lat: number,
+  downloadedIds: Set<string>,
+  online: boolean,
+): MapPack | null {
+  const candidates = MAP_PACKS.filter(
+    (p) => packContains(p, lng, lat) && (online || downloadedIds.has(p.id)),
+  );
+  if (candidates.length === 0) return null;
+  const core = candidates.filter((p) => p.kind === "core");
+  const pool = core.length > 0 ? core : candidates;
+  pool.sort(
+    (a, b) =>
+      Number(downloadedIds.has(b.id)) - Number(downloadedIds.has(a.id)) ||
+      b.maxzoom - a.maxzoom,
+  );
+  return pool[0];
+}
+
 type Fix = { lat: number; lng: number; accuracyM: number };
 type HomeBase = { name: string; lat: number; lng: number };
 
@@ -130,6 +162,9 @@ export default function MapView() {
   const mapRef = useRef<maplibregl.Map | null>(null);
   const abortersRef = useRef(new Map<string, AbortController>());
   const persistRequestedRef = useRef(false);
+  /** Live copies for map event handlers (state closures go stale). */
+  const downloadedRef = useRef<Set<string>>(new Set());
+  const activeCityRef = useRef<string>(MAP_PACKS[0].id);
 
   const [downloaded, setDownloaded] = useState<Set<string>>(new Set());
   const [progress, setProgress] = useState<Record<string, number>>({});
@@ -168,6 +203,32 @@ export default function MapView() {
   }, [fix, base]);
 
   useEffect(() => {
+    downloadedRef.current = downloaded;
+  }, [downloaded]);
+
+  /** Re-point the pmtiles key and reload the style for the given pack. */
+  async function switchToPack(city: MapPack) {
+    activeCityRef.current = city.id;
+    setActiveCityId(city.id);
+    window.localStorage.setItem(ACTIVE_CITY_KEY, city.id);
+    await registerCitySource(city, downloadedRef.current.has(city.id));
+    mapRef.current?.setStyle(cityStyle(city), { diff: false });
+  }
+
+  /**
+   * Auto pack selection: after every camera move, the best pack for the
+   * viewport center wins (core over region, downloaded over streamed).
+   * The user never juggles sources by hand.
+   */
+  function evaluateBestPack() {
+    const map = mapRef.current;
+    if (!map) return;
+    const c = map.getCenter();
+    const best = bestPackFor(c.lng, c.lat, downloadedRef.current, navigator.onLine);
+    if (best && best.id !== activeCityRef.current) void switchToPack(best);
+  }
+
+  useEffect(() => {
     let cancelled = false;
 
     (async () => {
@@ -191,7 +252,7 @@ export default function MapView() {
         } else {
           setDownloaded(new Set(storedIds));
           setMapNotice(
-            "No connection and no downloaded map. Download Rome or Tuscany below when you're back online — after that the map works offline.",
+            "No connection and no downloaded map. Download a city pack below when you're back online — after that the map works offline.",
           );
           return;
         }
@@ -208,7 +269,9 @@ export default function MapView() {
         }));
       }
       setDownloaded(new Set(storedIds));
+      downloadedRef.current = new Set(storedIds);
       setActiveCityId(city.id);
+      activeCityRef.current = city.id;
 
       const map = new maplibregl.Map({
         container: containerRef.current,
@@ -219,6 +282,25 @@ export default function MapView() {
         maxZoom: 17.5,
       });
       map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+
+      // A few POI kinds in the full flavor have no icon in the v4 sprite
+      // sheet (e.g. townhall). Register a small neutral dot for any missing
+      // image so those POIs still label cleanly instead of warning.
+      map.on("styleimagemissing", (e) => {
+        if (map.hasImage(e.id)) return;
+        const size = 8;
+        const data = new Uint8Array(size * size * 4);
+        for (let y = 0; y < size; y++) {
+          for (let x = 0; x < size; x++) {
+            const dx = x - size / 2 + 0.5;
+            const dy = y - size / 2 + 0.5;
+            if (dx * dx + dy * dy > (size / 2) * (size / 2)) continue;
+            const i = (y * size + x) * 4;
+            data[i] = 148; data[i + 1] = 158; data[i + 2] = 152; data[i + 3] = 255;
+          }
+        }
+        map.addImage(e.id, { width: size, height: size, data });
+      });
 
       // Tile/glyph failures become one quiet notice, not devtools spam.
       let noticed = false;
@@ -265,6 +347,8 @@ export default function MapView() {
         });
         new maplibregl.Marker({ element: el, anchor: "center" }).setLngLat(poi.lngLat).addTo(map);
       }
+
+      map.on("moveend", evaluateBestPack);
 
       mapRef.current = map;
       setBase(loadHomeBase());
@@ -313,7 +397,11 @@ export default function MapView() {
     mapRef.current?.setStyle(cityStyle(city), { diff: false });
   }
 
-  async function selectCity(city: MapPack) {
+  /**
+   * Row tap = navigation, not source juggling: the camera flies to the
+   * pack's area and auto-selection (moveend) picks the right source.
+   */
+  function goToPack(city: MapPack) {
     if (!navigator.onLine && !downloaded.has(city.id)) {
       setErrors((e) => ({
         ...e,
@@ -321,14 +409,7 @@ export default function MapView() {
       }));
       return;
     }
-    setActiveCityId(city.id);
-    window.localStorage.setItem(ACTIVE_CITY_KEY, city.id);
-    await registerCitySource(city, downloaded.has(city.id));
-    const map = mapRef.current;
-    if (map) {
-      map.setStyle(cityStyle(city), { diff: false });
-      map.jumpTo({ center: city.center, zoom: 12.5 });
-    }
+    mapRef.current?.jumpTo({ center: city.center, zoom: city.kind === "region" ? 9 : 13 });
   }
 
   async function togglePack(city: MapPack) {
@@ -352,7 +433,10 @@ export default function MapView() {
         next.delete(city.id);
         return next;
       });
-      if (city.id === activeCityId) await refreshActiveSource(city, false);
+      const nextIds = new Set(downloadedRef.current);
+      nextIds.delete(city.id);
+      downloadedRef.current = nextIds;
+      if (city.id === activeCityRef.current) await refreshActiveSource(city, false);
       return;
     }
 
@@ -375,7 +459,13 @@ export default function MapView() {
       );
       await storePack(city.id, blob);
       setDownloaded((d) => new Set(d).add(city.id));
-      if (city.id === activeCityId) await refreshActiveSource(city, true);
+      downloadedRef.current = new Set(downloadedRef.current).add(city.id);
+      if (city.id === activeCityRef.current) {
+        await refreshActiveSource(city, true);
+      } else {
+        // A just-downloaded core pack may now be the best for the viewport.
+        evaluateBestPack();
+      }
     } catch (err) {
       if (!aborter.signal.aborted) {
         const quotaHit = err instanceof DOMException && err.name === "QuotaExceededError";
@@ -406,9 +496,18 @@ export default function MapView() {
           role="application"
           aria-label="City map with safety locations"
         />
+        {!mapNotice ? (
+          <p
+            className="pointer-events-none absolute left-2 top-2 rounded-full border border-default bg-card/95 px-3 py-1.5 text-footnote font-semibold text-secondary"
+            role="status"
+          >
+            {MAP_PACKS.find((p) => p.id === activeCityId)?.name ?? activeCityId} map
+            {downloaded.has(activeCityId) ? " · offline" : ""}
+          </p>
+        ) : null}
         {base && baseReadout ? (
           <p
-            className="pointer-events-none absolute left-2 top-2 flex items-center gap-2 rounded-full border border-default bg-card/95 px-3 py-2 text-footnote font-bold"
+            className="pointer-events-none absolute left-2 top-12 flex items-center gap-2 rounded-full border border-default bg-card/95 px-3 py-2 text-footnote font-bold"
             role="status"
           >
             <svg
@@ -510,7 +609,7 @@ export default function MapView() {
       <section className="mt-8" aria-label="Offline maps">
         <SectionHeader
           title="Offline maps"
-          intro="Download before you travel and the map works with no connection. Rome covers the metro area to building level; Tuscany covers the hill towns and the roads between them."
+          intro="Download before you travel and the map works with no connection. City packs carry street names where you walk; the Tuscany region pack covers the hill towns and driving routes between them. The map picks the best downloaded pack automatically."
         />
         <Card padded={false} className="mt-3">
           {MAP_PACKS.map((city, i) => {
@@ -523,9 +622,9 @@ export default function MapView() {
                 <div className="flex min-h-14 items-center gap-3 p-3">
                   <button
                     type="button"
-                    onClick={() => void selectCity(city)}
+                    onClick={() => goToPack(city)}
                     className="min-h-control min-w-0 flex-1 rounded-xl text-left"
-                    aria-label={`Show ${city.name} on the map`}
+                    aria-label={`Go to ${city.name} on the map`}
                   >
                     <span className="block text-callout font-bold">
                       {city.name} <span className="font-normal text-secondary">· {city.nameIt}</span>

@@ -3,12 +3,14 @@
  * (https://build.protomaps.com) into public/map-packs/, and regenerates
  * the manifest at src/data/mapPacks.ts with real byte sizes.
  *
- * Exactly two packs ship:
- *   rome     — Rome metro bbox, maxzoom 14 (street/building detail)
- *   tuscany  — regional bbox covering Florence, Siena, Pisa, Lucca,
- *              San Gimignano, Volterra, Cortona, Montepulciano and the
- *              connecting roads; maxzoom 13 (38.5 MB — fits the cap;
- *              drop TUSCANY_MAXZOOM to 12 if a future build outgrows it)
+ * Four packs ship. Minor-road NAMES only exist in Protomaps tiles from
+ * z14 (verified with scripts/audit-tile-names.mjs), so the city cores are
+ * cut deep enough that the street a traveler is standing on has a name:
+ *   rome            — Rome metro bbox, maxzoom 14 (street/building detail)
+ *   florence        — city core bbox, maxzoom 15 (small area, small file)
+ *   siena           — city core bbox, maxzoom 15
+ *   tuscany-region  — wide bbox (hill towns + connecting roads),
+ *                     maxzoom 12, for driving context between cities
  *
  * Every extract is verified: PMTiles magic bytes, a minimum plausible size
  * (stub detection), and a HARD CAP of 45 MB per file (GitHub blocks 100 MB,
@@ -19,10 +21,9 @@
  *   brew install pmtiles
  *
  * Rebuild commands:
- *   node scripts/build-map-packs.mjs                    # both packs
- *   node scripts/build-map-packs.mjs tuscany            # one pack
+ *   node scripts/build-map-packs.mjs                    # all packs
+ *   node scripts/build-map-packs.mjs florence           # one pack
  *   PROTOMAPS_BUILD=20260723 node scripts/build-map-packs.mjs
- *   TUSCANY_MAXZOOM=13 node scripts/build-map-packs.mjs tuscany
  */
 import { spawnSync } from "node:child_process";
 import { mkdirSync, openSync, readSync, closeSync, rmSync, statSync, writeFileSync, readdirSync } from "node:fs";
@@ -38,25 +39,50 @@ const MANIFEST = join(ROOT, "src", "data", "mapPacks.ts");
 const HARD_CAP_MB = 45;
 const MIN_PLAUSIBLE_MB = 1; // anything smaller is a failed/stub extract
 
-/** The data model stays city-agnostic: add/remove entries here only. */
+/** The data model stays city-agnostic: add/remove entries here only.
+ *  `kind` drives auto-selection: a "core" pack always beats a "region"
+ *  pack when both cover the viewport (deeper zoom wins). */
 const PACKS = [
   {
     id: "rome",
     name: "Rome",
     nameIt: "Roma",
+    kind: "core",
     bbox: [12.17, 41.65, 12.73, 42.05],
     center: [12.4964, 41.9028],
     maxzoom: 14,
   },
   {
-    id: "tuscany",
-    name: "Tuscany",
+    id: "florence",
+    name: "Florence",
+    nameIt: "Firenze",
+    kind: "core",
+    // City core: historic center + Oltrarno + Campo di Marte/Novoli belt.
+    bbox: [11.15, 43.72, 11.36, 43.84],
+    center: [11.2558, 43.7696],
+    maxzoom: 15,
+  },
+  {
+    id: "siena",
+    name: "Siena",
+    nameIt: "Siena",
+    kind: "core",
+    // City core inside and just beyond the walls.
+    bbox: [11.28, 43.28, 11.4, 43.36],
+    center: [11.3308, 43.3188],
+    maxzoom: 15,
+  },
+  {
+    id: "tuscany-region",
+    name: "Tuscany region",
     nameIt: "Toscana",
+    kind: "region",
     // Florence, Siena, Pisa, Lucca, San Gimignano, Volterra, Cortona,
     // Montepulciano + the connecting roads (A1/A11/SR2/SR68/raccordi).
+    // z12 = driving context; street-level detail comes from core packs.
     bbox: [10.25, 42.95, 12.1, 43.95],
     center: [11.2558, 43.7696],
-    maxzoom: Number(process.env.TUSCANY_MAXZOOM ?? 13),
+    maxzoom: 12,
   },
 ];
 
@@ -147,6 +173,8 @@ export type MapPack = {
   id: string;
   name: string;
   nameIt: string;
+  /** "core" = deep city detail (wins auto-selection); "region" = wide driving context. */
+  kind: "core" | "region";
   /** [minLon, minLat, maxLon, maxLat] */
   bbox: [number, number, number, number];
   /** [lng, lat] */
@@ -157,7 +185,7 @@ export type MapPack = {
 };
 
 export const MAP_PACKS: MapPack[] = ${JSON.stringify(
-  entries.map(({ id, name, nameIt, bbox, center, maxzoom, sizeBytes }) => ({ id, name, nameIt, bbox, center, maxzoom, sizeBytes })),
+  entries.map(({ id, name, nameIt, kind, bbox, center, maxzoom, sizeBytes }) => ({ id, name, nameIt, kind, bbox, center, maxzoom, sizeBytes })),
   null,
   2,
 )};

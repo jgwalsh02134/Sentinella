@@ -11,10 +11,11 @@
  *    files managed in IndexedDB by the Map screen, and their online mode uses
  *    HTTP range requests the Cache API can't store.
  */
-// v6: deterministic offline map — /map shell is cache-first, glyph caching
-// unchanged (/map-fonts, cache-first), /map-packs stays out of the SW for
-// good (packs live in IndexedDB; double-storing 40 MB kills iOS quota).
-const VERSION = "sentinella-v6";
+// v7: full Protomaps light style — sprites join glyphs as self-hosted,
+// cache-first render assets (/map-fonts, /map-sprites); /map-packs stays
+// out of the SW for good (packs live in IndexedDB; double-storing 40 MB
+// kills iOS quota).
+const VERSION = "sentinella-v7";
 const PRECACHE = [
   "/",
   "/emergency",
@@ -129,7 +130,8 @@ self.addEventListener("fetch", (event) => {
     url.pathname.startsWith("/_next/static/") ||
     url.pathname.startsWith("/icons/") ||
     url.pathname.startsWith("/brand/") ||
-    url.pathname.startsWith("/map-fonts/")
+    url.pathname.startsWith("/map-fonts/") ||
+    url.pathname.startsWith("/map-sprites/")
   ) {
     event.respondWith(
       caches.match(request).then(

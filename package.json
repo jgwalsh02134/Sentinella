@@ -17,6 +17,7 @@
     "db:seed": "tsx src/db/seed.ts"
   },
   "dependencies": {
+    "@protomaps/basemaps": "^5.7.2",
     "bcryptjs": "^2.4.3",
     "drizzle-orm": "^0.33.0",
     "jose": "^5.9.3",

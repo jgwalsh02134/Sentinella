@@ -7,6 +7,8 @@ export type MapPack = {
   id: string;
   name: string;
   nameIt: string;
+  /** "core" = deep city detail (wins auto-selection); "region" = wide driving context. */
+  kind: "core" | "region";
   /** [minLon, minLat, maxLon, maxLat] */
   bbox: [number, number, number, number];
   /** [lng, lat] */
@@ -21,6 +23,7 @@ export const MAP_PACKS: MapPack[] = [
     "id": "rome",
     "name": "Rome",
     "nameIt": "Roma",
+    "kind": "core",
     "bbox": [
       12.17,
       41.65,
@@ -35,9 +38,46 @@ export const MAP_PACKS: MapPack[] = [
     "sizeBytes": 20548707
   },
   {
-    "id": "tuscany",
-    "name": "Tuscany",
+    "id": "florence",
+    "name": "Florence",
+    "nameIt": "Firenze",
+    "kind": "core",
+    "bbox": [
+      11.15,
+      43.72,
+      11.36,
+      43.84
+    ],
+    "center": [
+      11.2558,
+      43.7696
+    ],
+    "maxzoom": 15,
+    "sizeBytes": 12514253
+  },
+  {
+    "id": "siena",
+    "name": "Siena",
+    "nameIt": "Siena",
+    "kind": "core",
+    "bbox": [
+      11.28,
+      43.28,
+      11.4,
+      43.36
+    ],
+    "center": [
+      11.3308,
+      43.3188
+    ],
+    "maxzoom": 15,
+    "sizeBytes": 4625167
+  },
+  {
+    "id": "tuscany-region",
+    "name": "Tuscany region",
     "nameIt": "Toscana",
+    "kind": "region",
     "bbox": [
       10.25,
       42.95,
@@ -48,7 +88,7 @@ export const MAP_PACKS: MapPack[] = [
       11.2558,
       43.7696
     ],
-    "maxzoom": 13,
-    "sizeBytes": 40351062
+    "maxzoom": 12,
+    "sizeBytes": 20131417
   }
 ];
