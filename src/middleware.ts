@@ -36,10 +36,9 @@ export async function middleware(req: NextRequest) {
     return NextResponse.json({ error: "Sign in required." }, { status: 401 });
   }
 
-  const url = req.nextUrl.clone();
-  url.pathname = "/login";
-  url.searchParams.set("next", req.nextUrl.pathname);
-  return NextResponse.redirect(url);
+  // Signed-out page visits pass through: /checkin renders a real
+  // explanation screen (what check-ins do + sign in), not a bare redirect.
+  return NextResponse.next();
 }
 
 export const config = {

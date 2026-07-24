@@ -88,10 +88,10 @@ export default function ShareStatusLink() {
 
   return (
     <Card>
-      <h2 className="text-headline">Share with family</h2>
+      <h2 className="text-headline">Family link</h2>
       <p className="mt-2 text-subhead text-secondary">
-        A private link that shows your latest check-in status and approximate area — never exact
-        coordinates. Anyone with the link can view it; revoke it any time.
+        Anyone with this link sees your latest check-in status and approximate area — never exact
+        coordinates. Revoke it any time.
       </p>
 
       {url ? (

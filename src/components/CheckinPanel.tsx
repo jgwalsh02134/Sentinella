@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { formatDualDateTime } from "@/lib/timezones";
-import { Check, MapPin } from "lucide-react";
+import { ITALY_TZ, formatDualTime } from "@/lib/timezones";
+import { Check, Clock3, MapPin } from "lucide-react";
 import Icon from "@/components/Icon";
 import DstNote from "@/components/DstNote";
 import ReminderSettings from "@/components/ReminderSettings";
@@ -11,6 +11,7 @@ import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import Callout from "@/components/ui/Callout";
 import Card from "@/components/ui/Card";
+import Disclosure from "@/components/ui/Disclosure";
 import EmptyState from "@/components/ui/EmptyState";
 import { Field, FieldError, Input, Textarea } from "@/components/ui/Field";
 import ListRow from "@/components/ui/ListRow";
@@ -107,9 +108,29 @@ const statusMeta: Record<Status, { label: string; dot: string; tone: "verde" | "
   help: { label: "Need help", dot: "bg-signal", tone: "signal" },
 };
 
-/** Dual-zone timestamp: the trip runs on Italy time, family reads New York. */
-function formatWhen(iso: string) {
-  return formatDualDateTime(new Date(iso));
+/** The one-tap button names the outcome, not the mechanism. */
+const SUBMIT_LABEL: Record<Status, string> = {
+  safe: "I'm safe",
+  caution: "Check in — Caution",
+  help: "Check in — Need help",
+};
+
+/** Day-key in Italy's zone: history groups by the day the trip lived. */
+function dayKey(d: Date) {
+  return d.toLocaleDateString("en-CA", { timeZone: ITALY_TZ });
+}
+
+function dayHeader(d: Date) {
+  const now = new Date();
+  const key = dayKey(d);
+  if (key === dayKey(now)) return "Today";
+  if (key === dayKey(new Date(now.getTime() - 86_400_000))) return "Yesterday";
+  return d.toLocaleDateString("en-GB", {
+    timeZone: ITALY_TZ,
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  });
 }
 
 export default function CheckinPanel() {
@@ -249,6 +270,7 @@ export default function CheckinPanel() {
     }
 
     // Saved. Everything past this point is enhancement.
+    if (typeof navigator !== "undefined" && "vibrate" in navigator) navigator.vibrate(50);
     setConfirmed({ at: new Date(), clientId });
     setPlaceName("");
     setNote("");
@@ -282,6 +304,15 @@ export default function CheckinPanel() {
   ].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 
   const confirmedPending = confirmed ? pendingIds.has(confirmed.clientId) : false;
+
+  // Group by day in Italy's zone with relative headers.
+  const dayGroups: { header: string; items: CheckIn[] }[] = [];
+  for (const c of history) {
+    const header = dayHeader(new Date(c.createdAt));
+    const last = dayGroups[dayGroups.length - 1];
+    if (last && last.header === header) last.items.push(c);
+    else dayGroups.push({ header, items: [c] });
+  }
 
   return (
     <div className="space-y-6">
@@ -352,57 +383,8 @@ export default function CheckinPanel() {
           </div>
         ) : null}
 
-        <div className="mt-4 space-y-3">
-          <Button variant="gray" size="md" onClick={capture} disabled={locating} className="w-full">
-            {locating ? (
-              "Getting position…"
-            ) : fix ? (
-              <span className="flex items-center justify-center gap-2">
-                <Icon icon={Check} size="sm" /> Position attached — tap to refresh
-              </span>
-            ) : (
-              "Attach my position"
-            )}
-          </Button>
-          {fix ? (
-            <p className="font-mono text-footnote tabular-nums text-secondary">
-              {fix.lat.toFixed(5)}, {fix.lng.toFixed(5)} · ~{Math.round(fix.accuracyM)} m
-            </p>
-          ) : null}
-          {gpsNote ? (
-            <p className="text-footnote text-secondary" role="status">
-              {gpsNote}
-            </p>
-          ) : null}
-
-          <Field label="Place">
-            <Input
-              value={placeName}
-              onChange={(e) => setPlaceName(e.target.value)}
-              placeholder="e.g. Hotel Aurora, Firenze"
-              maxLength={120}
-            />
-          </Field>
-          <Field label="Note">
-            <Textarea
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="Optional"
-              maxLength={500}
-              rows={2}
-            />
-          </Field>
-        </div>
-
-        {error ? <FieldError className="mt-3">{error}</FieldError> : null}
-        {confirmed ? (
-          <p className="mt-3 text-callout font-semibold text-success" role="status">
-            Checked in ·{" "}
-            {confirmed.at.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })} ·{" "}
-            {confirmedPending ? (authNeeded ? "waiting for sign-in" : "syncing…") : "synced"}
-          </p>
-        ) : null}
-
+        {/* One tap, zero typing: the check-in saves locally the instant
+            this button releases; GPS and sync happen behind it. */}
         <Button
           variant="filled"
           size="lg"
@@ -410,8 +392,73 @@ export default function CheckinPanel() {
           disabled={saving}
           className="mt-4 w-full"
         >
-          {saving ? "Saving…" : "Save check-in"}
+          {saving ? "Saving…" : SUBMIT_LABEL[status]}
         </Button>
+
+        {confirmed ? (
+          <p className="mt-3 text-callout font-semibold text-success" role="status">
+            <span className="inline-flex items-center gap-1.5">
+              <Icon icon={Check} size="sm" />
+              Checked in ·{" "}
+              {confirmed.at.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })} ·{" "}
+              {confirmedPending ? (authNeeded ? "waiting for sign-in" : "syncing…") : "synced"}
+            </span>
+          </p>
+        ) : null}
+        {gpsNote ? (
+          <p className="mt-2 text-footnote text-secondary" role="status">
+            {gpsNote}
+          </p>
+        ) : null}
+        {error ? <FieldError className="mt-3">{error}</FieldError> : null}
+
+        <Disclosure
+          label="Add place or note"
+          sublabel="Optional — a plain tap is enough"
+          className="mt-4 border-t border-default pt-2"
+        >
+          <div className="space-y-3 pb-1 pt-2">
+            <Button
+              variant="gray"
+              size="md"
+              onClick={capture}
+              disabled={locating}
+              className="w-full"
+            >
+              {locating ? (
+                "Getting position…"
+              ) : fix ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Icon icon={Check} size="sm" /> Position attached — tap to refresh
+                </span>
+              ) : (
+                "Attach my position now"
+              )}
+            </Button>
+            {fix ? (
+              <p className="font-mono text-footnote tabular-nums text-secondary">
+                {fix.lat.toFixed(5)}, {fix.lng.toFixed(5)} · ~{Math.round(fix.accuracyM)} m
+              </p>
+            ) : null}
+            <Field label="Place">
+              <Input
+                value={placeName}
+                onChange={(e) => setPlaceName(e.target.value)}
+                placeholder="e.g. Hotel Aurora, Firenze"
+                maxLength={120}
+              />
+            </Field>
+            <Field label="Note">
+              <Textarea
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder="Optional"
+                maxLength={500}
+                rows={2}
+              />
+            </Field>
+          </div>
+        </Disclosure>
       </Card>
 
       <TripTracking
@@ -427,6 +474,18 @@ export default function CheckinPanel() {
 
       <section>
         <SectionHeader title="History" />
+
+        {/* One quiet retry affordance for sync trouble — never red text. */}
+        {queued.length > 0 && !authNeeded ? (
+          <p className="mt-2 flex items-center gap-2 text-footnote text-secondary">
+            <Icon icon={Clock3} size="sm" />
+            {queued.length === 1 ? "1 check-in" : `${queued.length} check-ins`} waiting to sync
+            <Button variant="plain" size="sm" onClick={() => void runSync()}>
+              Retry now
+            </Button>
+          </p>
+        ) : null}
+
         <div className="mt-3">
           {historyState === "loading" ? (
             <SkeletonCard lines={2} />
@@ -434,7 +493,7 @@ export default function CheckinPanel() {
             <EmptyState
               icon={MapPin}
               title="Couldn't load your history"
-              body="It needs a connection. Your check-ins are safe on the server."
+              body="It needs a connection. Anything you save meanwhile is kept on this phone."
               action={
                 <Button variant="tinted" size="md" onClick={loadHistory}>
                   Try again
@@ -448,51 +507,69 @@ export default function CheckinPanel() {
               body="Your first one will appear here with its time and position."
             />
           ) : (
-            <Card padded={false}>
-              <ul className="divide-y divide-default">
-                {history.map((c) => (
-                  <li key={c.id}>
-                    <ListRow
-                      card={false}
-                      href={
-                        c.lat != null && c.lng != null
-                          ? `https://maps.google.com/?q=${c.lat},${c.lng}`
-                          : undefined
-                      }
-                      aria-label={
-                        c.lat != null && c.lng != null
-                          ? `${statusMeta[c.status].label} check-in — open position in Maps`
-                          : undefined
-                      }
-                      icon={
-                        <span
-                          className={`block h-2.5 w-2.5 rounded-full ${statusMeta[c.status].dot}`}
-                          aria-hidden="true"
-                        />
-                      }
-                      title={
-                        <span className="flex items-center gap-2">
-                          {statusMeta[c.status].label}
-                          {c.isAuto ? <Badge tone="neutral">Auto</Badge> : null}
-                          {c.pending ? <Badge tone="neutral">Pending sync</Badge> : null}
-                        </span>
-                      }
-                      subtitle={
-                        <>
-                          <span className="block tabular-nums">{formatWhen(c.createdAt)}</span>
-                          {c.placeName ? (
-                            <span className="block break-words text-subhead text-primary">
-                              {c.placeName}
-                            </span>
-                          ) : null}
-                          {c.note ? <span className="block break-words">{c.note}</span> : null}
-                        </>
-                      }
-                    />
-                  </li>
-                ))}
-              </ul>
-            </Card>
+            <div className="space-y-4">
+              {dayGroups.map((group) => (
+                <div key={group.header}>
+                  <h3 className="eyebrow">{group.header}</h3>
+                  <Card padded={false} className="mt-2">
+                    <ul className="divide-y divide-default">
+                      {group.items.map((c) => (
+                        <li key={c.id}>
+                          <ListRow
+                            card={false}
+                            href={
+                              c.lat != null && c.lng != null
+                                ? `https://maps.google.com/?q=${c.lat},${c.lng}`
+                                : undefined
+                            }
+                            aria-label={
+                              c.lat != null && c.lng != null
+                                ? `${statusMeta[c.status].label} check-in — open position in Maps`
+                                : undefined
+                            }
+                            icon={
+                              <span
+                                className={`block h-2.5 w-2.5 rounded-full ${statusMeta[c.status].dot}`}
+                                aria-hidden="true"
+                              />
+                            }
+                            title={
+                              <span className="flex items-center gap-2">
+                                {statusMeta[c.status].label}
+                                {c.isAuto ? <Badge tone="neutral">Auto</Badge> : null}
+                              </span>
+                            }
+                            subtitle={
+                              <>
+                                <span className="block tabular-nums">
+                                  {formatDualTime(new Date(c.createdAt))}
+                                </span>
+                                {c.placeName ? (
+                                  <span className="block break-words text-subhead text-primary">
+                                    {c.placeName}
+                                  </span>
+                                ) : null}
+                                {c.note ? (
+                                  <span className="block break-words">{c.note}</span>
+                                ) : null}
+                              </>
+                            }
+                            value={
+                              <span className="flex items-center text-tertiary">
+                                <Icon icon={c.pending ? Clock3 : Check} size="sm" />
+                                <span className="sr-only">
+                                  {c.pending ? "Waiting to sync" : "Synced"}
+                                </span>
+                              </span>
+                            }
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  </Card>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </section>

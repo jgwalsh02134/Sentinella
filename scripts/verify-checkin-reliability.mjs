@@ -41,15 +41,15 @@ const browser = await chromium.launch();
   await page.goto(`${base}/checkin`, { waitUntil: "networkidle" });
   const before = await serverCount(page);
   await ctx.setOffline(true);
-  await page.getByRole("button", { name: "Save check-in" }).click();
+  await page.getByRole("button", { name: "I'm safe" }).click();
   await page.waitForTimeout(1000);
   const confirmation = await page.locator("[role=status]").allTextContents();
-  const pendingShown = await page.getByText("Pending sync").count();
+  const pendingShown = await page.getByText("Waiting to sync").count();
   await ctx.setOffline(false);
   await page.evaluate(() => window.dispatchEvent(new Event("online")));
   await page.waitForTimeout(12000); // background GPS cap is 10s; sync follows
   const after = await serverCount(page);
-  const stillPending = await page.getByText("Pending sync").count();
+  const stillPending = await page.getByText("Waiting to sync").count();
   console.log(
     `1. OFFLINE SUBMIT: confirmation=${JSON.stringify(confirmation)} pendingRow=${pendingShown >= 1}; after reconnect server ${before} -> ${after} (expected +1), pending rows left: ${stillPending}`,
   );
@@ -65,7 +65,7 @@ const browser = await chromium.launch();
   const before = await serverCount(page);
   await page.evaluate(() => {
     const btn = [...document.querySelectorAll("button")].find((b) =>
-      b.textContent?.includes("Save check-in"),
+      b.textContent?.includes("I'm safe"),
     );
     btn.click();
     btn.click();
@@ -83,7 +83,7 @@ const browser = await chromium.launch();
   await login(page);
   await page.goto(`${base}/checkin`, { waitUntil: "networkidle" });
   const before = await serverCount(page);
-  await page.getByRole("button", { name: "Save check-in" }).click();
+  await page.getByRole("button", { name: "I'm safe" }).click();
   await page.waitForTimeout(4000);
   const notes = await page.locator("[role=status]").allTextContents();
   const after = await serverCount(page);
@@ -115,7 +115,7 @@ const browser = await chromium.launch();
   const before = await serverCount(page);
   // Session dies while the screen is open.
   await ctx.addCookies([{ name: "sentinella_session", value: expired, url: base }]);
-  await page.getByRole("button", { name: "Save check-in" }).click();
+  await page.getByRole("button", { name: "I'm safe" }).click();
   await page.waitForTimeout(12000);
   const banner = await page.getByText(/sign in to sync/i).allTextContents();
   // Sign back in — LoginForm flushes the queue after auth.
