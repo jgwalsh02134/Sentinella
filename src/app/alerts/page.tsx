@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import AlertsPanel from "@/components/AlertsPanel";
 import SeasonalWeatherLink from "@/components/SeasonalWeatherLink";
 import UsAdvisoriesPanel from "@/components/UsAdvisoriesPanel";
+import NavTile from "@/components/ui/NavTile";
 import SectionHeader from "@/components/ui/SectionHeader";
 
 export const metadata: Metadata = { title: "Alerts" };
@@ -9,7 +10,12 @@ export const metadata: Metadata = { title: "Alerts" };
 export default function AlertsPage() {
   return (
     <main>
-      <SectionHeader level={1} eyebrow="Alerts" title="Alerts & advisories" />
+      <SectionHeader
+        level={1}
+        eyebrow="Alerts"
+        tile={<NavTile feature="alerts" />}
+        title="Alerts & advisories"
+      />
 
       <div className="mt-5">
         <SeasonalWeatherLink />

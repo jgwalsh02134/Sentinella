@@ -15,6 +15,7 @@ import BottomSheet, { sheetHeights, type SheetDetent } from "@/components/ui/Bot
 import Button from "@/components/ui/Button";
 import Callout from "@/components/ui/Callout";
 import { Field, FieldError, Input } from "@/components/ui/Field";
+import NavTile from "@/components/ui/NavTile";
 import Icon from "@/components/Icon";
 import Switch from "@/components/ui/Switch";
 import { bearingDeg, cardinal, formatKm, haversineKm } from "@/lib/geo";
@@ -610,8 +611,11 @@ export default function MapView() {
       style={{ bottom: navOffset }}
     >
       <div className="mx-auto flex h-full w-full max-w-md flex-col">
-        <header className="flex items-baseline justify-between border-b border-default px-4 py-2">
-          <h1 className="text-headline">Map</h1>
+        <header className="flex items-center justify-between border-b border-default px-4 py-2">
+          <span className="flex items-center gap-2">
+            <NavTile feature="map" />
+            <h1 className="text-headline">Map</h1>
+          </span>
           <p className="text-footnote text-secondary">
             {online ? "Works offline once a pack is downloaded" : "Offline"}
           </p>

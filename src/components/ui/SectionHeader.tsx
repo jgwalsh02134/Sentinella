@@ -12,6 +12,7 @@ export default function SectionHeader({
   title,
   intro,
   action,
+  tile,
   level = 2,
   className = "",
 }: {
@@ -21,6 +22,9 @@ export default function SectionHeader({
   intro?: ReactNode;
   /** Trailing slot, top-aligned with the heading. */
   action?: ReactNode;
+  /** Section marker: the destination's NavTile beside the h1, so the
+      color the user tapped on Home follows them here. */
+  tile?: ReactNode;
   /** 1 for the page h1 (exactly one per screen), 2+ for sections. */
   level?: 1 | 2 | 3;
   className?: string;
@@ -31,9 +35,12 @@ export default function SectionHeader({
   return (
     <header className={className}>
       <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
-          <Tag className={`${titleClass} ${eyebrow ? "mt-1" : ""}`}>{title}</Tag>
+        <div className="flex min-w-0 items-center gap-3">
+          {tile ? <span className="shrink-0">{tile}</span> : null}
+          <div className="min-w-0">
+            {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
+            <Tag className={`${titleClass} ${eyebrow ? "mt-1" : ""}`}>{title}</Tag>
+          </div>
         </div>
         {action ? <div className="shrink-0">{action}</div> : null}
       </div>

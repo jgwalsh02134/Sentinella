@@ -6,6 +6,7 @@ import Callout from "@/components/ui/Callout";
 import Card from "@/components/ui/Card";
 import Disclosure from "@/components/ui/Disclosure";
 import ListRow from "@/components/ui/ListRow";
+import NavTile from "@/components/ui/NavTile";
 import SectionHeader from "@/components/ui/SectionHeader";
 import Icon from "@/components/Icon";
 import ShareLocation from "@/components/ShareLocation";
@@ -85,6 +86,7 @@ export default function EmergencyPage() {
       <SectionHeader
         level={1}
         eyebrow="Emergency"
+        tile={<NavTile feature="emergency" />}
         title="One tap to help"
         intro="Tap any plate to call. Core lines are free from any phone, even without a SIM."
       />

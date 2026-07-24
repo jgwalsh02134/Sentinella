@@ -108,3 +108,23 @@ raw hex in components. Sanctioned hex exceptions: flag/crest artwork,
 src/lib/mapStyle.ts (canvas cartography), and the PWA themeColor in
 layout.tsx. Dark mode later = swap the :root variables; do not
 hardcode around them.
+
+## Navigation color map (iOS wayfinding — NavTile + BottomNav)
+
+The iOS system palette (ios-* tokens; grouped-bg is the page tone) is
+for WAYFINDING TILES and status only — never button colors; the
+interactive tint stays verde. One color = one feature, everywhere it
+appears (home nav row tile, destination header tile, active tab tint):
+
+  Emergency numbers & embassies  RED (ios-red tile; tab uses signal)
+  Check in                       GREEN (ios-green)
+  Offline map                    BLUE (ios-blue)
+  Field guide                    ORANGE (ios-orange, DARK glyph)
+  Before you fly                 INDIGO (ios-indigo)
+  Alerts & advisories            TEAL (ios-teal)
+
+The red tile is permitted: it is an emergency affordance. Yellow and
+orange tiles always carry dark glyphs (white fails contrast). Bottom
+nav tints icon+label of the ACTIVE tab only; inactive tabs stay gray.
+The single source of truth in code is src/components/ui/NavTile.tsx —
+change it and this table together.

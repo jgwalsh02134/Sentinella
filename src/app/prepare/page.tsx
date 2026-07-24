@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import PrepareChecklist from "@/components/PrepareChecklist";
 import Callout from "@/components/ui/Callout";
+import NavTile from "@/components/ui/NavTile";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { lastVerified } from "@/data/predeparture";
 
@@ -17,6 +18,7 @@ export default function PreparePage() {
       <SectionHeader
         level={1}
         eyebrow="Prepare"
+        tile={<NavTile feature="prepare" />}
         title="Before you fly"
         intro="Pre-departure checklist for a US → Italy trip. Tap items off as you go — progress is saved on this device."
       />

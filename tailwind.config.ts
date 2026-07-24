@@ -80,6 +80,9 @@ const config: Config = {
     borderRadius: {
       none: "0",
       xs: "0.25rem",
+      /* iOS Settings nav tile: 7pt radius on a 29pt square (see spacing
+         token `tile`). Only NavTile uses it. */
+      tile: "0.4118rem",
       xl: "0.75rem",
       "2xl": "1rem",
       full: "9999px",
@@ -228,6 +231,9 @@ const config: Config = {
       spacing: {
         control: "2.75rem",
         "control-lg": "3.25rem",
+        /* iOS Settings nav tile: 29pt square, rem-based so it grows with
+           Dynamic Type alongside the row it sits in. */
+        tile: "1.7059rem",
       },
     },
   },

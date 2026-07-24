@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Map, MapPin, Plane, Shield } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import CallPlate from "@/components/ui/CallPlate";
+import NavTile from "@/components/ui/NavTile";
+import type { FeatureKey } from "@/components/ui/NavTile";
 import SectionHeader from "@/components/ui/SectionHeader";
 import Icon from "@/components/Icon";
 import Crest from "@/components/Crest";
@@ -16,18 +17,16 @@ import { invitesRequired } from "@/lib/invites";
 
 export const dynamic = "force-dynamic";
 
-/** 2×2 quick actions — identical shape, parallel copy: icon, 2–3 word
- *  title, ≤6-word descriptor. */
-const quickActions: Array<{
-  href: string;
-  icon: LucideIcon;
-  title: string;
-  descriptor: string;
-}> = [
-  { href: "/checkin", icon: MapPin, title: "Check in", descriptor: "Log that you're safe" },
-  { href: "/guide", icon: Shield, title: "Field guide", descriptor: "Scams, phrases, cities" },
-  { href: "/map", icon: Map, title: "Offline map", descriptor: "Works with zero signal" },
-  { href: "/prepare", icon: Plane, title: "Before you fly", descriptor: "Pre-departure checklist" },
+/** iOS Settings-style navigation: inset-grouped rows, each with the
+ *  feature's color tile (the navigation color map lives in NavTile and
+ *  .cursorrules). Emergency leads, so it reads as a main destination. */
+const navRows: Array<{ href: string; feature: FeatureKey; label: string }> = [
+  { href: "/emergency", feature: "emergency", label: "Emergency numbers & embassies" },
+  { href: "/checkin", feature: "checkin", label: "Check in" },
+  { href: "/map", feature: "map", label: "Offline map" },
+  { href: "/guide", feature: "guide", label: "Field guide" },
+  { href: "/prepare", feature: "prepare", label: "Before you fly" },
+  { href: "/alerts", feature: "alerts", label: "Alerts & advisories" },
 ];
 
 export default async function HomePage() {
@@ -65,32 +64,32 @@ export default async function HomePage() {
           nameIt="Numero Unico di Emergenza"
           tier="primary"
         />
-        <p className="mt-2 text-right">
-          <Link href="/emergency" className="text-link text-callout">
-            All emergency numbers & embassies
-          </Link>
-        </p>
       </section>
 
-      {/* No visible header: four parallel cards explain themselves. */}
-      <section className="mt-8" aria-label="Quick actions">
-        <div className="grid grid-cols-2 gap-3">
-          {quickActions.map((action) => (
-            <Link
-              key={action.href}
-              href={action.href}
-              prefetch={false}
-              className="plate border border-default bg-card p-4"
-            >
-              <span className="block text-icon-brand">
-                <Icon icon={action.icon} size="lg" />
-              </span>
-              <span className="mt-2 block text-headline">{action.title}</span>
-              <span className="mt-1 block text-footnote text-secondary">{action.descriptor}</span>
-            </Link>
+      {/* iOS inset-grouped navigation list. The whole row is the tap
+          target; hairline separators inset to the text edge. Emergency
+          navigation lives in the first row (red tile). */}
+      <nav className="mt-6" aria-label="App sections">
+        <ul className="plate overflow-hidden border border-default bg-card">
+          {navRows.map((row) => (
+            <li key={row.href} className="group">
+              <Link
+                href={row.href}
+                prefetch={false}
+                className="flex min-h-control-lg items-center gap-3 pl-4 active:bg-sunken"
+              >
+                <NavTile feature={row.feature} />
+                <span className="flex min-w-0 flex-1 items-center justify-between gap-3 self-stretch border-t border-separator py-2 pr-3 group-first:border-t-0">
+                  <span className="min-w-0 break-words text-body">{row.label}</span>
+                  <span className="shrink-0 text-tertiary">
+                    <Icon icon={ChevronRight} size="md" />
+                  </span>
+                </span>
+              </Link>
+            </li>
           ))}
-        </div>
-      </section>
+        </ul>
+      </nav>
 
       <section className="mt-8" aria-label="Latest advisory">
         <SectionHeader title="Latest advisory" />
@@ -105,12 +104,16 @@ export default async function HomePage() {
         </section>
       ) : null}
 
+      {/* Grouped-list rhythm: informational card matches the white inset
+          groups above it. */}
       <section className="mt-8" aria-label="Offline readiness">
-        <h2 className="text-headline">Built for dead zones</h2>
-        <p className="mt-1 text-subhead text-secondary">
-          Open the Emergency and Guide screens once while online and they stay available without a
-          connection — numbers, phrases, and briefings included.
-        </p>
+        <Card>
+          <h2 className="text-headline">Built for dead zones</h2>
+          <p className="mt-1 text-subhead text-secondary">
+            Open the Emergency and Guide screens once while online and they stay available without
+            a connection — numbers, phrases, and briefings included.
+          </p>
+        </Card>
       </section>
 
       <InstallGuide />
