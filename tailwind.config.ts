@@ -70,6 +70,56 @@ const config: Config = {
         mist: v("neutral-600"),
         line: v("neutral-200"),
       },
+      /* Semantic layer — components use these (and the raw-hue aliases
+         above during migration), never raw hex. Icons take color through
+         currentColor, so icon tokens surface as text-icon-*. */
+      textColor: {
+        primary: v("text-primary"),
+        secondary: v("text-secondary"),
+        tertiary: v("text-tertiary"),
+        brand: v("text-brand"),
+        "on-accent": v("text-on-accent"),
+        danger: v("text-danger"),
+        warning: v("text-warning"),
+        success: v("text-success"),
+        info: v("text-info"),
+        accent: v("accent-700"),
+        "accent-deep": v("accent-900"),
+        "icon-default": v("icon-default"),
+        "icon-brand": v("icon-brand"),
+        "icon-on-accent": v("icon-on-accent"),
+        "icon-danger": v("icon-danger"),
+        "icon-warning": v("icon-warning"),
+        "icon-success": v("icon-success"),
+        "icon-info": v("icon-info"),
+      },
+      backgroundColor: {
+        page: v("fill-page"),
+        card: v("fill-card"),
+        sunken: v("fill-sunken"),
+        brand: v("fill-brand"),
+        "brand-strong": v("fill-brand-strong"),
+        accent: v("accent-600"),
+        "accent-strong": v("accent-700"),
+        "accent-subtle": v("accent-200"),
+        "accent-faint": v("accent-100"),
+        "danger-subtle": v("fill-danger-subtle"),
+        "warning-subtle": v("fill-warning-subtle"),
+        "success-subtle": v("fill-success-subtle"),
+        "info-subtle": v("fill-info-subtle"),
+      },
+      borderColor: {
+        default: v("border-default"),
+        strong: v("border-strong"),
+        focus: v("border-focus"),
+        accent: v("accent-600"),
+      },
+      outlineColor: {
+        focus: v("border-focus"),
+      },
+      ringColor: {
+        focus: v("border-focus"),
+      },
       fontFamily: {
         sans: [
           "-apple-system",

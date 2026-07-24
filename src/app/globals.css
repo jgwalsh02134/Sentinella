@@ -77,6 +77,98 @@
   --neutral-800: 53 64 60;
   --neutral-900: 35 47 42;
   --neutral-950: 23 32 29;
+
+  /* ---- Semantic layer -------------------------------------------------
+     Usage-grouped (Text / Fill / Icon / Border) — deliberately NOT
+     per-component tokens. Components use these and the accent slot only;
+     the raw scales above never leave this file. */
+
+  /* text */
+  --text-primary: var(--neutral-950);
+  --text-secondary: var(--neutral-600);
+  --text-tertiary: var(--neutral-500);
+  --text-brand: var(--verde-700);
+  --text-link: var(--azzurro-700);
+  --text-on-accent: var(--neutral-0);
+  --text-danger: var(--signal-700);
+  --text-warning: var(--ambra-700);
+  --text-success: var(--verde-700);
+  --text-info: var(--azzurro-700);
+
+  /* fill */
+  --fill-page: var(--neutral-50);
+  --fill-card: var(--neutral-0);
+  --fill-sunken: var(--neutral-100);
+  --fill-brand: var(--verde-600);
+  --fill-brand-strong: var(--verde-700);
+  --fill-danger-subtle: var(--signal-200);
+  --fill-warning-subtle: var(--ambra-200);
+  --fill-success-subtle: var(--verde-200);
+  --fill-info-subtle: var(--azzurro-200);
+
+  /* icon (icons render via currentColor; these are their text colors) */
+  --icon-default: var(--text-secondary);
+  --icon-brand: var(--verde-600);
+  --icon-on-accent: var(--neutral-0);
+  --icon-danger: var(--text-danger);
+  --icon-warning: var(--text-warning);
+  --icon-success: var(--text-success);
+  --icon-info: var(--text-info);
+
+  /* border */
+  --border-default: var(--neutral-200);
+  --border-strong: var(--neutral-400);
+  --border-focus: var(--azzurro-600);
+
+  /* ---- Accent slot ----------------------------------------------------
+     One semantic vocabulary, five liveries. Components say "accent";
+     a data-accent attribute on any ancestor decides which hue that means.
+     Default binding is verde (brand). */
+  --accent-100: var(--verde-100);
+  --accent-200: var(--verde-200);
+  --accent-600: var(--verde-600);
+  --accent-700: var(--verde-700);
+  --accent-900: var(--verde-900);
+}
+
+[data-accent="verde"] {
+  --accent-100: var(--verde-100);
+  --accent-200: var(--verde-200);
+  --accent-600: var(--verde-600);
+  --accent-700: var(--verde-700);
+  --accent-900: var(--verde-900);
+}
+
+[data-accent="azzurro"] {
+  --accent-100: var(--azzurro-100);
+  --accent-200: var(--azzurro-200);
+  --accent-600: var(--azzurro-600);
+  --accent-700: var(--azzurro-700);
+  --accent-900: var(--azzurro-900);
+}
+
+[data-accent="terracotta"] {
+  --accent-100: var(--terracotta-100);
+  --accent-200: var(--terracotta-200);
+  --accent-600: var(--terracotta-600);
+  --accent-700: var(--terracotta-700);
+  --accent-900: var(--terracotta-900);
+}
+
+[data-accent="glicine"] {
+  --accent-100: var(--glicine-100);
+  --accent-200: var(--glicine-200);
+  --accent-600: var(--glicine-600);
+  --accent-700: var(--glicine-700);
+  --accent-900: var(--glicine-900);
+}
+
+[data-accent="oliva"] {
+  --accent-100: var(--oliva-100);
+  --accent-200: var(--oliva-200);
+  --accent-600: var(--oliva-600);
+  --accent-700: var(--oliva-700);
+  --accent-900: var(--oliva-900);
 }
 
 html {
