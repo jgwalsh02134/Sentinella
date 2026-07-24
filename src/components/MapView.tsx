@@ -6,7 +6,13 @@ import { FetchSource, PMTiles, Protocol } from "pmtiles";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { AlertTriangle, Download, LocateFixed, Map as MapIcon, Minus, Plus } from "lucide-react";
 import { MAP_PACKS, type MapPack } from "@/data/mapPacks";
-import { safetyPois, type SafetyPoi } from "@/data/safetyPois";
+import {
+  CATEGORY_LABEL,
+  buildBaseMarker,
+  buildPoiMarker,
+  mapPlaces,
+  type MapPlace,
+} from "@/lib/mapMarkers";
 import { buildMapStyle } from "@/lib/mapStyle";
 import { appleMapsDirectionsUrl } from "@/lib/maps";
 import ActionRow, { type Action } from "@/components/ui/ActionRow";
@@ -106,31 +112,10 @@ function bestPackFor(
   return pool[0];
 }
 
-/** Marker glyphs: color is never the only signal — each kind has its own
- *  shape, and the sheet's place card names the place. */
-const POI_GLYPHS: Record<SafetyPoi["kind"], string> = {
-  er: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z"/></svg>',
-  embassy:
-    '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 21V4"/><path d="M6 4h11l-2.5 4L17 12H6"/></svg>',
-};
-
-const BASE_GLYPH =
-  '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>';
-
-/** 44px tap target around a 30px visual pin. */
-function markerElement(kind: SafetyPoi["kind"] | "base", label: string): HTMLButtonElement {
-  const el = document.createElement("button");
-  el.type = "button";
-  el.setAttribute("aria-label", label);
-  el.className = "flex h-11 w-11 items-center justify-center";
-  // Explicit -600 steps: azzurro/terracotta have no DEFAULT alias, so the
-  // bare bg-azzurro / bg-terracotta classes would compile to nothing.
-  const color =
-    kind === "er" ? "bg-verde" : kind === "embassy" ? "bg-azzurro-600" : "bg-terracotta-600";
-  el.innerHTML = `<span class="pointer-events-none flex h-[1.875rem] w-[1.875rem] items-center justify-center rounded-full ${color} text-white ring-2 ring-white">${
-    kind === "base" ? BASE_GLYPH : POI_GLYPHS[kind]
-  }</span>`;
-  return el;
+/** CSS zoom bucket for the marker system: below z11 badges shrink to
+ *  24px dots (color + shape survive); z13+ reveals the short names. */
+function zoomBucket(zoom: number): "mini" | "plain" | "labeled" {
+  return zoom >= 13 ? "labeled" : zoom >= 11 ? "plain" : "mini";
 }
 
 function formatSize(bytes: number): string {
@@ -176,6 +161,8 @@ export default function MapView() {
   const downloadedRef = useRef<Set<string>>(new Set());
   const activeCityRef = useRef<string>(MAP_PACKS[0].id);
   const baseMarkerRef = useRef<maplibregl.Marker | null>(null);
+  /** Marker elements by place id, for selection + category toggles. */
+  const poiElsRef = useRef(new Map<string, HTMLButtonElement>());
 
   const [downloaded, setDownloaded] = useState<Set<string>>(new Set());
   const [progress, setProgress] = useState<Record<string, number>>({});
@@ -190,7 +177,7 @@ export default function MapView() {
   const [mapNotice, setMapNotice] = useState<string | null>(null);
   const [gpsDenied, setGpsDenied] = useState(false);
   const [gpsNotice, setGpsNotice] = useState<string | null>(null);
-  const [selectedPoi, setSelectedPoi] = useState<SafetyPoi | null>(null);
+  const [selectedPoi, setSelectedPoi] = useState<MapPlace | null>(null);
   const [base, setBase] = useState<HomeBase | null>(null);
   const [baseName, setBaseName] = useState("Hotel");
   const [detent, setDetent] = useState<SheetDetent>("peek");
@@ -203,9 +190,9 @@ export default function MapView() {
   /** Nearest 24h ER by straight-line distance — recomputed per GPS fix. */
   const nearestEr = useMemo(() => {
     if (!fix) return null;
-    let best: { poi: SafetyPoi; km: number; bearing: number } | null = null;
-    for (const poi of safetyPois) {
-      if (poi.kind !== "er") continue;
+    let best: { poi: MapPlace; km: number; bearing: number } | null = null;
+    for (const poi of mapPlaces) {
+      if (poi.category !== "er") continue;
       const km = haversineKm(fix.lat, fix.lng, poi.lngLat[1], poi.lngLat[0]);
       if (!best || km < best.km) {
         best = { poi, km, bearing: bearingDeg(fix.lat, fix.lng, poi.lngLat[1], poi.lngLat[0]) };
@@ -423,17 +410,28 @@ export default function MapView() {
       });
 
       // Safety POI overlay: DOM markers survive style swaps between packs,
-      // and the data is bundled — they work fully offline.
-      for (const poi of safetyPois) {
-        const el = markerElement(poi.kind, poi.name);
+      // and the data + artwork are bundled (inline SVG) — fully offline.
+      poiElsRef.current.clear();
+      for (const place of mapPlaces) {
+        const el = buildPoiMarker(place);
         el.addEventListener("click", (ev) => {
           ev.stopPropagation();
-          setSelectedPoi(poi);
+          setSelectedPoi(place);
           setDetent("half");
-          mapRef.current?.easeTo({ center: poi.lngLat });
+          mapRef.current?.easeTo({ center: place.lngLat });
         });
-        new maplibregl.Marker({ element: el, anchor: "center" }).setLngLat(poi.lngLat).addTo(map);
+        poiElsRef.current.set(place.id, el);
+        new maplibregl.Marker({ element: el, anchor: "center" })
+          .setLngLat(place.lngLat)
+          .addTo(map);
       }
+
+      // Marker zoom buckets are CSS-driven off this attribute.
+      const applyBucket = () => {
+        if (containerRef.current) containerRef.current.dataset.zoom = zoomBucket(map.getZoom());
+      };
+      applyBucket();
+      map.on("zoom", applyBucket);
 
       map.on("moveend", evaluateBestPack);
 
@@ -461,12 +459,19 @@ export default function MapView() {
     baseMarkerRef.current?.remove();
     baseMarkerRef.current = null;
     if (base) {
-      const el = markerElement("base", `Home base: ${base.name}`);
+      const el = buildBaseMarker(`Home base: ${base.name}`);
       baseMarkerRef.current = new maplibregl.Marker({ element: el, anchor: "center" })
         .setLngLat([base.lng, base.lat])
         .addTo(map);
     }
   }, [base]);
+
+  // Selected marker scales 1.15x with a stronger shadow (CSS, data-driven).
+  useEffect(() => {
+    poiElsRef.current.forEach((el, id) => {
+      el.dataset.selected = String(id === selectedPoi?.id);
+    });
+  }, [selectedPoi]);
 
   function saveBase() {
     if (!fix) return;
@@ -795,9 +800,7 @@ export default function MapView() {
               <div>
                 <div className="flex items-start gap-3">
                   <div className="min-w-0 flex-1">
-                    <p className="eyebrow">
-                      {selectedPoi.kind === "er" ? "24h emergency room" : "Embassy / consulate"}
-                    </p>
+                    <p className="eyebrow">{CATEGORY_LABEL[selectedPoi.category]}</p>
                     <h2 className="text-headline">{selectedPoi.name}</h2>
                     <p className="mt-1 text-footnote text-secondary">{selectedPoi.address}</p>
                   </div>

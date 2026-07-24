@@ -101,3 +101,18 @@ export function buildMapStyle(opts: {
     layers: styleLayers,
   };
 }
+
+/**
+ * Cartography colors for the DOM safety markers (lib/mapMarkers.ts).
+ * Raw hex is sanctioned in this file only (canvas cartography); marker
+ * colors are wayfinding identities, not UI tokens. None is signal red —
+ * markers are wayfinding, never emergency actions.
+ */
+export const MARKER_COLORS = {
+  /** Italian hospital road-sign blue — the exact sign on the street. */
+  er: "#1B62B5",
+  /** Navy pin for embassies & consulates. */
+  embassy: "#1D3557",
+  /** Police dark blue — distinct from hospital blue by shape AND tone. */
+  police: "#27408B",
+} as const;

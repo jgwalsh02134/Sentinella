@@ -356,6 +356,87 @@ textarea,
   margin-bottom: 6.75rem;
 }
 
+/* ---- Map POI markers ----------------------------------------------------
+   Signage-language badges (lib/mapMarkers.ts): 36px visual inside a 44px
+   hit area. Zoom buckets are CSS-only, driven by data-zoom on the map
+   container: "mini" (<z11) shrinks badges to 24px dots that keep their
+   color + shape; "labeled" (≥z13) reveals the short names. Selection
+   scales 1.15x with a stronger shadow and rides above neighbors. */
+.poi-marker {
+  position: relative;
+  display: flex;
+  height: 2.75rem;
+  width: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+}
+.poi-visual {
+  position: relative;
+  height: 2.25rem;
+  width: 2.25rem;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.35));
+  transition: transform 150ms ease-out;
+}
+.poi-visual > svg {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+[data-zoom="mini"] .poi-visual {
+  transform: scale(0.667);
+}
+.poi-marker[data-selected="true"] .poi-visual {
+  transform: scale(1.15);
+  filter: drop-shadow(0 3px 6px rgb(0 0 0 / 0.45));
+}
+.maplibregl-marker:has(.poi-marker[data-selected="true"]) {
+  z-index: 5;
+}
+.poi-usflag {
+  position: absolute;
+  right: -0.3125rem;
+  bottom: -0.125rem;
+  display: block;
+  height: 0.625rem;
+  width: 1rem;
+  overflow: hidden;
+  border-radius: 0.1875rem;
+  box-shadow: 0 0 0 1.5px rgb(var(--neutral-0));
+}
+.poi-usflag svg {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+.poi-label {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  color: rgb(var(--neutral-950));
+  /* White halo so names read over any basemap ink. */
+  text-shadow:
+    0 0 3px rgb(var(--neutral-0)),
+    0 0 3px rgb(var(--neutral-0)),
+    0 0 3px rgb(var(--neutral-0)),
+    0 0 3px rgb(var(--neutral-0));
+  pointer-events: none;
+}
+.poi-label-above {
+  top: auto;
+  bottom: 100%;
+}
+[data-zoom="labeled"] .poi-label {
+  display: block;
+}
+
 /* ---- Motion system ----------------------------------------------------
    ONE system: 150–200ms ease-out, applied only to disclosure, pressed
    states, and the skeleton shimmer. No entrance animations. Everything
