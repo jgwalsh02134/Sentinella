@@ -78,6 +78,14 @@ export const basicsItems: InfoItem[] = [
     ],
   },
   {
+    title: "IT-alert: the loud message is official",
+    body: "Italy's national cell-broadcast emergency system reaches any powered-on phone connected to an Italian network — including US phones roaming or on a travel eSIM. No app, no registration, nothing to set up.",
+    bullets: [
+      "If a loud IT-alert lands on your phone, read it: it's the government warning everyone in the affected area about a major emergency.",
+    ],
+    links: [{ label: "it-alert.gov.it (official)", url: "https://www.it-alert.gov.it" }],
+  },
+  {
     title: "Strikes are scheduled, not surprises",
     body: "Transport strikes (scioperi) are announced days ahead and usually run set hours with guaranteed peak service. The night before any train or flight, check the operator's site — Trenitalia, Italo, or your airline — and have a fallback.",
     links: [
