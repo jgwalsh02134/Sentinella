@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ITALY_TZ, formatDualTime } from "@/lib/timezones";
 import { Check, Clock3, MapPin } from "lucide-react";
 import Icon from "@/components/Icon";
-import DstNote from "@/components/DstNote";
 import ReminderSettings from "@/components/ReminderSettings";
 import TripTracking from "@/components/TripTracking";
 import Badge from "@/components/ui/Badge";
@@ -469,8 +468,6 @@ export default function CheckinPanel() {
       />
 
       <ReminderSettings />
-
-      <DstNote />
 
       <section>
         <SectionHeader title="History" />

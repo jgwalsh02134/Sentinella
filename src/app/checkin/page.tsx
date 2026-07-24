@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { MapPin, Clock3, Users } from "lucide-react";
 import CheckinPanel from "@/components/CheckinPanel";
 import Icon from "@/components/Icon";
+import LiveClock from "@/components/LiveClock";
 import ShareStatusLink from "@/components/ShareStatusLink";
 import { getSessionUser } from "@/lib/session";
 import Button from "@/components/ui/Button";
@@ -61,6 +62,10 @@ export default async function CheckinPage() {
         title="Leave a breadcrumb"
         intro="A timestamped status with optional position. Your history builds a trail your team or contacts can reconstruct if it's ever needed."
       />
+      {/* Both zones at a glance: a check-in timestamp reads differently in
+          Rome and New York, so the full clock lives on this screen. */}
+      <LiveClock variant="full" className="mt-5" />
+
       {session ? (
         <>
           <div className="mt-5">

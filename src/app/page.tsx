@@ -8,6 +8,7 @@ import Icon from "@/components/Icon";
 import Crest from "@/components/Crest";
 import InstallGuide from "@/components/InstallGuide";
 import LatestAlert from "@/components/LatestAlert";
+import LiveClock from "@/components/LiveClock";
 import NotificationSettings from "@/components/NotificationSettings";
 import SignOutButton from "@/components/SignOutButton";
 import Button from "@/components/ui/Button";
@@ -55,6 +56,9 @@ export default async function HomePage() {
           </Link>
         )}
       </header>
+
+      {/* Live dual-timezone strip — device clock, works fully offline. */}
+      <LiveClock variant="compact" className="mt-3" />
 
       <section className="mt-5" aria-label="Emergency">
         <CallPlate
