@@ -173,7 +173,7 @@ export default function TripTracking({ onAutoCheckIn }: Props) {
             aria-checked={active}
             aria-label="Track my trip"
             onClick={() => (active ? stop() : start())}
-            className="flex h-11 w-14 shrink-0 items-center justify-center rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-verde"
+            className="flex h-11 w-14 shrink-0 items-center justify-center rounded-lg"
           >
             <span
               aria-hidden="true"

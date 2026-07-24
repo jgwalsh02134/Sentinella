@@ -21,6 +21,18 @@ const tabHeadings: Record<Tab, string> = {
 };
 
 /**
+ * Category liveries via the accent slot — the label always accompanies the
+ * color, so hue is never the only signal. Content text stays neutral.
+ */
+const tabAccents: Record<Tab, string> = {
+  Basics: "oliva",
+  Scams: "terracotta",
+  Phrases: "glicine",
+  Cities: "azzurro",
+  Health: "verde",
+};
+
+/**
  * Split off the first sentence so an item's lead can render bold and the
  * key fact scans in two seconds. Avoids false breaks after abbreviations
  * ("U.S. STEP") by requiring a lowercase letter, digit, or closing
@@ -62,7 +74,7 @@ function ColonLead({ text }: { text: string }) {
 /** Basics and Health share one card layout. */
 function InfoCard({ item }: { item: InfoItem }) {
   return (
-    <article className="plate border border-line bg-white p-5">
+    <article className="plate border border-line border-l-4 border-l-accent bg-white p-5">
       <h3 className="text-base font-bold leading-snug">{item.title}</h3>
       <p className="body-copy mt-1.5 text-mist">
         <LeadBody text={item.body} />
@@ -87,7 +99,7 @@ function InfoCard({ item }: { item: InfoItem }) {
                 href={link.url}
                 target={external ? "_blank" : undefined}
                 rel={external ? "noopener noreferrer" : undefined}
-                className="flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde px-4 text-sm font-bold text-verde active:bg-verde-tint"
+                className="flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-accent px-4 text-sm font-bold text-accent active:bg-accent-subtle"
               >
                 {link.label}
               </a>
@@ -116,9 +128,10 @@ export default function GuideTabs() {
               key={t}
               role="tab"
               aria-selected={active}
+              data-accent={tabAccents[t]}
               onClick={() => setTab(t)}
               className={`min-h-[2.75rem] shrink-0 rounded-full border-2 px-5 text-sm font-bold transition-colors ${
-                active ? "border-verde bg-verde text-white" : "border-line bg-white text-mist"
+                active ? "border-accent bg-accent-subtle text-accent" : "border-default bg-card text-secondary"
               }`}
             >
               {t}
@@ -127,8 +140,9 @@ export default function GuideTabs() {
         })}
       </div>
 
+      <div data-accent={tabAccents[tab]}>
       <header className="mt-4">
-        <p className="eyebrow">{tab}</p>
+        <p className="eyebrow text-accent">{tab}</p>
         <h2 className="title-section">{tabHeadings[tab]}</h2>
       </header>
 
@@ -144,13 +158,13 @@ export default function GuideTabs() {
 
         {tab === "Scams" &&
           scams.map((s) => (
-            <article key={s.title} className="plate border border-line bg-white p-5">
+            <article key={s.title} className="plate border border-line border-l-4 border-l-accent bg-white p-5">
               <h3 className="text-base font-bold leading-snug">{s.title}</h3>
               <p className="mt-0.5 text-xs font-semibold uppercase tracking-wide text-mist">
                 {s.where}
               </p>
               <p className="body-copy mt-2 text-mist">{s.how}</p>
-              <p className="body-copy mt-2 rounded-xl bg-verde-tint p-3 text-verde-deep">
+              <p className="body-copy mt-2 rounded-xl bg-accent-subtle p-3 text-accent-deep">
                 <strong className="font-bold">Counter:</strong> {s.counter}
               </p>
             </article>
@@ -162,11 +176,11 @@ export default function GuideTabs() {
               <h3 className="eyebrow mt-2">{group.label}</h3>
               <div className="mt-2 space-y-2">
                 {group.phrases.map((p) => (
-                  <div key={p.it} className="plate border border-line bg-white p-4">
+                  <div key={p.it} className="plate border border-line border-l-4 border-l-accent bg-white p-4">
                     <p className="text-xs font-semibold uppercase tracking-wide text-mist">
                       {p.en}
                     </p>
-                    <p className="mt-1 text-lg font-bold leading-snug text-verde-deep">
+                    <p className="mt-1 text-lg font-bold leading-snug text-accent-deep">
                       <ItalyFlag /> <i lang="it">{p.it}</i>
                     </p>
                     <p className="mt-0.5 text-sm italic text-mist">{p.say}</p>
@@ -178,9 +192,9 @@ export default function GuideTabs() {
 
         {tab === "Cities" &&
           regions.map((r) => (
-            <article key={r.name} className="plate border border-line bg-white p-5">
+            <article key={r.name} className="plate border border-line border-l-4 border-l-accent bg-white p-5">
               <h3 className="title-section">{r.name}</h3>
-              <p className="body-copy mt-0.5 font-medium text-verde-deep">{r.headline}</p>
+              <p className="body-copy mt-0.5 font-medium text-accent">{r.headline}</p>
               <h4 className="eyebrow mt-3">Watch for</h4>
               <ul className="mt-1 space-y-1.5">
                 {r.watch.map((w) => (
@@ -217,7 +231,7 @@ export default function GuideTabs() {
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde px-4 text-sm font-bold text-verde active:bg-verde-tint"
+                      className="flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-accent px-4 text-sm font-bold text-accent active:bg-accent-subtle"
                     >
                       {link.label}
                     </a>
@@ -229,6 +243,7 @@ export default function GuideTabs() {
           ))}
 
         {tab === "Health" && healthItems.map((item) => <InfoCard key={item.title} item={item} />)}
+      </div>
       </div>
     </div>
   );

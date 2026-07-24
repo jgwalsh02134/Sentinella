@@ -29,10 +29,10 @@ type Payload = {
  * genuine emergency-adjacent signaling, the allowed use of red.
  */
 const LEVEL_BADGE: Record<number, string> = {
-  1: "bg-verde-tint text-verde-deep",
-  2: "bg-ambra-tint text-ambra",
-  3: "bg-signal-tint text-signal-deep",
-  4: "bg-signal-tint text-signal-deep",
+  1: "bg-success-subtle text-success",
+  2: "bg-warning-subtle text-warning",
+  3: "bg-danger-subtle text-danger",
+  4: "bg-danger-subtle text-danger",
 };
 
 const SOURCE_LABEL: Record<Item["source"], string> = {
@@ -127,7 +127,7 @@ export default function UsAdvisoriesPanel() {
         <div className="plate border border-line bg-white p-5">
           <div className="flex items-center gap-2">
             <span
-              className={`rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide ${LEVEL_BADGE[adv.level] ?? "bg-ambra-tint text-ambra"}`}
+              className={`rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide ${LEVEL_BADGE[adv.level] ?? "bg-warning-subtle text-warning"}`}
             >
               Level {adv.level}
             </span>
@@ -191,7 +191,7 @@ function AdvisoryList({ items }: { items: Item[] }) {
       {items.map((item) => (
         <li key={item.id} className="plate border border-line bg-white p-5">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-verde-tint px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-verde-deep">
+            <span className="rounded-full bg-info-subtle px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-info">
               Official
             </span>
             {item.regions.map((r) => (
@@ -207,7 +207,7 @@ function AdvisoryList({ items }: { items: Item[] }) {
           <h4 className="mt-2 break-words text-base font-bold leading-snug">{item.title}</h4>
           {item.body ? (
             <details className="mt-1">
-              <summary className="body-copy cursor-pointer text-sm font-semibold text-verde">
+              <summary className="body-copy cursor-pointer text-sm font-semibold text-info">
                 Details
               </summary>
               <p className="body-copy mt-1 whitespace-pre-line break-words text-mist">{item.body}</p>

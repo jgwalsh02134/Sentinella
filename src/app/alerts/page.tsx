@@ -27,7 +27,7 @@ export default function AlertsPage() {
         </div>
       </section>
 
-      <section className="mt-6" aria-label="Official U.S. Department of State advisories">
+      <section className="mt-6" aria-label="Official U.S. Department of State advisories" data-accent="azzurro">
         <h2 className="eyebrow">Official — U.S. Department of State</h2>
         <div className="mt-2">
           <UsAdvisoriesPanel />

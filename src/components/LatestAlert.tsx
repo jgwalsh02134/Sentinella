@@ -32,9 +32,9 @@ type Candidate = {
 };
 
 const TEAM_BADGE: Record<TeamAlert["severity"], { rank: number; className: string }> = {
-  info: { rank: 1, className: "bg-verde-tint text-verde-deep" },
-  advisory: { rank: 2, className: "bg-ambra-tint text-ambra" },
-  critical: { rank: 3, className: "bg-signal-tint text-signal-deep" },
+  info: { rank: 1, className: "bg-info-subtle text-info" },
+  advisory: { rank: 2, className: "bg-warning-subtle text-warning" },
+  critical: { rank: 3, className: "bg-danger-subtle text-danger" },
 };
 
 function teamCandidate(alert: TeamAlert): Candidate {
@@ -53,10 +53,10 @@ function officialCandidate(item: OfficialItem): Candidate {
   const rank = item.source === "state_advisory" ? Math.min(item.level ?? 1, 3) : 2;
   const badgeClass =
     rank >= 3
-      ? "bg-signal-tint text-signal-deep"
+      ? "bg-danger-subtle text-danger"
       : rank === 2
-        ? "bg-ambra-tint text-ambra"
-        : "bg-verde-tint text-verde-deep";
+        ? "bg-warning-subtle text-warning"
+        : "bg-success-subtle text-success";
   return {
     title: item.title,
     badge: item.level ? `Official · Level ${item.level}` : "Official",
@@ -129,7 +129,7 @@ export default function LatestAlert() {
         <span className="min-w-0 truncate text-xs font-semibold text-mist">{candidate.region}</span>
       </span>
       <span className="mt-2 block break-words text-sm font-bold leading-snug">{candidate.title}</span>
-      <span className="mt-1 block text-xs font-semibold text-verde">All advisories →</span>
+      <span className="mt-1 block text-xs font-semibold text-info">All advisories →</span>
     </Link>
   );
 }

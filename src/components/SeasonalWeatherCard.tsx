@@ -29,9 +29,12 @@ export default function SeasonalWeatherCard() {
   }
 
   return (
-    <article className="plate border border-line bg-white p-5">
+    <article
+      className="plate border border-line bg-white p-5"
+      data-accent={card.id === "allerta" ? "azzurro" : undefined}
+    >
       <div className="flex items-start gap-2.5">
-        <span className="mt-0.5 text-ambra">
+        <span className={card.id === "heat" ? "mt-0.5 text-icon-warning" : "mt-0.5 text-icon-info"}>
           <Icon icon={card.id === "heat" ? Sun : CloudRain} size="lg" />
         </span>
         <div>
@@ -69,7 +72,9 @@ export default function SeasonalWeatherCard() {
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde px-4 text-sm font-bold text-verde active:bg-verde-tint"
+            className={card.id === "heat"
+              ? "flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-ambra px-4 text-sm font-bold text-warning active:bg-warning-subtle"
+              : "flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-accent px-4 text-sm font-bold text-accent active:bg-accent-subtle"}
           >
             {link.label}
           </a>

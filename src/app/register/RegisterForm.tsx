@@ -86,7 +86,7 @@ export default function RegisterForm({ invitesRequired }: { invitesRequired: boo
       <button
         type="submit"
         disabled={busy}
-        className="min-h-[3.25rem] w-full rounded-xl bg-verde text-base font-bold text-white active:bg-verde-deep disabled:opacity-60"
+        className="min-h-[3.25rem] w-full rounded-xl bg-verde text-base font-bold text-white active:bg-brand-strong disabled:bg-sunken disabled:text-tertiary"
       >
         {busy ? "Creating…" : "Create account"}
       </button>

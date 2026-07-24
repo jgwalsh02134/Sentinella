@@ -44,27 +44,39 @@ export default function PrepareChecklist() {
     });
   }
 
+  /** Section liveries via the accent slot; labels carry the meaning. */
+  const sectionAccents: Record<string, string> = {
+    "entry-rules": "azzurro",
+    "global-entry": "oliva",
+    health: "glicine",
+    setup: "terracotta",
+  };
+
   return (
     <div className="space-y-6">
       {predeparture.map((section) => (
-        <section key={section.id} aria-label={section.title}>
+        <section
+          key={section.id}
+          aria-label={section.title}
+          data-accent={sectionAccents[section.id]}
+        >
           <h2 className="eyebrow">{section.title}</h2>
           <ul className="mt-2 space-y-3">
             {section.items.map((item) => {
               const done = checked.has(item.id);
               return (
-                <li key={item.id} className="plate border border-line bg-white p-4">
+                <li key={item.id} className="plate border border-line border-l-4 border-l-accent bg-white p-4">
                   <button
                     type="button"
                     role="checkbox"
                     aria-checked={done}
                     onClick={() => toggle(item.id)}
-                    className="flex min-h-[2.75rem] w-full items-start gap-3 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-verde"
+                    className="flex min-h-[2.75rem] w-full items-start gap-3 text-left"
                   >
                     <span
                       aria-hidden="true"
                       className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 ${
-                        done ? "border-verde bg-verde text-white" : "border-line bg-white"
+                        done ? "border-accent bg-accent text-on-accent" : "border-line bg-white"
                       }`}
                     >
                       {done ? (

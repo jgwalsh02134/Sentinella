@@ -178,7 +178,7 @@ export default function NotificationSettings() {
           aria-label="Notifications"
           disabled={busy}
           onClick={() => void toggle()}
-          className="flex h-11 w-14 shrink-0 items-center justify-center rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-verde disabled:opacity-60"
+          className="flex h-11 w-14 shrink-0 items-center justify-center rounded-lg disabled:border-neutral-300 disabled:text-tertiary"
         >
           <span
             aria-hidden="true"

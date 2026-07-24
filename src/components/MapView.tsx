@@ -237,7 +237,7 @@ export default function MapView() {
                   <button
                     type="button"
                     onClick={() => void selectCity(city)}
-                    className="min-h-[2.75rem] flex-1 rounded-lg text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-verde"
+                    className="min-h-[2.75rem] flex-1 rounded-lg text-left"
                     aria-label={`Show ${city.name} on the map`}
                   >
                     <span className="block text-sm font-bold">
@@ -262,7 +262,7 @@ export default function MapView() {
                     aria-checked={isDownloaded || isDownloading}
                     aria-label={`Offline map for ${city.name}`}
                     onClick={() => void togglePack(city)}
-                    className="flex h-11 w-14 shrink-0 items-center justify-center rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-verde"
+                    className="flex h-11 w-14 shrink-0 items-center justify-center rounded-lg"
                   >
                     <span
                       aria-hidden="true"

@@ -14,9 +14,9 @@ type Alert = {
 };
 
 const severityMeta: Record<Severity, { label: string; badge: string }> = {
-  info: { label: "Info", badge: "bg-verde-tint text-verde-deep" },
-  advisory: { label: "Advisory", badge: "bg-ambra-tint text-ambra" },
-  critical: { label: "Critical", badge: "bg-signal-tint text-signal-deep" },
+  info: { label: "Info", badge: "bg-info-subtle text-info" },
+  advisory: { label: "Advisory", badge: "bg-warning-subtle text-warning" },
+  critical: { label: "Critical", badge: "bg-danger-subtle text-danger" },
 };
 
 function formatWhen(iso: string) {
@@ -95,7 +95,7 @@ export default function AlertsPanel() {
           <button
             type="button"
             onClick={() => setShowForm((v) => !v)}
-            className="min-h-[2.75rem] w-full rounded-xl border-2 border-verde font-semibold text-verde active:bg-verde-tint"
+            className="min-h-[2.75rem] w-full rounded-xl border-2 border-verde font-semibold text-verde active:bg-accent-subtle"
           >
             {showForm ? "Close" : "Publish an alert"}
           </button>
@@ -141,7 +141,7 @@ export default function AlertsPanel() {
                 type="button"
                 onClick={publish}
                 disabled={publishing || !title.trim() || !body.trim()}
-                className="min-h-[3rem] w-full rounded-xl bg-verde font-bold text-white active:bg-verde-deep disabled:opacity-60"
+                className="min-h-[3rem] w-full rounded-xl bg-verde font-bold text-white active:bg-brand-strong disabled:bg-sunken disabled:text-tertiary"
               >
                 {publishing ? "Publishing…" : "Publish"}
               </button>

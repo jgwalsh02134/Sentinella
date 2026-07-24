@@ -67,7 +67,7 @@ export default function ReminderSettings() {
               aria-checked={selected}
               disabled={hours === null}
               onClick={() => void select(opt.hours)}
-              className={`min-h-[2.75rem] rounded-xl border-2 text-sm font-bold transition-colors disabled:opacity-60 ${
+              className={`min-h-[2.75rem] rounded-xl border-2 text-sm font-bold transition-colors disabled:border-neutral-300 disabled:text-tertiary ${
                 selected ? "border-verde bg-verde text-white" : "border-line bg-white text-mist"
               }`}
             >

@@ -109,7 +109,7 @@ export default function ShareLocation() {
           type="button"
           onClick={locate}
           disabled={busy}
-          className="min-h-[3rem] flex-1 rounded-xl bg-verde px-4 font-semibold text-white active:bg-verde-deep disabled:opacity-60"
+          className="min-h-[3rem] flex-1 rounded-xl bg-verde px-4 font-semibold text-white active:bg-brand-strong disabled:bg-sunken disabled:text-tertiary"
         >
           {busy ? "Locating…" : fix ? "Refresh position" : "Get my position"}
         </button>
@@ -117,7 +117,7 @@ export default function ShareLocation() {
           <button
             type="button"
             onClick={share}
-            className="min-h-[3rem] flex-1 rounded-xl border-2 border-verde px-4 font-semibold text-verde active:bg-verde-tint"
+            className="min-h-[3rem] flex-1 rounded-xl border-2 border-verde px-4 font-semibold text-verde active:bg-accent-subtle"
           >
             Share
           </button>

@@ -192,16 +192,21 @@ textarea,
   touch-action: manipulation;
 }
 
-/* Every interactive element gets a visible focus ring. */
+/* One global focus ring: azzurro over a white underlay filling the offset
+   gap, so the ring reads against any fill — paper, white cards, and the
+   solid signal emergency plates alike. */
 :focus-visible {
-  outline: 3px solid rgb(var(--verde-600));
+  outline: 2px solid rgb(var(--border-focus));
   outline-offset: 2px;
+  box-shadow: 0 0 0 2px rgb(var(--neutral-0));
   border-radius: 4px;
 }
 
-/* Uppercase micro-labels used as section eyebrows throughout the app. */
+/* Uppercase micro-labels used as section eyebrows throughout the app.
+   Accent-aware: verde by default, re-liveried inside data-accent scopes. */
 .eyebrow {
-  @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-verde;
+  @apply text-[11px] font-semibold uppercase tracking-[0.14em];
+  color: rgb(var(--accent-700));
 }
 
 /* ---- Type scale -----------------------------------------------------
@@ -237,9 +242,11 @@ textarea,
   @apply rounded-r-xl border-l-[3px] border-ambra bg-ambra-tint p-3 text-[15px] leading-relaxed text-ink;
 }
 
-/* Standalone text link. */
+/* Standalone text link — azzurro, so links stop competing with verde
+   action buttons. */
 .text-link {
-  @apply font-semibold text-verde underline underline-offset-2;
+  @apply font-semibold underline underline-offset-2;
+  color: rgb(var(--text-link));
 }
 
 /* Signage-style plate: the app's signature element. */

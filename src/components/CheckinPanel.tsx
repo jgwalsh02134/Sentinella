@@ -197,7 +197,7 @@ export default function CheckinPanel() {
             type="button"
             onClick={capture}
             disabled={locating}
-            className="min-h-[3rem] w-full rounded-xl border-2 border-verde px-4 font-semibold text-verde active:bg-verde-tint disabled:opacity-60"
+            className="min-h-[3rem] w-full rounded-xl border-2 border-verde px-4 font-semibold text-verde active:bg-accent-subtle disabled:bg-sunken disabled:text-tertiary"
           >
             {locating ? (
               "Getting position…"
@@ -239,7 +239,7 @@ export default function CheckinPanel() {
           type="button"
           onClick={submit}
           disabled={saving}
-          className="mt-4 min-h-[3.25rem] w-full rounded-xl bg-verde text-base font-bold text-white active:bg-verde-deep disabled:opacity-60"
+          className="mt-4 min-h-[3.25rem] w-full rounded-xl bg-verde text-base font-bold text-white active:bg-brand-strong disabled:bg-sunken disabled:text-tertiary"
         >
           {saving ? "Saving…" : "Check in"}
         </button>
@@ -276,7 +276,7 @@ export default function CheckinPanel() {
                     href={`https://maps.google.com/?q=${c.lat},${c.lng}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-1 inline-block break-all font-mono text-xs tabular-nums text-verde underline"
+                    className="text-link mt-1 inline-block break-all font-mono text-xs tabular-nums"
                   >
                     {c.lat.toFixed(5)}, {c.lng.toFixed(5)}
                   </a>

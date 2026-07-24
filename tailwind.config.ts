@@ -26,6 +26,8 @@ const scale = (hue: string) => ({
 
 const config: Config = {
   content: ["./src/**/*.{ts,tsx}"],
+  // iOS sticky-hover fix: hover: styles only apply on devices that hover.
+  future: { hoverOnlyWhenSupported: true },
   theme: {
     extend: {
       colors: {
