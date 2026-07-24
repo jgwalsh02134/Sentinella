@@ -116,6 +116,20 @@ const config: Config = {
         terracotta: scale("terracotta"),
         glicine: scale("glicine"),
         oliva: scale("oliva"),
+        /* iOS system palette (light values) — wayfinding tiles and status
+           ONLY. Never a button color: the interactive tint stays verde,
+           and solid red fills stay exclusive to emergency actions. */
+        ios: {
+          red: v("ios-red"),
+          orange: v("ios-orange"),
+          yellow: v("ios-yellow"),
+          green: v("ios-green"),
+          teal: v("ios-teal"),
+          blue: v("ios-blue"),
+          indigo: v("ios-indigo"),
+          purple: v("ios-purple"),
+          gray: v("ios-gray"),
+        },
         neutral: {
           0: v("neutral-0"),
           50: v("neutral-50"),
@@ -179,6 +193,8 @@ const config: Config = {
         strong: v("border-strong"),
         focus: v("border-focus"),
         accent: v("accent-600"),
+        /* iOS hairline separator (fixed 29% alpha per HIG). */
+        separator: "rgba(60, 60, 67, 0.29)",
       },
       outlineColor: {
         focus: v("border-focus"),

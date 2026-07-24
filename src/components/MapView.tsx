@@ -835,7 +835,7 @@ export default function MapView() {
                 <section aria-label="Your position">
                   {fix ? (
                     <>
-                      <p className="font-mono text-headline font-bold tabular-nums text-verde-deep">
+                      <p className="font-mono text-headline font-bold tabular-nums text-primary">
                         {fix.lat.toFixed(5)}, {fix.lng.toFixed(5)}{" "}
                         <span className="font-sans text-footnote font-normal text-secondary">
                           ±{Math.round(fix.accuracyM)} m
@@ -862,7 +862,7 @@ export default function MapView() {
                   ) : (
                     <p className="text-subhead text-secondary">
                       GPS works with no signal — tap{" "}
-                      <span className="font-semibold text-verde-deep">locate</span> for your
+                      <span className="font-semibold text-primary">locate</span> for your
                       position and the nearest ER.
                     </p>
                   )}

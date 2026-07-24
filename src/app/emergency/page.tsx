@@ -106,7 +106,7 @@ export default function EmergencyPage() {
           <ol className="mt-2 space-y-2">
             {callScript.map((step, i) => (
               <li key={step.lead} className="body-copy flex gap-3">
-                <span className="font-mono font-bold text-verde">{i + 1}</span>
+                <span className="font-mono font-bold text-secondary">{i + 1}</span>
                 <span className="min-w-0 text-secondary">
                   <strong className="font-bold text-primary">{step.lead}</strong> {step.rest}
                 </span>
@@ -224,7 +224,7 @@ export default function EmergencyPage() {
           <ol className="space-y-3">
             {lostDocumentSteps.map((step, i) => (
               <li key={step.lead} className="body-copy flex gap-3">
-                <span className="font-mono font-bold text-verde">{i + 1}</span>
+                <span className="font-mono font-bold text-secondary">{i + 1}</span>
                 <span className="min-w-0 text-secondary">
                   <strong className="font-bold text-primary">{step.lead}</strong>{" "}
                   <TelText text={step.rest} />

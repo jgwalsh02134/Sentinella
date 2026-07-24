@@ -68,7 +68,7 @@ export default function PrepareChecklist() {
 
   return (
     <div>
-      <p className="text-subhead font-semibold text-brand" role="status">
+      <p className="text-subhead font-semibold text-secondary" role="status">
         {hydrated ? `${doneCount} of ${allIds.length} done` : `${allIds.length} items`}
       </p>
 

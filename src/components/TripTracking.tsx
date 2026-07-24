@@ -150,12 +150,12 @@ export default function TripTracking({ onAutoCheckIn }: Props) {
     <>
       {active ? (
         <div
-          className="sticky top-2 z-20 flex items-center gap-2 rounded-full border border-verde/30 bg-verde-tint px-4 py-2"
+          className="sticky top-2 z-20 flex items-center gap-2 rounded-full border border-default bg-success-subtle px-4 py-2"
           role="status"
           aria-live="polite"
         >
           <span className="h-2.5 w-2.5 rounded-full bg-verde" aria-hidden="true" />
-          <span className="text-footnote font-semibold text-verde-deep">
+          <span className="text-footnote font-semibold text-success">
             Trip tracking on — auto check-in every 5 min or 250 m
           </span>
         </div>
@@ -175,16 +175,16 @@ export default function TripTracking({ onAutoCheckIn }: Props) {
         </div>
 
         {active ? (
-          <div className="mt-3 rounded-xl bg-verde-tint p-3">
+          <div className="mt-3 rounded-xl bg-success-subtle p-3">
             {live ? (
-              <p className="font-mono text-callout font-bold tabular-nums text-verde-deep">
+              <p className="font-mono text-callout font-bold tabular-nums text-primary">
                 {live.lat.toFixed(5)}, {live.lng.toFixed(5)}{" "}
                 <span className="font-sans text-footnote font-normal">~{Math.round(live.accuracyM)} m</span>
               </p>
             ) : (
-              <p className="text-callout text-verde-deep">Getting a fix…</p>
+              <p className="text-callout text-secondary">Getting a fix…</p>
             )}
-            <p className="mt-1 text-footnote text-verde-deep/80">
+            <p className="mt-1 text-footnote text-secondary">
               {lastSentAt ? `Last sent ${formatClock(lastSentAt)}` : "First auto check-in sends once a fix lands."}
             </p>
           </div>

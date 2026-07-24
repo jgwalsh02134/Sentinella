@@ -64,11 +64,33 @@
   --oliva-700: 83 94 61;
   --oliva-900: 57 65 42;
 
-  /* neutral ramp — paper=50, line=200, mist=600, ink=950 (aliases kept) */
+  /* ---- iOS system palette (Apple HIG, light values) --------------------
+     For wayfinding tiles and status ONLY — never new button colors. The
+     app's tint (the interactive color) remains verde. One color = one
+     meaning; a label or glyph always accompanies the color. */
+  --ios-red: 255 59 48;
+  --ios-orange: 255 149 0;
+  --ios-yellow: 255 204 0;
+  --ios-green: 52 199 89;
+  --ios-teal: 48 176 199;
+  --ios-blue: 0 122 255;
+  --ios-indigo: 88 86 214;
+  --ios-purple: 175 82 222;
+  --ios-gray: 142 142 147;
+  /* iOS grouped-table background; hairline separator is rgba(60,60,67,.29)
+     (fixed alpha, applied in tailwind.config as border-separator). */
+  --grouped-bg: 242 242 247;
+  --separator: 60 60 67;
+
+  /* neutral ramp — paper=50, line=200, mist=600, ink=950 (aliases kept).
+     neutral-50 IS the iOS grouped background (#F2F2F7): the page sits on
+     the grouped tone and white cards read as inset groups. */
   --neutral-0: 255 255 255;
-  --neutral-50: 244 246 243;
-  --neutral-100: 236 239 234;
-  --neutral-200: 220 227 223;
+  --neutral-50: 242 242 247;
+  /* 100/200 cooled to sit on the grouped tone (iOS systemGray5/4 family);
+     the darker text steps keep their warm ink cast. */
+  --neutral-100: 235 235 240;
+  --neutral-200: 213 213 219;
   --neutral-300: 195 204 199;
   --neutral-400: 154 166 160;
   --neutral-500: 102 114 110;
@@ -217,9 +239,15 @@ textarea,
 }
 
 /* Uppercase micro-labels used as section eyebrows throughout the app.
-   Accent-aware: verde by default, re-liveried inside data-accent scopes. */
+   Quiet gray by default — color communicates, never decorates, and the
+   tint (verde) marks interactive elements only. Inside a data-accent
+   scope the eyebrow takes the bound livery: there the color IS the
+   meaning (feature identity of the section). */
 .eyebrow {
   @apply text-caption font-semibold uppercase tracking-[0.14em];
+  color: rgb(var(--text-secondary));
+}
+[data-accent] .eyebrow {
   color: rgb(var(--accent-700));
 }
 

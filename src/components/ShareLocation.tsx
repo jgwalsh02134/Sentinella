@@ -91,8 +91,8 @@ export default function ShareLocation() {
       </p>
 
       {fix ? (
-        <div className="mt-3 break-words rounded-xl bg-verde-tint p-4">
-          <p className="font-mono text-title font-bold tabular-nums text-verde-deep">
+        <div className="mt-3 break-words rounded-xl bg-sunken p-4">
+          <p className="font-mono text-title font-bold tabular-nums text-primary">
             {fix.lat.toFixed(5)}, {fix.lng.toFixed(5)}
           </p>
           <p className="mt-1 text-footnote text-secondary">

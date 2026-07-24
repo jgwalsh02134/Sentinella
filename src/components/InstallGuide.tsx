@@ -151,14 +151,14 @@ export default function InstallGuide() {
         ) : (
           <ol className="mt-3 space-y-2">
             <li className="flex gap-3 text-body">
-              <span className="font-mono font-bold text-verde">1</span>
+              <span className="font-mono font-bold text-secondary">1</span>
               <span className="min-w-0 text-secondary">
                 Tap the <strong className="whitespace-nowrap text-primary">Share <ShareGlyph /></strong>{" "}
                 button in Safari&apos;s toolbar.
               </span>
             </li>
             <li className="flex gap-3 text-body">
-              <span className="font-mono font-bold text-verde">2</span>
+              <span className="font-mono font-bold text-secondary">2</span>
               <span className="min-w-0 text-secondary">
                 Choose{" "}
                 <strong className="text-primary">
