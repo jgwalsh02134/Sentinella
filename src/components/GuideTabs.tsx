@@ -248,7 +248,7 @@ export default function GuideTabs() {
             regions.map((r) => (
               <Card key={r.name} as="article" accentEdge>
                 <h3 className="title-section">{r.name}</h3>
-                <p className="body-copy mt-1 font-medium text-accent">{r.headline}</p>
+                <p className="body-copy mt-1 font-medium text-secondary">{r.headline}</p>
                 <h4 className="eyebrow mt-3">Watch for</h4>
                 <ul className="mt-1 space-y-2">
                   {r.watch.map((w) => (

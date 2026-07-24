@@ -8,7 +8,6 @@ export default function OfflinePage() {
     <main>
       <SectionHeader
         level={1}
-        eyebrow="Offline"
         title="No connection — you're still covered"
         intro="This page wasn't cached yet, but calls don't need data. The core numbers are below; the Emergency and Guide screens work offline if you've opened them before."
       />

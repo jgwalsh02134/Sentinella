@@ -277,8 +277,12 @@ textarea,
    border everywhere — the ONLY shadow in the app belongs to the 112
    emergency plate (shadow-plate, applied by CallPlate tier="primary"),
    so the deepest element on any screen is the one that summons help. */
-.plate {
-  @apply block max-w-full rounded-2xl;
+/* Layered so single-purpose utilities (e.g. `flex` on ListRow) can
+   override the block default. */
+@layer components {
+  .plate {
+    @apply block max-w-full rounded-2xl;
+  }
 }
 
 /* Horizontal scroller that hides its scrollbar. Content may scroll within

@@ -84,7 +84,7 @@ export default function PrepareChecklist() {
               {section.items.map((item) => {
                 const done = checked.has(item.id);
                 return (
-                  <Card key={item.id} as="li" accentEdge>
+                  <Card key={item.id} as="li">
                     <div className="flex items-start gap-2">
                       <button
                         type="button"

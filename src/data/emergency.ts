@@ -22,7 +22,7 @@ export const emergencyNumbers: EmergencyNumber[] = [
     name: "All emergencies",
     nameIt: "Numero Unico di Emergenza",
     detail:
-      "Free from any phone, no SIM needed. Routes to police, medical, or fire; interpreters available.",
+      "Routes to police, medical, or fire; interpreters available.",
     tier: "primary",
   },
   {

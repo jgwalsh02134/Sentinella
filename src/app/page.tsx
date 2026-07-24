@@ -106,13 +106,11 @@ export default async function HomePage() {
       ) : null}
 
       <section className="mt-8" aria-label="Offline readiness">
-        <div className="plate bg-verde-tint p-4">
-          <h2 className="text-headline text-verde-deep">Built for dead zones</h2>
-          <p className="mt-1 text-subhead text-verde-deep/80">
-            Open the Emergency and Guide screens once while online and they stay available without
-            a connection — numbers, phrases, and briefings included.
-          </p>
-        </div>
+        <h2 className="text-headline">Built for dead zones</h2>
+        <p className="mt-1 text-subhead text-secondary">
+          Open the Emergency and Guide screens once while online and they stay available without a
+          connection — numbers, phrases, and briefings included.
+        </p>
       </section>
 
       <InstallGuide />

@@ -581,7 +581,7 @@ export default function MapView() {
         <p className="mt-2 text-footnote text-secondary">
           Downloads live in this browser's storage. iOS may evict them if the device runs low on
           space — re-download before you travel. Outside a downloaded area the map needs a
-          connection. Map data © OpenStreetMap contributors.
+          connection.
         </p>
       </section>
 

@@ -189,13 +189,7 @@ export default function CheckinPanel() {
         ) : null}
 
         <div className="mt-4 space-y-3">
-          <Button
-            variant="secondary"
-            size="md"
-            onClick={capture}
-            disabled={locating}
-            className="w-full"
-          >
+          <Button variant="quiet" size="md" onClick={capture} disabled={locating} className="w-full">
             {locating ? (
               "Getting position…"
             ) : fix ? (

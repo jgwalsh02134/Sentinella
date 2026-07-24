@@ -9,12 +9,7 @@ export const metadata: Metadata = { title: "Alerts" };
 export default function AlertsPage() {
   return (
     <main>
-      <SectionHeader
-        level={1}
-        eyebrow="Alerts"
-        title="Alerts & advisories"
-        intro="Alerts from your group's admins and advisories from official U.S. sources, in one place."
-      />
+      <SectionHeader level={1} eyebrow="Alerts" title="Alerts & advisories" />
 
       <div className="mt-5">
         <SeasonalWeatherLink />

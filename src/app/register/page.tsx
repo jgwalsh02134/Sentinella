@@ -19,7 +19,6 @@ export default function RegisterPage() {
       </div>
       <SectionHeader
         level={1}
-        eyebrow="Create account"
         title="Join your traveler group"
         intro={
           required

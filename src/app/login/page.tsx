@@ -13,7 +13,6 @@ export default function LoginPage() {
       </div>
       <SectionHeader
         level={1}
-        eyebrow="Sign in"
         title="Welcome back"
         intro="Signing in unlocks check-ins. Emergency numbers and the guide never require an account."
       />
