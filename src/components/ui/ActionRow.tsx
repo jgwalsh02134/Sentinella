@@ -1,9 +1,10 @@
+import type { ReactNode } from "react";
 import Button from "@/components/ui/Button";
 
 /**
  * The Call / Directions / Website triplet used by embassies, hospitals,
- * and map places. Equal-width secondary buttons; at 320px viewports the
- * flex basis makes the row wrap 2+1 instead of squeezing labels.
+ * and map places — an equal TINTED row; at 320px viewports the flex
+ * basis makes the row wrap 2+1 instead of squeezing labels.
  *
  * Labels say exactly what they do and stay identical everywhere:
  * "Call", "Get directions", "Website".
@@ -11,6 +12,9 @@ import Button from "@/components/ui/Button";
 export type Action = {
   label: string;
   href: string;
+  /** Leading glyph — brand marks only when the brand is the destination
+      (BrandIcon rules): Apple Maps directions, store links. */
+  icon?: ReactNode;
 };
 
 export default function ActionRow({
@@ -30,6 +34,7 @@ export default function ActionRow({
           size="md"
           className="min-w-0 flex-1 basis-24"
         >
+          {action.icon}
           {action.label}
         </Button>
       ))}

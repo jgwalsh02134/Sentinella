@@ -8,6 +8,7 @@ import Disclosure from "@/components/ui/Disclosure";
 import ListRow from "@/components/ui/ListRow";
 import NavTile from "@/components/ui/NavTile";
 import SectionHeader from "@/components/ui/SectionHeader";
+import BrandIcon from "@/components/BrandIcon";
 import Icon from "@/components/Icon";
 import ShareLocation from "@/components/ShareLocation";
 import TelText from "@/components/TelText";
@@ -65,7 +66,12 @@ function EmbassyBody({ embassy, headingLevel }: { embassy: Embassy; headingLevel
         className="mt-3"
         actions={[
           { label: "Call", href: `tel:${embassy.dial}` },
-          { label: "Get directions", href: appleMapsDirectionsUrl(`${embassy.address}, Italy`) },
+          {
+            label: "Get directions",
+            href: appleMapsDirectionsUrl(`${embassy.address}, Italy`),
+            // Brand mark: the destination is Apple Maps.
+            icon: <BrandIcon brand="apple" size={16} />,
+          },
           { label: "Website", href: embassy.website },
         ]}
       />
@@ -178,6 +184,7 @@ export default function EmergencyPage() {
                   href: appleMapsDirectionsUrl(
                     `${p.hospital.replace(/\s*\([^)]*\)/g, "")}, ${p.city}, Italy`,
                   ),
+                  icon: <BrandIcon brand="apple" size={16} />,
                 },
               ]}
             />

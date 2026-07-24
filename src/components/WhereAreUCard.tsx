@@ -1,6 +1,14 @@
 import ActionRow from "@/components/ui/ActionRow";
 import Card from "@/components/ui/Card";
+import BrandIcon from "@/components/BrandIcon";
 import { whereAreUApp } from "@/data/emergency";
+
+/** Brand mark only when the brand is the destination (BrandIcon rules). */
+function storeIcon(url: string) {
+  if (url.includes("apps.apple.com")) return <BrandIcon brand="apple" size={16} />;
+  if (url.includes("play.google.com")) return <BrandIcon brand="google" size={16} />;
+  return undefined;
+}
 
 /**
  * The 112 Where ARE U app card — the ONE source of truth, rendered
@@ -26,9 +34,15 @@ export default function WhereAreUCard({
           </li>
         ))}
       </ul>
+      {/* Paired store buttons: App Store + Google Play side by side,
+          TINTED, brand glyph + label. */}
       <ActionRow
         className="mt-3"
-        actions={whereAreUApp.links.map((link) => ({ label: link.label, href: link.url }))}
+        actions={whereAreUApp.links.map((link) => ({
+          label: link.label,
+          href: link.url,
+          icon: storeIcon(link.url),
+        }))}
       />
       <p className="mt-2 text-footnote text-secondary">{whereAreUApp.note}</p>
     </Card>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import BrandIcon from "@/components/BrandIcon";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import { FieldError } from "@/components/ui/Field";
@@ -97,8 +98,15 @@ export default function ShareLocation() {
           </p>
           <p className="mt-1 text-footnote text-secondary">
             Accurate to ~{Math.round(fix.accuracyM)} m ·{" "}
-            <a href={mapsUrl(fix)} target="_blank" rel="noreferrer" className="text-link">
-              Open in Maps
+            <a
+              href={mapsUrl(fix)}
+              target="_blank"
+              rel="noreferrer"
+              className="text-link inline-flex items-center gap-1"
+            >
+              {/* Brand mark: the share link's destination is Google Maps. */}
+              <BrandIcon brand="google" size={16} />
+              Open in Google Maps
             </a>
           </p>
         </div>

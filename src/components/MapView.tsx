@@ -16,6 +16,7 @@ import Button from "@/components/ui/Button";
 import Callout from "@/components/ui/Callout";
 import { Field, FieldError, Input } from "@/components/ui/Field";
 import NavTile from "@/components/ui/NavTile";
+import BrandIcon from "@/components/BrandIcon";
 import Icon from "@/components/Icon";
 import Switch from "@/components/ui/Switch";
 import { bearingDeg, cardinal, formatKm, haversineKm } from "@/lib/geo";
@@ -819,6 +820,8 @@ export default function MapView() {
                       {
                         label: "Get directions",
                         href: appleMapsDirectionsUrl(`${selectedPoi.address}, Italy`),
+                        // Brand mark: the destination is Apple Maps.
+                        icon: <BrandIcon brand="apple" size={16} />,
                       },
                       selectedPoi.poisonDial && selectedPoi.poisonDial !== selectedPoi.dial
                         ? {

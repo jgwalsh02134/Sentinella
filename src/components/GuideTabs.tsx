@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment, useEffect, useState } from "react";
+import BrandIcon from "@/components/BrandIcon";
 import ItalyFlag from "@/components/ItalyFlag";
 import SeasonalWeatherCard from "@/components/SeasonalWeatherCard";
 import TelText from "@/components/TelText";
@@ -96,20 +97,24 @@ function ColonLead({ text }: { text: string }) {
 }
 
 /** Official external resources render as links, not as fake buttons —
- *  buttons are for actions; these open reading material in the browser. */
+ *  buttons are for actions; these open reading material in the browser.
+ *  Brand mark only when the brand is the destination: Apple Maps
+ *  directions links get the Apple glyph; everything else stays generic. */
 function ResourceLinks({ links }: { links: { label: string; url: string }[] }) {
   return (
     <p className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
       {links.map((link) => {
         const external = !link.url.startsWith("/");
+        const appleMaps = link.url.startsWith("https://maps.apple.com");
         return (
           <a
             key={link.url}
             href={link.url}
             target={external ? "_blank" : undefined}
             rel={external ? "noopener noreferrer" : undefined}
-            className="text-link inline-block py-1 text-callout"
+            className="text-link inline-flex items-center gap-1 py-1 text-callout"
           >
+            {appleMaps ? <BrandIcon brand="apple" size={16} /> : null}
             {link.label}
           </a>
         );
