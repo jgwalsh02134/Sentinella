@@ -259,6 +259,13 @@ textarea,
   @apply rounded-r-xl border-l-[3px] border-ambra bg-ambra-tint p-3 text-callout text-ink;
 }
 
+/* Category livery edge for cards: 3px in the bound accent (same weight as
+   the callout edge). The section label always carries the meaning. */
+.accent-edge {
+  border-left-width: 3px;
+  border-left-color: rgb(var(--accent-600));
+}
+
 /* Standalone text link — azzurro, so links stop competing with verde
    action buttons. */
 .text-link {

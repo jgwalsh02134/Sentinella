@@ -1,13 +1,18 @@
+import type { ReactNode } from "react";
+
 /**
- * The app's signature element: emergency numbers rendered like Italian road
- * signage plates. The entire plate is a tel: link — one tap to call.
+ * The app's signature element: emergency numbers rendered like Italian
+ * road signage — high contrast, huge numerals, zero decoration. The
+ * entire plate is a tel: link; one tap to call.
  *
- * Pure signage on purpose: number, name, Italian name — nothing else.
- * Explanatory prose belongs in a footnote UNDER the plate, outside the
- * tappable area. The tap target is sacred.
+ * Pure signage on purpose: number, name, Italian name — NOTHING else
+ * inside the tap target. Explanatory prose goes in the `footnote` prop,
+ * which renders below the plate, outside the tappable area.
  *
  * Color is language here:
- *   red   = the primary emergency action (112 only)
+ *   red   = the primary emergency action (112 only) — and it carries the
+ *           app's ONLY shadow, so it is physically the deepest element
+ *           on any screen
  *   green = other official emergency services
  *   white = support lines
  */
@@ -17,11 +22,11 @@ type CallPlateProps = {
   name: string;
   nameIt?: string;
   tier?: "primary" | "service" | "support";
+  /** Explanatory sentence rendered BELOW the plate, never inside it. */
+  footnote?: ReactNode;
 };
 
 const tierStyles: Record<NonNullable<CallPlateProps["tier"]>, string> = {
-  // The 112 plate carries the app's ONLY shadow — the deepest element on
-  // any screen is the one that summons help.
   primary: "bg-signal text-white shadow-plate active:bg-signal-deep",
   service: "bg-verde text-white active:bg-verde-deep",
   support: "bg-white text-ink border border-line active:bg-paper",
@@ -33,15 +38,16 @@ export default function CallPlate({
   name,
   nameIt,
   tier = "service",
+  footnote,
 }: CallPlateProps) {
   const isPrimary = tier === "primary";
   const isSupport = tier === "support";
 
-  return (
+  const plate = (
     <a
       href={`tel:${dial}`}
       aria-label={`Call ${name} at ${number}`}
-      className={`plate ${tierStyles[tier]} p-5 transition-transform duration-100 active:scale-[0.99]`}
+      className={`plate ${tierStyles[tier]} p-5 transition-transform duration-150 ease-out active:scale-[0.99] motion-reduce:transition-none motion-reduce:active:scale-100`}
     >
       <span className="flex flex-wrap items-center gap-4">
         <span
@@ -54,7 +60,10 @@ export default function CallPlate({
         <span className="min-w-0 flex-1">
           <span className={`block ${isPrimary ? "text-title" : "text-headline"}`}>{name}</span>
           {nameIt ? (
-            <i lang="it" className={`block text-subhead italic ${isSupport ? "text-mist" : "text-white/75"}`}>
+            <i
+              lang="it"
+              className={`block text-subhead italic ${isSupport ? "text-mist" : "text-white/75"}`}
+            >
               {nameIt}
             </i>
           ) : null}
@@ -73,5 +82,14 @@ export default function CallPlate({
         </svg>
       </span>
     </a>
+  );
+
+  if (!footnote) return plate;
+
+  return (
+    <div>
+      {plate}
+      <p className="mt-2 px-1 text-footnote text-secondary">{footnote}</p>
+    </div>
   );
 }

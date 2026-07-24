@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Map, MapPin, Plane, Shield } from "lucide-react";
-import CallPlate from "@/components/CallPlate";
+import CallPlate from "@/components/ui/CallPlate";
 import Icon from "@/components/Icon";
 import Crest from "@/components/Crest";
 import InstallGuide from "@/components/InstallGuide";

@@ -1,4 +1,4 @@
-import CallPlate from "@/components/CallPlate";
+import CallPlate from "@/components/ui/CallPlate";
 
 export const metadata = { title: "Offline" };
 

@@ -100,14 +100,20 @@ export const whereAreUApp = {
   title: "112 Where ARE U — the official app",
   body: "Dials 112 and sends your GPS position to the operator at the same time (official app, developer AREU).",
   bullets: [
-    "Active in both Lazio (Rome) and Tuscany (Florence).",
+    "Active in Lazio and Tuscany — both regions on this trip.",
     "Dial 112 directly first — the app is a supplement.",
   ],
-  link: {
-    label: "App Store — 112 Where ARE U",
-    url: "https://apps.apple.com/us/app/112-where-are-u/id888964800",
-  },
-  note: "Install before you travel — the link needs a connection; calling 112 doesn't.",
+  links: [
+    {
+      label: "App Store",
+      url: "https://apps.apple.com/us/app/112-where-are-u/id888964800",
+    },
+    {
+      label: "Google Play",
+      url: "https://play.google.com/store/apps/details?id=it.Beta80Group.whereareu",
+    },
+  ],
+  note: "Install before you travel — the store links need a connection; calling 112 doesn't.",
 } as const;
 
 export const poisonCenters: PoisonCenter[] = [

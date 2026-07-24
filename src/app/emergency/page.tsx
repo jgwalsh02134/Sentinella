@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import CallPlate from "@/components/CallPlate";
+import CallPlate from "@/components/ui/CallPlate";
 import ShareLocation from "@/components/ShareLocation";
 import TelText from "@/components/TelText";
 import VerifiedCaveat from "@/components/VerifiedCaveat";
@@ -9,7 +9,8 @@ import IrelandFlag from "@/components/IrelandFlag";
 import NewZealandFlag from "@/components/NewZealandFlag";
 import UkFlag from "@/components/UkFlag";
 import UsFlag from "@/components/UsFlag";
-import { callScript, emergencyNumbers, poisonCenters, whereAreUApp } from "@/data/emergency";
+import WhereAreUCard from "@/components/WhereAreUCard";
+import { callScript, emergencyNumbers, poisonCenters } from "@/data/emergency";
 import { embassies, lostDocumentSteps } from "@/data/embassies";
 import { appleMapsDirectionsUrl } from "@/lib/maps";
 
@@ -72,26 +73,7 @@ export default function EmergencyPage() {
       </section>
 
       <section className="mt-6" aria-label="112 companion app">
-        <div className="plate border border-default bg-card p-4">
-          <h2 className="text-headline">{whereAreUApp.title}</h2>
-          <p className="body-copy mt-2 text-secondary">{whereAreUApp.body}</p>
-          <ul className="mt-2 space-y-2">
-            {whereAreUApp.bullets.map((b) => (
-              <li key={b} className="body-copy text-secondary">
-                {b}
-              </li>
-            ))}
-          </ul>
-          <a
-            href={whereAreUApp.link.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-3 flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde px-4 text-callout font-bold text-verde active:bg-verde-tint"
-          >
-            {whereAreUApp.link.label}
-          </a>
-          <p className="mt-2 text-footnote text-secondary">{whereAreUApp.note}</p>
-        </div>
+        <WhereAreUCard />
       </section>
 
       <section className="mt-8 space-y-3" aria-label="Emergency services">
