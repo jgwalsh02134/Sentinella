@@ -40,10 +40,13 @@ export default function EmergencyPage() {
 
       <section className="mt-5 space-y-3" aria-label="Primary emergency number">
         {primary.map((n) => (
-          <CallPlate key={n.dial} {...n} />
+          <div key={n.dial}>
+            <CallPlate number={n.number} dial={n.dial} name={n.name} nameIt={n.nameIt} tier={n.tier} />
+            <p className="mt-1.5 px-1 text-footnote text-secondary">{n.detail}</p>
+          </div>
         ))}
         <div className="plate border border-default bg-card p-5">
-          <h2 className="eyebrow">When the operator answers</h2>
+          <h2 className="text-headline">When the operator answers</h2>
           <ol className="mt-2 space-y-2">
             {callScript.map((step, i) => (
               <li key={step.lead} className="body-copy flex gap-3">
@@ -90,17 +93,23 @@ export default function EmergencyPage() {
         </div>
       </section>
 
-      <section className="mt-6 space-y-3" aria-label="Emergency services">
-        <h2 className="eyebrow">Direct service lines</h2>
+      <section className="mt-8 space-y-3" aria-label="Emergency services">
+        <h2 className="title-section">Direct service lines</h2>
         {services.map((n) => (
-          <CallPlate key={n.dial} {...n} />
+          <div key={n.dial}>
+            <CallPlate number={n.number} dial={n.dial} name={n.name} nameIt={n.nameIt} tier={n.tier} />
+            <p className="mt-1.5 px-1 text-footnote text-secondary">{n.detail}</p>
+          </div>
         ))}
       </section>
 
-      <section className="mt-6 space-y-3" aria-label="Support lines">
-        <h2 className="eyebrow">Support lines</h2>
+      <section className="mt-8 space-y-3" aria-label="Support lines">
+        <h2 className="title-section">Support lines</h2>
         {support.map((n) => (
-          <CallPlate key={n.dial} {...n} />
+          <div key={n.dial}>
+            <CallPlate number={n.number} dial={n.dial} name={n.name} nameIt={n.nameIt} tier={n.tier} />
+            <p className="mt-1.5 px-1 text-footnote text-secondary">{n.detail}</p>
+          </div>
         ))}
         {poisonCenters.map((p) => (
           <div key={p.dial} className="space-y-2">
@@ -127,8 +136,8 @@ export default function EmergencyPage() {
         </p>
       </section>
 
-      <section className="mt-6" aria-label="Embassies and consulates">
-        <h2 className="eyebrow">Embassies & consulates</h2>
+      <section className="mt-8" aria-label="Embassies and consulates">
+        <h2 className="title-section">Embassies & consulates</h2>
         <p className="callout mt-2">
           Switchboard numbers only, verified July 2026. After-hours consular emergency lines differ —{" "}
           <strong className="font-bold">verify yours on the official site before travel.</strong>
@@ -138,10 +147,10 @@ export default function EmergencyPage() {
             const FlagIcon = flagIcons[e.country];
             return (
             <div key={e.name} className="plate break-words border border-default bg-card p-4">
-              <p className="text-headline">
+              <h3 className="text-headline">
                 {FlagIcon ? <FlagIcon /> : <span aria-hidden="true">{e.flag}</span>}{" "}
                 {e.name}
-              </p>
+              </h3>
               <p className="mt-0.5 text-subhead text-secondary">{e.address}</p>
               <p className="mt-0.5 font-mono text-callout font-semibold tabular-nums">{e.phone}</p>
               {e.notes ? <p className="mt-1 text-subhead text-secondary">{e.notes}</p> : null}
@@ -183,8 +192,8 @@ export default function EmergencyPage() {
         </div>
       </section>
 
-      <section className="mt-6" aria-label="Lost documents">
-        <h2 className="eyebrow">Passport lost or stolen</h2>
+      <section className="mt-8" aria-label="Lost documents">
+        <h2 className="title-section">Passport lost or stolen</h2>
         <div className="plate mt-2 border border-default bg-card p-5">
           <ol className="space-y-2.5">
             {lostDocumentSteps.map((step, i) => (

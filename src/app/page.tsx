@@ -50,9 +50,9 @@ export default async function HomePage() {
         </Link>
       </section>
 
+      {/* No visible header: four parallel cards explain themselves. */}
       <section className="mt-6" aria-label="Quick actions">
-        <h2 className="eyebrow">Right now</h2>
-        <div className="mt-2 grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           <Link href="/checkin" className="plate border border-default bg-card p-4">
             <span className="block text-verde">
               <Icon icon={MapPin} size="lg" />
@@ -72,22 +72,20 @@ export default async function HomePage() {
               <Icon icon={Map} size="lg" />
             </span>
             <span className="mt-1 block text-headline">Offline map</span>
-            <span className="block text-footnote text-secondary">
-              Download city maps and see where you are, no signal needed
-            </span>
+            <span className="block text-footnote text-secondary">Works with zero signal</span>
           </Link>
           <Link href="/prepare" className="plate col-span-2 border border-default bg-card p-4">
             <span className="block text-verde">
               <Icon icon={Plane} size="lg" />
             </span>
             <span className="mt-1 block text-headline">Before you fly</span>
-            <span className="block text-footnote text-secondary">US → Italy pre-departure checklist</span>
+            <span className="block text-footnote text-secondary">Pre-departure checklist</span>
           </Link>
         </div>
       </section>
 
-      <section className="mt-6" aria-label="Latest advisory">
-        <h2 className="eyebrow">Latest advisory</h2>
+      <section className="mt-8" aria-label="Latest advisory">
+        <h2 className="title-section">Latest advisory</h2>
         <div className="mt-2">
           <LatestAlert />
         </div>

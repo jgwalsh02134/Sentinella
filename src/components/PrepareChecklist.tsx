@@ -60,7 +60,7 @@ export default function PrepareChecklist() {
           aria-label={section.title}
           data-accent={sectionAccents[section.id]}
         >
-          <h2 className="eyebrow">{section.title}</h2>
+          <h2 className="title-section">{section.title}</h2>
           <ul className="mt-2 space-y-3">
             {section.items.map((item) => {
               const done = checked.has(item.id);

@@ -179,7 +179,7 @@ export default function AlertsPanel() {
                 <span className="text-footnote font-semibold text-secondary">{a.region}</span>
                 <span className="ml-auto text-footnote text-secondary">{formatWhen(a.createdAt)}</span>
               </div>
-              <h2 className="mt-2 break-words text-headline">{a.title}</h2>
+              <h3 className="mt-2 break-words text-headline">{a.title}</h3>
               <p className="body-copy mt-1 break-words text-secondary">{a.body}</p>
             </li>
           ))}

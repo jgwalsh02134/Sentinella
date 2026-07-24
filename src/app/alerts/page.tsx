@@ -20,15 +20,15 @@ export default function AlertsPage() {
         <SeasonalWeatherLink />
       </div>
 
-      <section className="mt-4" aria-label="Team advisories">
-        <h2 className="eyebrow">Team advisories</h2>
+      <section className="mt-6" aria-label="Team alerts">
+        <h2 className="title-section">Team alerts</h2>
         <div className="mt-2">
           <AlertsPanel />
         </div>
       </section>
 
-      <section className="mt-6" aria-label="Official U.S. Department of State advisories" data-accent="azzurro">
-        <h2 className="eyebrow">Official — U.S. Department of State</h2>
+      <section className="mt-8" aria-label="Official U.S. Department of State advisories" data-accent="azzurro">
+        <h2 className="title-section">Official — U.S. Department of State</h2>
         <div className="mt-2">
           <UsAdvisoriesPanel />
         </div>

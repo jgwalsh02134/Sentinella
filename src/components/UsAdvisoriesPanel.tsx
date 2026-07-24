@@ -204,7 +204,7 @@ function AdvisoryList({ items }: { items: Item[] }) {
             ))}
             <span className="ml-auto text-footnote text-secondary">{formatDate(item.publishedAt)}</span>
           </div>
-          <h4 className="mt-2 break-words text-headline">{item.title}</h4>
+          <h3 className="mt-2 break-words text-headline">{item.title}</h3>
           {item.body ? (
             <details className="mt-1">
               <summary className="cursor-pointer text-callout font-semibold text-info">

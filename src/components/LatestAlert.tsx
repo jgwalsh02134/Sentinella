@@ -104,18 +104,47 @@ export default function LatestAlert() {
     };
   }, []);
 
-  if (state === "loading") return null;
+  if (state === "loading") {
+    // Placeholder keeps the section from rendering as a bare heading.
+    return <div className="plate min-h-[4rem] border border-default bg-card p-4" aria-hidden="true" />;
+  }
 
   if (state === "offline") {
     return (
-      <p className="text-body text-secondary">
-        Advisories need a connection. Emergency numbers and the guide work offline.
-      </p>
+      <div className="plate border border-default bg-card p-4">
+        <p className="text-headline">You're offline</p>
+        <p className="mt-1 text-subhead text-secondary">
+          Advisories update when you reconnect. Emergency numbers and the guide still work.
+        </p>
+      </div>
     );
   }
 
   if (!candidate) {
-    return <p className="text-body text-secondary">No active advisories right now.</p>;
+    return (
+      <div className="plate flex items-center gap-3 border border-default bg-card p-4">
+        <span
+          aria-hidden="true"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-success-subtle text-success"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            className="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="m5 13 4 4L19 7" />
+          </svg>
+        </span>
+        <span className="min-w-0">
+          <span className="block text-headline">No active advisories</span>
+          <span className="block text-footnote text-secondary">Nothing needs your attention right now.</span>
+        </span>
+      </div>
+    );
   }
 
   return (

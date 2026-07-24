@@ -2,6 +2,10 @@
  * The app's signature element: emergency numbers rendered like Italian road
  * signage plates. The entire plate is a tel: link — one tap to call.
  *
+ * Pure signage on purpose: number, name, Italian name — nothing else.
+ * Explanatory prose belongs in a footnote UNDER the plate, outside the
+ * tappable area. The tap target is sacred.
+ *
  * Color is language here:
  *   red   = the primary emergency action (112 only)
  *   green = other official emergency services
@@ -12,7 +16,6 @@ type CallPlateProps = {
   dial: string;
   name: string;
   nameIt?: string;
-  detail?: string;
   tier?: "primary" | "service" | "support";
 };
 
@@ -27,7 +30,6 @@ export default function CallPlate({
   dial,
   name,
   nameIt,
-  detail,
   tier = "service",
 }: CallPlateProps) {
   const isPrimary = tier === "primary";
@@ -68,11 +70,6 @@ export default function CallPlate({
           <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
         </svg>
       </span>
-      {detail ? (
-        <span className={`mt-3 block text-subhead ${isSupport ? "text-mist" : "text-white/85"}`}>
-          {detail}
-        </span>
-      ) : null}
     </a>
   );
 }

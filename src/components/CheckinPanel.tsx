@@ -122,13 +122,6 @@ export default function CheckinPanel() {
 
   return (
     <div className="space-y-6">
-      <TripTracking
-        onAutoCheckIn={(checkIn, advisories) => {
-          setHistory((h) => [checkIn as CheckIn, ...h]);
-          setNearby(advisories as NearbyAdvisory[]);
-        }}
-      />
-
       {nearby.length > 0 ? (
         <div className="rounded-xl bg-ambra-tint p-4" role="status">
           <p className="text-callout font-bold text-ambra">Active advisories near your position</p>
@@ -156,7 +149,7 @@ export default function CheckinPanel() {
       ) : null}
 
       <div className="plate border border-default bg-card p-5">
-        <h2 className="eyebrow">New check-in</h2>
+        <h2 className="text-headline">New check-in</h2>
 
         <div className="mt-3 grid grid-cols-3 gap-2" role="radiogroup" aria-label="Status">
           {(Object.keys(statusMeta) as Status[]).map((s) => {
@@ -241,12 +234,19 @@ export default function CheckinPanel() {
         </button>
       </div>
 
+      <TripTracking
+        onAutoCheckIn={(checkIn, advisories) => {
+          setHistory((h) => [checkIn as CheckIn, ...h]);
+          setNearby(advisories as NearbyAdvisory[]);
+        }}
+      />
+
       <ReminderSettings />
 
       <DstNote />
 
       <section>
-        <h2 className="eyebrow">History</h2>
+        <h2 className="title-section">History</h2>
         {loadingHistory ? (
           <p className="mt-3 text-body text-secondary">Loading…</p>
         ) : history.length === 0 ? (
