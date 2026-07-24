@@ -11,9 +11,10 @@
  *    files managed in IndexedDB by the Map screen, and their online mode uses
  *    HTTP range requests the Cache API can't store.
  */
-// v9: guide became list→detail routes — precache every /guide/* page so
-// the whole guide keeps its offline guarantee.
-const VERSION = "sentinella-v9";
+// v10: guide became list→detail routes — precache every /guide/* page AND
+// the hashed JS/CSS chunks referenced by precached pages, so a page first
+// opened offline still hydrates (search, phrase Show mode, disclosures).
+const VERSION = "sentinella-v10";
 const PRECACHE = [
   "/",
   "/emergency",
@@ -34,11 +35,42 @@ const PRECACHE = [
   "/brand/us-state-seal.svg",
 ];
 
+/**
+ * Interactivity offline: precached HTML references hashed /_next/static
+ * chunks; without them a precached page renders but never hydrates. Parse
+ * each precached page for chunk URLs and cache those too. Individual
+ * fetch failures are tolerated — a missed chunk degrades interactivity,
+ * never the install.
+ */
+async function precachePageChunks(cache) {
+  const pages = PRECACHE.filter((p) => !p.includes("."));
+  const urls = new Set();
+  for (const page of pages) {
+    const cached = await cache.match(page);
+    if (!cached) continue;
+    const html = await cached.clone().text();
+    for (const match of html.matchAll(/\/_next\/static\/[^"'\\ ]+/g)) {
+      urls.add(match[0].replace(/&amp;/g, "&"));
+    }
+  }
+  await Promise.all(
+    Array.from(urls).map(async (u) => {
+      if (await cache.match(u)) return;
+      try {
+        const response = await fetch(u);
+        if (response.ok) await cache.put(u, response);
+      } catch {
+        // Offline mid-install or a stale reference — skip this chunk.
+      }
+    }),
+  );
+}
+
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches
       .open(VERSION)
-      .then((cache) => cache.addAll(PRECACHE))
+      .then((cache) => cache.addAll(PRECACHE).then(() => precachePageChunks(cache)))
       .then(() => self.skipWaiting()),
   );
 });

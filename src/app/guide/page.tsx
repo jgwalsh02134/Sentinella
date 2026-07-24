@@ -46,7 +46,7 @@ export default function GuidePage() {
         <section className="mt-6" aria-label="Essentials">
           <SectionHeader title="Essentials" />
           <div className="mt-3 space-y-3">
-            <SeasonalWeatherLink />
+            <SeasonalWeatherLink subtitle="Seasonal weather safety" />
             <GuideRowGroup>{essentials.map(sectionRow)}</GuideRowGroup>
           </div>
         </section>

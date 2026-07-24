@@ -12,7 +12,12 @@ import { isHeatSeason } from "@/lib/season";
  * the same reason as the full card — cached pages must never bake in a
  * stale season.
  */
-export default function SeasonalWeatherLink() {
+export default function SeasonalWeatherLink({
+  subtitle = "Seasonal weather safety · in the field guide",
+}: {
+  /** Override on the guide index itself, where "in the field guide" is redundant. */
+  subtitle?: string;
+}) {
   const [heat, setHeat] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -34,7 +39,7 @@ export default function SeasonalWeatherLink() {
           ? "Heat bulletins — today's bollino and advice"
           : "Allerta meteo — color codes and today's outlook"
       }
-      subtitle="Seasonal weather safety · in the field guide"
+      subtitle={subtitle}
     />
   );
 }
