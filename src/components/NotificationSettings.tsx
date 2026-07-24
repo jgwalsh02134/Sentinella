@@ -168,8 +168,10 @@ export default function NotificationSettings() {
   return (
     <Card>
       <div className="flex min-h-control items-center gap-3">
-        <div className="flex-1">
-          <h2 className="text-headline">Notifications</h2>
+        <div className="min-w-0 flex-1">
+          <h2 id="notifications-switch-label" className="text-headline">
+            Notifications
+          </h2>
           <p className="text-footnote text-secondary">
             {enabled ? "On for this device." : "Alerts and reminders, even with the app closed."}
           </p>
@@ -177,7 +179,7 @@ export default function NotificationSettings() {
         <Switch
           checked={enabled}
           onChange={() => void toggle()}
-          label="Notifications"
+          labelledBy="notifications-switch-label"
           disabled={busy}
         />
       </div>
@@ -187,18 +189,19 @@ export default function NotificationSettings() {
       {enabled && prefs ? (
         <div className="mt-3 space-y-1 border-t border-default pt-3">
           {PREF_LABELS.map(({ key, label, detail }) => (
-            <label key={key} className="flex min-h-control cursor-pointer items-center gap-3">
-              <input
-                type="checkbox"
-                checked={prefs[key]}
-                onChange={(e) => void setPref(key, e.target.checked)}
-                className="h-5 w-5 shrink-0 accent-verde"
-              />
-              <span>
-                <span className="block text-callout font-semibold">{label}</span>
+            <div key={key} className="flex min-h-control items-center gap-3">
+              <span className="min-w-0 flex-1">
+                <span id={`pref-${key}-label`} className="block text-callout font-semibold">
+                  {label}
+                </span>
                 <span className="block text-footnote text-secondary">{detail}</span>
               </span>
-            </label>
+              <Switch
+                checked={prefs[key]}
+                onChange={(next) => void setPref(key, next)}
+                labelledBy={`pref-${key}-label`}
+              />
+            </div>
           ))}
         </div>
       ) : null}

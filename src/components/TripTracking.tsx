@@ -165,14 +165,16 @@ export default function TripTracking({ onAutoCheckIn }: Props) {
 
       <Card>
         <div className="flex min-h-control items-center gap-3">
-          <div className="flex-1">
-            <h2 className="text-headline">Track my trip</h2>
+          <div className="min-w-0 flex-1">
+            <h2 id="trip-tracking-switch-label" className="text-headline">
+              Track my trip
+            </h2>
             <p className="text-footnote text-secondary">Automatic safe check-ins while this screen is open.</p>
           </div>
           <Switch
             checked={active}
             onChange={() => (active ? stop() : start())}
-            label="Track my trip"
+            labelledBy="trip-tracking-switch-label"
           />
         </div>
 
