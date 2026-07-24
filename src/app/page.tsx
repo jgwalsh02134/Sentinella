@@ -11,6 +11,7 @@ import LatestAlert from "@/components/LatestAlert";
 import LiveClock from "@/components/LiveClock";
 import NotificationSettings from "@/components/NotificationSettings";
 import SignOutButton from "@/components/SignOutButton";
+import WeatherCard from "@/components/WeatherCard";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import { getSessionUser } from "@/lib/session";
@@ -94,6 +95,12 @@ export default async function HomePage() {
           ))}
         </ul>
       </nav>
+
+      {/* Below the clock strip in reading order; the 112 plate and the
+          navigation list stay above it — weather never outranks safety. */}
+      <section className="mt-8" aria-label="Weather">
+        <WeatherCard />
+      </section>
 
       <section className="mt-8" aria-label="Latest advisory">
         <SectionHeader title="Latest advisory" />

@@ -114,6 +114,18 @@ export const externalAdvisories = pgTable("external_advisories", {
   notifiedAt: timestamp("notified_at", { withTimezone: true }),
 });
 
+/**
+ * Last-good Open-Meteo forecasts, one row per rounded-coordinate key
+ * ("41.90,12.50"). Upserted on every successful fetch; when Open-Meteo is
+ * unreachable the API serves this copy labeled with its age — weather
+ * degrades to stale, never to blank.
+ */
+export const weatherCache = pgTable("weather_cache", {
+  locationKey: text("location_key").primaryKey(),
+  payload: jsonb("payload").notNull(),
+  fetchedAt: timestamp("fetched_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export type User = typeof users.$inferSelect;
 export type CheckIn = typeof checkIns.$inferSelect;
 export type Alert = typeof alerts.$inferSelect;
