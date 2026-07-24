@@ -47,6 +47,21 @@ export const healthItems: InfoItem[] = [
     body: "Bring medication in original packaging with a copy of the prescription, ideally with the generic (molecule) name — brand names differ. Italian pharmacies can often dispense equivalents with a local doctor's script.",
   },
   {
+    title: "Traveling at 60+",
+    body: "The in-country half of the senior checklist — the pre-trip half (insurance shopping, vaccines, medication rules) lives in Before you fly.",
+    bullets: [
+      "Carry your insurance details and keep your phone's Medical ID filled in — both readable when you can't speak for yourself.",
+      "Medications: original packaging, prescriptions handy.",
+      "Pharmacies (farmacia, the green cross): minor issues handled on the spot, and many pharmacists speak English.",
+      "116117: after-hours, non-urgent care. 112: emergencies, always.",
+      "Pace yourself: cobblestones and stairs demand attention, doubly so in rain — plan rest stops instead of pushing through.",
+      "Discount reality: Italy's over-65 museum discounts apply to EU/EEA citizens only — US visitors pay full price (Colosseum €18 + €2 booking fee; the Vatican has no senior rate).",
+    ],
+    warning:
+      "Trenitalia's Carta d'Argento senior railcard was discontinued for new purchase on April 1, 2026 — don't buy one from a reseller.",
+    links: [{ label: "Before you fly — pre-trip checklist", url: "/prepare" }],
+  },
+  {
     title: "Water, heat, and insects",
     body: "Tap water is safe unless marked 'acqua non potabile'; public fountains (nasoni in Rome) are drinkable. Summer heat is the most common health incident — hydrate and plan shade at midday. Mosquitoes are a nuisance in the north in summer; repellent handles it.",
   },

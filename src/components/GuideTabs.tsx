@@ -79,17 +79,20 @@ function InfoCard({ item }: { item: InfoItem }) {
       {item.warning ? <p className="callout mt-2.5">{item.warning}</p> : null}
       {item.links?.length ? (
         <div className="mt-3 flex flex-wrap gap-2">
-          {item.links.map((link) => (
-            <a
-              key={link.url}
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde px-4 text-sm font-bold text-verde active:bg-verde-tint"
-            >
-              {link.label}
-            </a>
-          ))}
+          {item.links.map((link) => {
+            const external = !link.url.startsWith("/");
+            return (
+              <a
+                key={link.url}
+                href={link.url}
+                target={external ? "_blank" : undefined}
+                rel={external ? "noopener noreferrer" : undefined}
+                className="flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde px-4 text-sm font-bold text-verde active:bg-verde-tint"
+              >
+                {link.label}
+              </a>
+            );
+          })}
         </div>
       ) : null}
     </article>
