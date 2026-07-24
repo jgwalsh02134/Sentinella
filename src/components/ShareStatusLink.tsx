@@ -99,7 +99,7 @@ export default function ShareStatusLink() {
           <p className="text-link mt-2 break-all text-footnote">{url}</p>
           <div className="mt-3 flex gap-3">
             <Button
-              variant="secondary"
+              variant="tinted"
               size="md"
               onClick={() => void shareOrCopy(url)}
               disabled={busy}
@@ -108,7 +108,7 @@ export default function ShareStatusLink() {
               {copied ? "Copied" : "Share link"}
             </Button>
             <Button
-              variant="destructive"
+              variant="tinted" destructive
               size="md"
               onClick={() => void revoke()}
               disabled={busy}
@@ -120,7 +120,7 @@ export default function ShareStatusLink() {
         </>
       ) : (
         <Button
-          variant="secondary"
+          variant="tinted"
           size="md"
           onClick={() => void create()}
           disabled={busy}

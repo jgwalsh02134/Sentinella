@@ -122,7 +122,7 @@ export default function LatestAlert() {
         title="Advisories couldn't load"
         body="They update when you reconnect. Emergency numbers and the guide still work."
         action={
-          <Button variant="secondary" size="md" onClick={load}>
+          <Button variant="tinted" size="md" onClick={load}>
             Try again
           </Button>
         }

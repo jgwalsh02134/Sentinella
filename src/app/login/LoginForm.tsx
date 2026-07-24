@@ -57,7 +57,7 @@ function Form() {
         />
       </Field>
       {error ? <FieldError>{error}</FieldError> : null}
-      <Button type="submit" variant="primary" size="lg" disabled={busy} className="w-full">
+      <Button type="submit" variant="filled" size="lg" disabled={busy} className="w-full">
         {busy ? "Signing in…" : "Sign in"}
       </Button>
       <p className="text-subhead text-secondary">

@@ -141,7 +141,7 @@ export default function InstallGuide() {
 
         {installEvent ? (
           <Button
-            variant="secondary"
+            variant="tinted"
             size="lg"
             onClick={() => void install()}
             className="mt-3 w-full"

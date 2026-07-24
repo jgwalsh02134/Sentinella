@@ -189,7 +189,7 @@ export default function CheckinPanel() {
         ) : null}
 
         <div className="mt-4 space-y-3">
-          <Button variant="quiet" size="md" onClick={capture} disabled={locating} className="w-full">
+          <Button variant="gray" size="md" onClick={capture} disabled={locating} className="w-full">
             {locating ? (
               "Getting position…"
             ) : fix ? (
@@ -233,7 +233,7 @@ export default function CheckinPanel() {
         ) : null}
 
         <Button
-          variant="primary"
+          variant="filled"
           size="lg"
           onClick={() => void submit()}
           disabled={saving}
@@ -265,7 +265,7 @@ export default function CheckinPanel() {
               title="Couldn't load your history"
               body="It needs a connection. Your check-ins are safe on the server."
               action={
-                <Button variant="secondary" size="md" onClick={loadHistory}>
+                <Button variant="tinted" size="md" onClick={loadHistory}>
                   Try again
                 </Button>
               }

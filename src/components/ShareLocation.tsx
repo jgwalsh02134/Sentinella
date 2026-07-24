@@ -113,7 +113,7 @@ export default function ShareLocation() {
 
       <div className="mt-3 flex gap-3">
         <Button
-          variant={fix ? "secondary" : "primary"}
+          variant={fix ? "tinted" : "filled"}
           size="md"
           onClick={locate}
           disabled={busy}
@@ -122,7 +122,7 @@ export default function ShareLocation() {
           {busy ? "Locating…" : fix ? "Refresh position" : "Get my position"}
         </Button>
         {fix ? (
-          <Button variant="primary" size="md" onClick={() => void share()} className="min-w-0 flex-1">
+          <Button variant="filled" size="md" onClick={() => void share()} className="min-w-0 flex-1">
             Share position
           </Button>
         ) : null}

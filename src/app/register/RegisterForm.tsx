@@ -77,7 +77,7 @@ export default function RegisterForm({ invitesRequired }: { invitesRequired: boo
         />
       </Field>
       {error ? <FieldError>{error}</FieldError> : null}
-      <Button type="submit" variant="primary" size="lg" disabled={busy} className="w-full">
+      <Button type="submit" variant="filled" size="lg" disabled={busy} className="w-full">
         {busy ? "Creating…" : "Create account"}
       </Button>
       <p className="text-subhead text-secondary">

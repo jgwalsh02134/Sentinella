@@ -83,6 +83,11 @@ const config: Config = {
       /* iOS Settings nav tile: 7pt radius on a 29pt square (see spacing
          token `tile`). Only NavTile uses it. */
       tile: "0.4118rem",
+      /* iOS button radii — 10/12/14pt for the small/medium/large button
+         sizes (continuous-feel corners). Only ui/Button uses these. */
+      "btn-sm": "0.5882rem",
+      btn: "0.7059rem",
+      "btn-lg": "0.8235rem",
       xl: "0.75rem",
       "2xl": "1rem",
       full: "9999px",
@@ -231,6 +236,11 @@ const config: Config = {
       spacing: {
         control: "2.75rem",
         "control-lg": "3.25rem",
+        /* iOS button heights — small 34pt (inline), medium 44pt, large
+           50pt (primary CTAs). Rem-based so they track Dynamic Type. */
+        "btn-sm": "2rem",
+        btn: "2.5882rem",
+        "btn-lg": "2.9412rem",
         /* iOS Settings nav tile: 29pt square, rem-based so it grows with
            Dynamic Type alongside the row it sits in. */
         tile: "1.7059rem",

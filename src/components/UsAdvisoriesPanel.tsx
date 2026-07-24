@@ -140,7 +140,7 @@ export default function UsAdvisoriesPanel() {
         title="Couldn't reach the advisory service"
         body="Official advisories need a connection. The Emergency and Guide screens keep working offline."
         action={
-          <Button variant="secondary" size="md" onClick={load}>
+          <Button variant="tinted" size="md" onClick={load}>
             Try again
           </Button>
         }

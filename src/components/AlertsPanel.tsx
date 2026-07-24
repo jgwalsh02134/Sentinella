@@ -114,7 +114,7 @@ export default function AlertsPanel() {
       {isAdmin ? (
         <Card>
           <Button
-            variant="secondary"
+            variant="tinted"
             size="md"
             onClick={() => setShowForm((v) => !v)}
             className="w-full"
@@ -153,7 +153,7 @@ export default function AlertsPanel() {
               </div>
               {formError ? <FieldError>{formError}</FieldError> : null}
               <Button
-                variant="primary"
+                variant="filled"
                 size="lg"
                 onClick={() => void publish()}
                 disabled={publishing || !title.trim() || !body.trim()}
@@ -177,7 +177,7 @@ export default function AlertsPanel() {
           title="Couldn't reach the advisory service"
           body="Team alerts need a connection. The Emergency and Guide screens keep working offline."
           action={
-            <Button variant="secondary" size="md" onClick={load}>
+            <Button variant="tinted" size="md" onClick={load}>
               Try again
             </Button>
           }

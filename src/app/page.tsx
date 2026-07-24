@@ -46,7 +46,7 @@ export default async function HomePage() {
           </div>
         </div>
         {session ? (
-          <Button href="/checkin" variant="secondary" size="md">
+          <Button href="/checkin" variant="tinted" size="md">
             Check in
           </Button>
         ) : (

@@ -722,7 +722,7 @@ export default function MapView() {
                     </p>
                     <div className="mt-4 flex justify-center">
                       <Button
-                        variant="secondary"
+                        variant="tinted"
                         size="md"
                         onClick={() => goToPack(MAP_PACKS[0])}
                       >
@@ -754,7 +754,7 @@ export default function MapView() {
                         "The map for this area streams online or works from a downloaded pack."}
                     </p>
                     <div className="mt-4 flex justify-center">
-                      <Button variant="secondary" size="md" onClick={() => void togglePack(coveringPack)}>
+                      <Button variant="tinted" size="md" onClick={() => void togglePack(coveringPack)}>
                         Download {coveringPack.name} — {formatSize(coveringPack.sizeBytes)}
                       </Button>
                     </div>
@@ -895,7 +895,7 @@ export default function MapView() {
                           </span>
                         ) : null}
                       </p>
-                      <Button variant="destructive" size="md" onClick={removeBase}>
+                      <Button variant="tinted" destructive size="md" onClick={removeBase}>
                         Remove
                       </Button>
                     </div>
@@ -911,7 +911,7 @@ export default function MapView() {
                             className="w-0 min-w-0 flex-1"
                             aria-label="Name for this spot"
                           />
-                          <Button variant="primary" size="md" onClick={saveBase} className="shrink-0">
+                          <Button variant="filled" size="md" onClick={saveBase} className="shrink-0">
                             Save spot
                           </Button>
                         </span>
@@ -985,7 +985,7 @@ export default function MapView() {
                               <FieldError>{errors[city.id]}</FieldError>
                               {!isDownloaded && !isDownloading ? (
                                 <Button
-                                  variant="secondary"
+                                  variant="tinted"
                                   size="md"
                                   onClick={() => void togglePack(city)}
                                   className="mt-2"

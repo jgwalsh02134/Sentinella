@@ -26,7 +26,7 @@ export default function ActionRow({
         <Button
           key={action.href + action.label}
           href={action.href}
-          variant="secondary"
+          variant="tinted"
           size="md"
           className="min-w-0 flex-1 basis-24"
         >
