@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { CloudOff, Droplets, LocateFixed } from "lucide-react";
+import Link from "next/link";
+import { CloudOff, Droplets, LocateFixed, TriangleAlert } from "lucide-react";
 import Icon from "@/components/Icon";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
@@ -28,6 +29,18 @@ const CITIES: Place[] = [
   { id: "siena", label: "Siena", lat: 43.3188, lng: 11.3308 },
 ];
 
+/** Admin region a place belongs to, for matching MeteoAlarm warnings. */
+function placeRegion(p: Place): string | null {
+  if (p.id === "rome") return "Lazio";
+  if (p.id === "florence" || p.id === "siena") return "Toscana";
+  // "My location": coarse boxes are enough for a cross-link chip.
+  if (p.lat >= 40.78 && p.lat <= 42.84 && p.lng >= 11.45 && p.lng <= 14.03) return "Lazio";
+  if (p.lat >= 42.24 && p.lat <= 44.47 && p.lng >= 9.69 && p.lng <= 12.38) return "Toscana";
+  return null;
+}
+
+type WarningChip = { severity: string | null; kind: string; expiresAt: string | null };
+
 const SELECTED_KEY = "sentinella-weather-place";
 const CACHE_PREFIX = "sentinella-weather:";
 
@@ -53,18 +66,23 @@ function dayLabel(isoDate: string): string {
   return new Date(`${isoDate}T12:00:00`).toLocaleDateString("en-US", { weekday: "short" });
 }
 
-export default function WeatherCard({
-  className = "",
-  /** Optional slot rendered above the forecast (Phase-4 warning chip). */
-  children,
-}: {
-  className?: string;
-  children?: React.ReactNode;
-}) {
+export default function WeatherCard({ className = "" }: { className?: string }) {
   const [place, setPlace] = useState<Place>(CITIES[0]);
   const [state, setState] = useState<"loading" | "ready" | "offline" | "error">("loading");
   const [data, setData] = useState<WeatherResult | null>(null);
   const [gpsNote, setGpsNote] = useState<string | null>(null);
+  const [warnings, setWarnings] = useState<Array<WarningChip & { regions: string[] }>>([]);
+
+  // Cross-link: active MeteoAlarm warnings, matched to the selected
+  // place's region. Best effort — no chip is rendered when unreachable.
+  useEffect(() => {
+    fetch("/api/warnings")
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error())))
+      .then((payload: { warnings?: Array<WarningChip & { source: string; regions: string[] }> }) => {
+        setWarnings((payload.warnings ?? []).filter((w) => w.source === "meteoalarm"));
+      })
+      .catch(() => undefined);
+  }, []);
 
   // Restore the last-picked city before the first fetch.
   useEffect(() => {
@@ -137,6 +155,15 @@ export default function WeatherCard({
     { id: "gps", label: "My location", onClick: useMyLocation, icon: true },
   ];
 
+  const region = placeRegion(place);
+  const activeWarning =
+    region == null
+      ? null
+      : warnings.find(
+          (w) =>
+            w.regions.includes(region) && (!w.expiresAt || +new Date(w.expiresAt) > Date.now()),
+        ) ?? null;
+
   return (
     <Card className={className}>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -166,7 +193,22 @@ export default function WeatherCard({
       </div>
       {gpsNote ? <p className="mt-2 text-footnote text-secondary">{gpsNote}</p> : null}
 
-      {children}
+      {activeWarning ? (
+        <Link
+          href="/alerts"
+          className={`mt-3 flex min-h-11 items-center gap-2 rounded-xl px-3 py-2 text-callout font-semibold ${
+            activeWarning.severity === "red"
+              ? "bg-danger-subtle text-danger"
+              : "bg-warning-subtle text-warning"
+          }`}
+        >
+          <Icon icon={TriangleAlert} size="sm" className="shrink-0" />
+          <span className="min-w-0 flex-1">
+            {activeWarning.severity} {activeWarning.kind.toLowerCase()} warning covers {place.label}
+          </span>
+          <span className="shrink-0 text-footnote underline underline-offset-2">Alerts</span>
+        </Link>
+      ) : null}
 
       <div className="mt-3">
         {state === "loading" ? (

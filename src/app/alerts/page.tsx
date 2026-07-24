@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import AlertsPanel from "@/components/AlertsPanel";
+import OfficialWarningsPanel from "@/components/OfficialWarningsPanel";
 import SeasonalWeatherLink from "@/components/SeasonalWeatherLink";
 import UsAdvisoriesPanel from "@/components/UsAdvisoriesPanel";
 import NavTile from "@/components/ui/NavTile";
@@ -25,6 +26,13 @@ export default function AlertsPage() {
         <SectionHeader title="Team alerts" />
         <div className="mt-3">
           <AlertsPanel />
+        </div>
+      </section>
+
+      <section className="mt-8" aria-label="Official warnings for Italy" data-accent="azzurro">
+        <SectionHeader title="Official warnings — Italy" />
+        <div className="mt-3">
+          <OfficialWarningsPanel />
         </div>
       </section>
 

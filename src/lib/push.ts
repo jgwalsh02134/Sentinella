@@ -9,7 +9,14 @@
 import webpush from "web-push";
 import { and, eq, inArray, isNull } from "drizzle-orm";
 import { db } from "@/db";
-import { externalAdvisories, pushSubscriptions, users, type ExternalAdvisory } from "@/db/schema";
+import {
+  externalAdvisories,
+  officialWarnings,
+  pushSubscriptions,
+  users,
+  type ExternalAdvisory,
+  type OfficialWarning,
+} from "@/db/schema";
 
 export type PushPayload = {
   title: string;
@@ -120,6 +127,48 @@ export async function notifyNewAdvisories(items: ExternalAdvisory[]): Promise<vo
       });
     } catch (err) {
       console.error("[push] advisory notification failed:", err);
+    }
+  }
+}
+
+/**
+ * The push bar for official warnings, deliberately high:
+ *
+ *   - NEW red (rosso) warnings — MeteoAlarm or GDACS
+ *   - NEW earthquakes at M ≥ 4.5
+ *
+ * Yellow and orange NEVER push; they surface in-app only. Notification
+ * fatigue is a safety failure: a traveler who has learned to swipe away
+ * this app's notifications won't read the one that matters. Every push
+ * from this function must mean "act now".
+ *
+ * Dedupe matches notifyNewAdvisories: notified_at is claimed exactly once
+ * per row, so racing refreshes never double-send.
+ */
+export async function notifyNewWarnings(items: OfficialWarning[]): Promise<void> {
+  const PUSH_QUAKE_MAGNITUDE = 4.5;
+  const urgent = items.filter(
+    (w) => w.severity === "red" || (w.source === "ingv" && (w.magnitude ?? 0) >= PUSH_QUAKE_MAGNITUDE),
+  );
+
+  for (const item of urgent) {
+    try {
+      const claimed = await db
+        .update(officialWarnings)
+        .set({ notifiedAt: new Date() })
+        .where(and(eq(officialWarnings.id, item.id), isNull(officialWarnings.notifiedAt)))
+        .returning({ id: officialWarnings.id });
+      if (claimed.length === 0) continue;
+
+      const label = item.source === "ingv" ? "Earthquake" : "Red weather warning";
+      await sendPush("official", {
+        title: `${label}: ${item.title}`.slice(0, 120),
+        body: item.regions.length ? `Affects: ${item.regions.join(", ")}` : item.area,
+        url: "/alerts",
+        tag: item.externalId,
+      });
+    } catch (err) {
+      console.error("[push] warning notification failed:", err);
     }
   }
 }

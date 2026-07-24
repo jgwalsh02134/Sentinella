@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getActiveWarnings, refreshWarnings } from "@/lib/official-warnings";
+import { notifyNewWarnings } from "@/lib/push";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,11 @@ export const dynamic = "force-dynamic";
  */
 export async function GET() {
   try {
-    await refreshWarnings();
+    const refresh = await refreshWarnings();
+    if (refresh.newItems.length > 0) {
+      // Fire-and-forget; notified_at claiming makes any refresh path safe.
+      void notifyNewWarnings(refresh.newItems);
+    }
     const data = await getActiveWarnings();
     return NextResponse.json(data);
   } catch (err) {

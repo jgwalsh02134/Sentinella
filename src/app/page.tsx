@@ -11,6 +11,7 @@ import LatestAlert from "@/components/LatestAlert";
 import LiveClock from "@/components/LiveClock";
 import NotificationSettings from "@/components/NotificationSettings";
 import SignOutButton from "@/components/SignOutButton";
+import WarningBanner from "@/components/WarningBanner";
 import WeatherCard from "@/components/WeatherCard";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
@@ -60,6 +61,10 @@ export default async function HomePage() {
 
       {/* Live dual-timezone strip — device clock, works fully offline. */}
       <LiveClock variant="compact" className="mt-3" />
+
+      {/* Renders only while an orange/red warning or M≥4.5 quake is
+          active for Lazio/Tuscany — otherwise nothing, never a shell. */}
+      <WarningBanner />
 
       <section className="mt-5" aria-label="Emergency">
         <CallPlate
