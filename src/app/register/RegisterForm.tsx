@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import { Field, FieldError, Input } from "@/components/ui/Field";
+import { syncQueue } from "@/lib/checkinQueue";
 
 export default function RegisterForm({ invitesRequired }: { invitesRequired: boolean }) {
   const router = useRouter();
@@ -29,6 +30,8 @@ export default function RegisterForm({ invitesRequired }: { invitesRequired: boo
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error ?? "Registration didn't work. Try again.");
+      // Auth succeeded: flush any check-ins queued while signed out.
+      void syncQueue();
       router.push("/");
       router.refresh();
     } catch (err) {
