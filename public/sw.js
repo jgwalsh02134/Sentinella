@@ -14,7 +14,7 @@
 // v10: guide became list→detail routes — precache every /guide/* page AND
 // the hashed JS/CSS chunks referenced by precached pages, so a page first
 // opened offline still hydrates (search, phrase Show mode, disclosures).
-const VERSION = "sentinella-v10";
+const VERSION = "sentinella-v11";
 const PRECACHE = [
   "/",
   "/emergency",

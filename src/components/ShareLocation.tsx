@@ -88,7 +88,11 @@ export default function ShareLocation() {
     <Card>
       <h2 className="text-headline">Your position</h2>
       <p className="mt-2 text-body text-secondary">
-        Read your coordinates to a 112 operator, or send them to a contact.
+        Read your coordinates to a{" "}
+        <a href="tel:112" className="font-semibold tabular-nums underline underline-offset-2">
+          112
+        </a>{" "}
+        operator, or send them to a contact.
       </p>
 
       {fix ? (

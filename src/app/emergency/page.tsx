@@ -97,7 +97,9 @@ function EmbassyBody({ embassy, headingLevel }: { embassy: Embassy; headingLevel
  *  numbering to assistive tech). */
 function NumberedSteps({ steps }: { steps: readonly Step[] }) {
   return (
-    <ol className="list-decimal space-y-2 pl-5 marker:font-mono marker:font-bold marker:text-secondary">
+    // No marker:font-mono: a font-family swap inside ::marker drops the
+    // digits in some engines — weight and color only.
+    <ol className="list-decimal space-y-2 pl-5 marker:font-semibold marker:text-secondary">
       {steps.map((step) => (
         <li key={step.lead} className="body-copy pl-1 text-secondary">
           <strong className="font-bold text-primary">{step.lead}</strong>{" "}
