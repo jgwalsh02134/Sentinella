@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { formatDualDateTime } from "@/lib/timezones";
 import { Check } from "lucide-react";
 import Icon from "@/components/Icon";
+import DstNote from "@/components/DstNote";
 import ReminderSettings from "@/components/ReminderSettings";
 import TripTracking from "@/components/TripTracking";
 
@@ -33,15 +35,9 @@ const statusMeta: Record<Status, { label: string; dot: string; chip: string }> =
   help: { label: "Need help", dot: "bg-signal", chip: "border-signal bg-signal text-white" },
 };
 
+/** Dual-zone timestamp: the trip runs on Italy time, family reads New York. */
 function formatWhen(iso: string) {
-  const d = new Date(iso);
-  return d.toLocaleString(undefined, {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  return formatDualDateTime(new Date(iso));
 }
 
 export default function CheckinPanel() {
@@ -247,6 +243,8 @@ export default function CheckinPanel() {
 
       <ReminderSettings />
 
+      <DstNote />
+
       <section>
         <h2 className="eyebrow">History</h2>
         {loadingHistory ? (
@@ -267,8 +265,8 @@ export default function CheckinPanel() {
                       Auto
                     </span>
                   ) : null}
-                  <span className="ml-auto text-xs text-secondary">{formatWhen(c.createdAt)}</span>
                 </div>
+                <p className="mt-1 text-xs tabular-nums text-secondary">{formatWhen(c.createdAt)}</p>
                 {c.placeName ? <p className="mt-1 break-words text-sm">{c.placeName}</p> : null}
                 {c.note ? <p className="mt-1 break-words text-sm text-secondary">{c.note}</p> : null}
                 {c.lat != null && c.lng != null ? (

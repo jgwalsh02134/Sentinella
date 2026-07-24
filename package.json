@@ -9,6 +9,7 @@
     "start": "next start -p ${PORT:-3000}",
     "start:railway": "npm run db:migrate && next start -p ${PORT:-3000}",
     "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/lib/*.test.ts",
     "icons": "node scripts/generate-icons.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",

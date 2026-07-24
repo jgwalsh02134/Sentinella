@@ -3,8 +3,10 @@ import { notFound } from "next/navigation";
 import { desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { checkIns, users } from "@/db/schema";
+import DstNote from "@/components/DstNote";
 import { nearestRegion } from "@/lib/region-geo";
 import { relativeTime } from "@/lib/relative-time";
+import { formatDualDateTime } from "@/lib/timezones";
 
 /**
  * Public read-only status page behind an unguessable token. Deliberately
@@ -77,20 +79,12 @@ export default async function StatusPage({ params }: { params: { token: string }
             ) : null}
             .
           </p>
-          <p
-            className="mt-2 text-sm text-secondary"
-            data-checkin-at={latest.createdAt.toISOString()}
-          >
-            {latest.createdAt.toLocaleString("en-GB", {
-              timeZone: "Europe/Rome",
-              weekday: "short",
-              day: "numeric",
-              month: "short",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}{" "}
-            (Italy time)
+          <p className="mt-2 text-sm tabular-nums text-secondary">
+            {formatDualDateTime(latest.createdAt)}
           </p>
+          <div className="mt-3">
+            <DstNote />
+          </div>
         </div>
       ) : (
         <div className="plate mt-5 border border-default bg-card p-5">
