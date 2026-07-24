@@ -155,7 +155,7 @@ export default function TripTracking({ onAutoCheckIn }: Props) {
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-verde opacity-60 motion-reduce:animate-none" />
             <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-verde" />
           </span>
-          <span className="text-xs font-semibold text-verde-deep">
+          <span className="text-footnote font-semibold text-verde-deep">
             Trip tracking on — auto check-in every 5 min or 250 m
           </span>
         </div>
@@ -164,8 +164,8 @@ export default function TripTracking({ onAutoCheckIn }: Props) {
       <div className="plate border border-default bg-card p-5">
         <div className="flex min-h-[2.75rem] items-center gap-3">
           <div className="flex-1">
-            <h2 className="text-sm font-bold">Track my trip</h2>
-            <p className="text-xs text-secondary">Automatic safe check-ins while this screen is open.</p>
+            <h2 className="text-headline">Track my trip</h2>
+            <p className="text-footnote text-secondary">Automatic safe check-ins while this screen is open.</p>
           </div>
           <button
             type="button"
@@ -189,22 +189,22 @@ export default function TripTracking({ onAutoCheckIn }: Props) {
         {active ? (
           <div className="mt-3 rounded-xl bg-verde-tint p-3">
             {live ? (
-              <p className="font-mono text-sm font-bold tabular-nums text-verde-deep">
+              <p className="font-mono text-callout font-bold tabular-nums text-verde-deep">
                 {live.lat.toFixed(5)}, {live.lng.toFixed(5)}{" "}
-                <span className="font-sans text-xs font-normal">~{Math.round(live.accuracyM)} m</span>
+                <span className="font-sans text-footnote font-normal">~{Math.round(live.accuracyM)} m</span>
               </p>
             ) : (
-              <p className="text-sm text-verde-deep">Getting a fix…</p>
+              <p className="text-callout text-verde-deep">Getting a fix…</p>
             )}
-            <p className="mt-1 text-xs text-verde-deep/80">
+            <p className="mt-1 text-footnote text-verde-deep/80">
               {lastSentAt ? `Last sent ${formatClock(lastSentAt)}` : "First auto check-in sends once a fix lands."}
             </p>
           </div>
         ) : null}
 
-        {error ? <p className="mt-3 text-sm font-medium text-danger">{error}</p> : null}
+        {error ? <p className="mt-3 text-callout font-medium text-danger">{error}</p> : null}
 
-        <p className="mt-3 text-xs leading-relaxed text-secondary">
+        <p className="mt-3 text-footnote text-secondary">
           Tracking pauses when the screen locks or you leave the app — iPhone doesn't allow web apps
           to track in the background.
         </p>

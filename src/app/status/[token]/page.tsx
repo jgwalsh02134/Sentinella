@@ -65,7 +65,7 @@ export default async function StatusPage({ params }: { params: { token: string }
       {latest && meta ? (
         <div className="plate mt-5 border border-default bg-card p-5">
           <span
-            className={`inline-block rounded-full px-4 py-1.5 text-sm font-bold uppercase tracking-wide ${meta.chip}`}
+            className={`inline-block rounded-full px-4 py-1.5 text-callout font-bold uppercase tracking-wide ${meta.chip}`}
           >
             {meta.label}
           </span>
@@ -79,7 +79,7 @@ export default async function StatusPage({ params }: { params: { token: string }
             ) : null}
             .
           </p>
-          <p className="mt-2 text-sm tabular-nums text-secondary">
+          <p className="mt-2 text-subhead tabular-nums text-secondary">
             {formatDualDateTime(latest.createdAt)}
           </p>
           <div className="mt-3">
@@ -94,7 +94,7 @@ export default async function StatusPage({ params }: { params: { token: string }
         </div>
       )}
 
-      <p className="mt-4 text-xs leading-relaxed text-secondary">
+      <p className="mt-4 text-footnote text-secondary">
         Shared from Sentinella, a travel safety app. This page shows an approximate area at most —
         never exact coordinates — and is informational, not monitored in real time. In an emergency
         in Italy, call 112.

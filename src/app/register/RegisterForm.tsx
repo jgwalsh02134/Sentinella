@@ -44,7 +44,7 @@ export default function RegisterForm({ invitesRequired }: { invitesRequired: boo
             required
             value={inviteCode}
             onChange={(e) => setInviteCode(e.target.value)}
-            className="mt-1 min-h-[3rem] w-full rounded-xl border border-default px-4 font-mono text-base uppercase outline-none focus:border-verde"
+            className="mt-1 min-h-[3rem] w-full rounded-xl border border-default px-4 font-mono text-body uppercase outline-none focus:border-verde"
           />
         </label>
       ) : null}
@@ -55,7 +55,7 @@ export default function RegisterForm({ invitesRequired }: { invitesRequired: boo
           autoComplete="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="mt-1 min-h-[3rem] w-full rounded-xl border border-default px-4 text-base outline-none focus:border-verde"
+          className="mt-1 min-h-[3rem] w-full rounded-xl border border-default px-4 text-body outline-none focus:border-verde"
         />
       </label>
       <label className="block">
@@ -66,7 +66,7 @@ export default function RegisterForm({ invitesRequired }: { invitesRequired: boo
           autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 min-h-[3rem] w-full rounded-xl border border-default px-4 text-base outline-none focus:border-verde"
+          className="mt-1 min-h-[3rem] w-full rounded-xl border border-default px-4 text-body outline-none focus:border-verde"
         />
       </label>
       <label className="block">
@@ -78,19 +78,19 @@ export default function RegisterForm({ invitesRequired }: { invitesRequired: boo
           autoComplete="new-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 min-h-[3rem] w-full rounded-xl border border-default px-4 text-base outline-none focus:border-verde"
+          className="mt-1 min-h-[3rem] w-full rounded-xl border border-default px-4 text-body outline-none focus:border-verde"
         />
-        <span className="mt-1 block text-xs text-secondary">At least 8 characters.</span>
+        <span className="mt-1 block text-footnote text-secondary">At least 8 characters.</span>
       </label>
-      {error ? <p className="text-sm font-medium text-danger">{error}</p> : null}
+      {error ? <p className="text-callout font-medium text-danger">{error}</p> : null}
       <button
         type="submit"
         disabled={busy}
-        className="min-h-[3.25rem] w-full rounded-xl bg-verde text-base font-bold text-white active:bg-brand-strong disabled:bg-sunken disabled:text-tertiary"
+        className="min-h-[3.25rem] w-full rounded-xl bg-verde text-body font-bold text-white active:bg-brand-strong disabled:bg-sunken disabled:text-tertiary"
       >
         {busy ? "Creating…" : "Create account"}
       </button>
-      <p className="text-sm text-secondary">
+      <p className="text-subhead text-secondary">
         Already registered?{" "}
         <Link href="/login" className="text-link">
           Sign in

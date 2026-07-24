@@ -38,7 +38,7 @@ export default function DstNote() {
 
   return (
     <div className="flex items-start gap-2 rounded-xl bg-warning-subtle p-3" role="note">
-      <p className="flex-1 text-sm leading-relaxed text-warning">
+      <p className="flex-1 text-callout text-warning">
         Italy changed clocks on Oct 25; the US changes Nov 1 — Italy is{" "}
         <strong className="font-bold">5 hours ahead this week, not 6</strong>.
       </p>

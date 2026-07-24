@@ -48,7 +48,7 @@ export default function EmergencyPage() {
             {callScript.map((step, i) => (
               <li key={step.lead} className="body-copy flex gap-3">
                 <span className="font-mono font-bold text-verde">{i + 1}</span>
-                <span className="text-secondary">
+                <span className="min-w-0 text-secondary">
                   <strong className="font-bold text-primary">{step.lead}</strong> {step.rest}
                 </span>
               </li>
@@ -60,8 +60,8 @@ export default function EmergencyPage() {
       <section className="mt-6" aria-label="Share your position">
         <ShareLocation />
         <Link href="/map" className="plate mt-3 block border border-default bg-card p-4">
-          <p className="text-sm font-bold">Offline map →</p>
-          <p className="mt-0.5 text-xs leading-relaxed text-secondary">
+          <p className="text-headline">Offline map →</p>
+          <p className="mt-0.5 text-subhead text-secondary">
             See where you are on a downloaded city map — works without a connection.
           </p>
         </Link>
@@ -69,7 +69,7 @@ export default function EmergencyPage() {
 
       <section className="mt-6" aria-label="112 companion app">
         <div className="plate border border-default bg-card p-5">
-          <h2 className="text-base font-bold leading-snug">{whereAreUApp.title}</h2>
+          <h2 className="text-headline">{whereAreUApp.title}</h2>
           <p className="body-copy mt-1.5 text-secondary">{whereAreUApp.body}</p>
           <ul className="mt-2 space-y-1.5">
             {whereAreUApp.bullets.map((b) => (
@@ -82,11 +82,11 @@ export default function EmergencyPage() {
             href={whereAreUApp.link.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde px-4 text-sm font-bold text-verde active:bg-verde-tint"
+            className="mt-3 flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde px-4 text-callout font-bold text-verde active:bg-verde-tint"
           >
             {whereAreUApp.link.label}
           </a>
-          <p className="mt-2 text-xs leading-relaxed text-secondary">{whereAreUApp.note}</p>
+          <p className="mt-2 text-footnote text-secondary">{whereAreUApp.note}</p>
         </div>
       </section>
 
@@ -115,7 +115,7 @@ export default function EmergencyPage() {
               href={appleMapsDirectionsUrl(`${p.hospital.replace(/\s*\([^)]*\)/g, "")}, ${p.city}, Italy`)}
               target="_blank"
               rel="noreferrer"
-              className="flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde text-sm font-bold text-verde active:bg-verde-tint"
+              className="flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde text-callout font-bold text-verde active:bg-verde-tint"
             >
               Directions — {p.hospital}
             </a>
@@ -138,15 +138,15 @@ export default function EmergencyPage() {
             const FlagIcon = flagIcons[e.country];
             return (
             <div key={e.name} className="plate break-words border border-default bg-card p-4">
-              <p className="text-base font-bold">
+              <p className="text-headline">
                 {FlagIcon ? <FlagIcon /> : <span aria-hidden="true">{e.flag}</span>}{" "}
                 {e.name}
               </p>
-              <p className="mt-0.5 text-sm text-secondary">{e.address}</p>
-              <p className="mt-0.5 font-mono text-sm font-semibold tabular-nums">{e.phone}</p>
-              {e.notes ? <p className="mt-1 text-xs leading-relaxed text-secondary">{e.notes}</p> : null}
+              <p className="mt-0.5 text-subhead text-secondary">{e.address}</p>
+              <p className="mt-0.5 font-mono text-callout font-semibold tabular-nums">{e.phone}</p>
+              {e.notes ? <p className="mt-1 text-subhead text-secondary">{e.notes}</p> : null}
               {e.email ? (
-                <p className="mt-1 text-xs leading-relaxed text-secondary">
+                <p className="mt-1 text-subhead text-secondary">
                   Email:{" "}
                   <a href={`mailto:${e.email}`} className="text-link break-all">
                     {e.email}
@@ -156,7 +156,7 @@ export default function EmergencyPage() {
               <div className="mt-3 grid grid-cols-2 gap-2">
                 <a
                   href={`tel:${e.dial}`}
-                  className="flex min-h-[2.75rem] items-center justify-center rounded-xl bg-verde text-sm font-bold text-white active:bg-verde-deep"
+                  className="flex min-h-[2.75rem] items-center justify-center rounded-xl bg-verde text-callout font-bold text-white active:bg-verde-deep"
                 >
                   Call
                 </a>
@@ -164,7 +164,7 @@ export default function EmergencyPage() {
                   href={appleMapsDirectionsUrl(`${e.address}, Italy`)}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde text-sm font-bold text-verde active:bg-verde-tint"
+                  className="flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde text-callout font-bold text-verde active:bg-verde-tint"
                 >
                   Directions
                 </a>
@@ -172,7 +172,7 @@ export default function EmergencyPage() {
                   href={e.website}
                   target="_blank"
                   rel="noreferrer"
-                  className="col-span-2 flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde text-sm font-bold text-verde active:bg-verde-tint"
+                  className="col-span-2 flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde text-callout font-bold text-verde active:bg-verde-tint"
                 >
                   Website
                 </a>
@@ -190,7 +190,7 @@ export default function EmergencyPage() {
             {lostDocumentSteps.map((step, i) => (
               <li key={step.lead} className="body-copy flex gap-3">
                 <span className="font-mono font-bold text-verde">{i + 1}</span>
-                <span className="text-secondary">
+                <span className="min-w-0 text-secondary">
                   <strong className="font-bold text-primary">{step.lead}</strong> {step.rest}
                 </span>
               </li>

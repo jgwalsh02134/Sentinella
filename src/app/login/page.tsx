@@ -45,7 +45,7 @@ function LoginForm() {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 min-h-[3rem] w-full rounded-xl border border-default px-4 text-base outline-none focus:border-verde"
+          className="mt-1 min-h-[3rem] w-full rounded-xl border border-default px-4 text-body outline-none focus:border-verde"
         />
       </label>
       <label className="block">
@@ -56,18 +56,18 @@ function LoginForm() {
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 min-h-[3rem] w-full rounded-xl border border-default px-4 text-base outline-none focus:border-verde"
+          className="mt-1 min-h-[3rem] w-full rounded-xl border border-default px-4 text-body outline-none focus:border-verde"
         />
       </label>
-      {error ? <p className="text-sm font-medium text-danger">{error}</p> : null}
+      {error ? <p className="text-callout font-medium text-danger">{error}</p> : null}
       <button
         type="submit"
         disabled={busy}
-        className="min-h-[3.25rem] w-full rounded-xl bg-verde text-base font-bold text-white active:bg-brand-strong disabled:bg-sunken disabled:text-tertiary"
+        className="min-h-[3.25rem] w-full rounded-xl bg-verde text-body font-bold text-white active:bg-brand-strong disabled:bg-sunken disabled:text-tertiary"
       >
         {busy ? "Signing in…" : "Sign in"}
       </button>
-      <p className="text-sm text-secondary">
+      <p className="text-subhead text-secondary">
         New here?{" "}
         <Link href="/register" className="text-link">
           Create an account

@@ -131,10 +131,10 @@ export default function CheckinPanel() {
 
       {nearby.length > 0 ? (
         <div className="rounded-xl bg-ambra-tint p-4" role="status">
-          <p className="text-sm font-bold text-ambra">Active advisories near your position</p>
+          <p className="text-callout font-bold text-ambra">Active advisories near your position</p>
           <ul className="mt-1.5 space-y-1">
             {nearby.map((a) => (
-              <li key={a.title} className="text-sm leading-relaxed text-ambra">
+              <li key={a.title} className="text-subhead text-ambra">
                 {a.badge ? <span className="font-bold uppercase">{a.badge} · </span> : null}
                 {a.url ? (
                   <a
@@ -148,7 +148,7 @@ export default function CheckinPanel() {
                 ) : (
                   a.title
                 )}
-                <span className="text-xs"> ({a.source === "team" ? "team" : "official"})</span>
+                <span className="text-footnote"> ({a.source === "team" ? "team" : "official"})</span>
               </li>
             ))}
           </ul>
@@ -169,7 +169,7 @@ export default function CheckinPanel() {
                 role="radio"
                 aria-checked={selected}
                 onClick={() => setStatus(s)}
-                className={`min-h-[3rem] rounded-xl border-2 px-2 text-sm font-bold transition-colors ${
+                className={`min-h-[3rem] rounded-xl border-2 px-2 text-callout font-bold transition-colors ${
                   selected ? meta.chip : "border-default bg-card text-secondary"
                 }`}
               >
@@ -182,7 +182,7 @@ export default function CheckinPanel() {
         {status === "help" ? (
           <a
             href="tel:112"
-            className="mt-3 block rounded-xl bg-signal-tint p-3 text-sm font-semibold text-danger"
+            className="mt-3 block rounded-xl bg-signal-tint p-3 text-callout font-semibold text-danger"
           >
             If this is an emergency, call 112 now — a check-in is not monitored in real time.
           </a>
@@ -206,7 +206,7 @@ export default function CheckinPanel() {
             )}
           </button>
           {fix ? (
-            <p className="font-mono text-xs tabular-nums text-secondary">
+            <p className="font-mono text-footnote tabular-nums text-secondary">
               {fix.lat.toFixed(5)}, {fix.lng.toFixed(5)} · ~{Math.round(fix.accuracyM)} m
             </p>
           ) : null}
@@ -216,7 +216,7 @@ export default function CheckinPanel() {
             onChange={(e) => setPlaceName(e.target.value)}
             placeholder="Place (e.g. Hotel Aurora, Firenze)"
             maxLength={120}
-            className="min-h-[3rem] w-full rounded-xl border border-default bg-card px-4 text-base outline-none focus:border-verde"
+            className="min-h-[3rem] w-full rounded-xl border border-default bg-card px-4 text-body outline-none focus:border-verde"
           />
           <textarea
             value={note}
@@ -224,18 +224,18 @@ export default function CheckinPanel() {
             placeholder="Note (optional)"
             maxLength={500}
             rows={2}
-            className="w-full rounded-xl border border-default bg-card px-4 py-3 text-base outline-none focus:border-verde"
+            className="w-full rounded-xl border border-default bg-card px-4 py-3 text-body outline-none focus:border-verde"
           />
         </div>
 
-        {error ? <p className="mt-3 text-sm font-medium text-danger">{error}</p> : null}
-        {message ? <p className="mt-3 text-sm font-semibold text-verde">{message}</p> : null}
+        {error ? <p className="mt-3 text-callout font-medium text-danger">{error}</p> : null}
+        {message ? <p className="mt-3 text-callout font-semibold text-verde">{message}</p> : null}
 
         <button
           type="button"
           onClick={submit}
           disabled={saving}
-          className="mt-4 min-h-[3.25rem] w-full rounded-xl bg-verde text-base font-bold text-white active:bg-brand-strong disabled:bg-sunken disabled:text-tertiary"
+          className="mt-4 min-h-[3.25rem] w-full rounded-xl bg-verde text-body font-bold text-white active:bg-brand-strong disabled:bg-sunken disabled:text-tertiary"
         >
           {saving ? "Saving…" : "Check in"}
         </button>
@@ -248,9 +248,9 @@ export default function CheckinPanel() {
       <section>
         <h2 className="eyebrow">History</h2>
         {loadingHistory ? (
-          <p className="mt-3 text-sm text-secondary">Loading…</p>
+          <p className="mt-3 text-body text-secondary">Loading…</p>
         ) : history.length === 0 ? (
-          <p className="mt-3 text-sm text-secondary">
+          <p className="mt-3 text-body text-secondary">
             No check-ins yet. Your first one will appear here with its time and position.
           </p>
         ) : (
@@ -259,22 +259,22 @@ export default function CheckinPanel() {
               <li key={c.id} className="plate border border-default bg-card p-4">
                 <div className="flex items-center gap-2">
                   <span className={`h-2.5 w-2.5 rounded-full ${statusMeta[c.status].dot}`} aria-hidden="true" />
-                  <span className="text-sm font-bold">{statusMeta[c.status].label}</span>
+                  <span className="text-callout font-bold">{statusMeta[c.status].label}</span>
                   {c.isAuto ? (
-                    <span className="rounded-full border border-default px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-secondary">
+                    <span className="rounded-full border border-default px-2 py-0.5 text-caption font-semibold uppercase tracking-wide text-secondary">
                       Auto
                     </span>
                   ) : null}
                 </div>
-                <p className="mt-1 text-xs tabular-nums text-secondary">{formatWhen(c.createdAt)}</p>
-                {c.placeName ? <p className="mt-1 break-words text-sm">{c.placeName}</p> : null}
-                {c.note ? <p className="mt-1 break-words text-sm text-secondary">{c.note}</p> : null}
+                <p className="mt-1 text-footnote tabular-nums text-secondary">{formatWhen(c.createdAt)}</p>
+                {c.placeName ? <p className="mt-1 break-words text-subhead">{c.placeName}</p> : null}
+                {c.note ? <p className="mt-1 break-words text-subhead text-secondary">{c.note}</p> : null}
                 {c.lat != null && c.lng != null ? (
                   <a
                     href={`https://maps.google.com/?q=${c.lat},${c.lng}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-link mt-1 inline-block break-all font-mono text-xs tabular-nums"
+                    className="text-link mt-1 inline-block break-all font-mono text-footnote tabular-nums"
                   >
                     {c.lat.toFixed(5)}, {c.lng.toFixed(5)}
                   </a>

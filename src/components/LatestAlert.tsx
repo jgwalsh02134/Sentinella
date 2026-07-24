@@ -108,28 +108,28 @@ export default function LatestAlert() {
 
   if (state === "offline") {
     return (
-      <p className="text-sm text-secondary">
+      <p className="text-body text-secondary">
         Advisories need a connection. Emergency numbers and the guide work offline.
       </p>
     );
   }
 
   if (!candidate) {
-    return <p className="text-sm text-secondary">No active advisories right now.</p>;
+    return <p className="text-body text-secondary">No active advisories right now.</p>;
   }
 
   return (
     <Link href="/alerts" className="plate block border border-default bg-card p-4">
       <span className="flex items-center gap-2">
         <span
-          className={`rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide ${candidate.badgeClass}`}
+          className={`rounded-full px-2.5 py-1 text-caption font-bold uppercase tracking-wide ${candidate.badgeClass}`}
         >
           {candidate.badge}
         </span>
-        <span className="min-w-0 truncate text-xs font-semibold text-secondary">{candidate.region}</span>
+        <span className="min-w-0 truncate text-footnote font-semibold text-secondary">{candidate.region}</span>
       </span>
-      <span className="mt-2 block break-words text-sm font-bold leading-snug">{candidate.title}</span>
-      <span className="mt-1 block text-xs font-semibold text-info">All advisories →</span>
+      <span className="mt-2 block break-words text-headline">{candidate.title}</span>
+      <span className="mt-1 block text-footnote font-semibold text-info">All advisories →</span>
     </Link>
   );
 }

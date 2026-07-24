@@ -106,7 +106,7 @@ export default function UsAdvisoriesPanel() {
     };
   }, [data, nearRegion]);
 
-  if (state === "loading") return <p className="text-sm text-secondary">Checking official sources…</p>;
+  if (state === "loading") return <p className="text-body text-secondary">Checking official sources…</p>;
 
   if (state === "offline" || !data) {
     return (
@@ -127,18 +127,18 @@ export default function UsAdvisoriesPanel() {
         <div className="plate border border-default bg-card p-5">
           <div className="flex items-center gap-2">
             <span
-              className={`rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide ${LEVEL_BADGE[adv.level] ?? "bg-warning-subtle text-warning"}`}
+              className={`rounded-full px-2.5 py-1 text-caption font-bold uppercase tracking-wide ${LEVEL_BADGE[adv.level] ?? "bg-warning-subtle text-warning"}`}
             >
               Level {adv.level}
             </span>
-            <span className="text-xs font-semibold text-secondary">Italy Travel Advisory</span>
+            <span className="text-footnote font-semibold text-secondary">Italy Travel Advisory</span>
           </div>
-          <p className="mt-2 text-xl font-extrabold tracking-tight">
+          <p className="mt-2 text-title tracking-tight">
             {ADVISORY_LEVEL_NAMES[adv.level] ?? adv.title}
           </p>
-          <p className="mt-1 text-xs text-secondary">Issued {formatDate(adv.publishedAt)}</p>
+          <p className="mt-1 text-footnote text-secondary">Issued {formatDate(adv.publishedAt)}</p>
           {adv.body ? <p className="body-copy mt-2 break-words text-secondary">{adv.body.split("\n")[0]}</p> : null}
-          <a href={adv.url} target="_blank" rel="noreferrer" className="text-link mt-2 block text-sm">
+          <a href={adv.url} target="_blank" rel="noreferrer" className="text-link mt-2 block text-callout">
             Read the official advisory on travel.state.gov →
           </a>
         </div>
@@ -177,7 +177,7 @@ export default function UsAdvisoriesPanel() {
         </div>
       ) : null}
 
-      <p className="text-xs leading-relaxed text-secondary">
+      <p className="text-footnote text-secondary">
         Source: U.S. Department of State and U.S. Mission Italy (public-domain). Last checked{" "}
         {data.lastCheckedAt ? formatWhen(data.lastCheckedAt) : "never"}.
       </p>
@@ -191,29 +191,29 @@ function AdvisoryList({ items }: { items: Item[] }) {
       {items.map((item) => (
         <li key={item.id} className="plate border border-default bg-card p-5">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-info-subtle px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-info">
+            <span className="rounded-full bg-info-subtle px-2.5 py-1 text-caption font-bold uppercase tracking-wide text-info">
               Official
             </span>
             {item.regions.map((r) => (
               <span
                 key={r}
-                className="rounded-full border border-default px-2.5 py-1 text-[11px] font-semibold text-secondary"
+                className="rounded-full border border-default px-2.5 py-1 text-caption font-semibold text-secondary"
               >
                 {r}
               </span>
             ))}
-            <span className="ml-auto text-xs text-secondary">{formatDate(item.publishedAt)}</span>
+            <span className="ml-auto text-footnote text-secondary">{formatDate(item.publishedAt)}</span>
           </div>
-          <h4 className="mt-2 break-words text-base font-bold leading-snug">{item.title}</h4>
+          <h4 className="mt-2 break-words text-headline">{item.title}</h4>
           {item.body ? (
             <details className="mt-1">
-              <summary className="body-copy cursor-pointer text-sm font-semibold text-info">
+              <summary className="cursor-pointer text-callout font-semibold text-info">
                 Details
               </summary>
               <p className="body-copy mt-1 whitespace-pre-line break-words text-secondary">{item.body}</p>
             </details>
           ) : null}
-          <p className="mt-2 text-xs text-secondary">
+          <p className="mt-2 text-footnote text-secondary">
             {SOURCE_LABEL[item.source]} ·{" "}
             <a href={item.url} target="_blank" rel="noreferrer" className="text-link">
               Official notice →

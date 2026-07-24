@@ -85,15 +85,15 @@ export default function ShareStatusLink() {
 
   return (
     <div className="plate border border-default bg-card p-5">
-      <h2 className="text-sm font-bold">Share with family</h2>
-      <p className="mt-1 text-xs leading-relaxed text-secondary">
+      <h2 className="text-headline">Share with family</h2>
+      <p className="mt-1 text-subhead text-secondary">
         A private link that shows your latest check-in status and approximate area — never exact
         coordinates. Anyone with the link can view it; revoke it any time.
       </p>
 
       {url ? (
         <>
-          <p className="text-link mt-2 break-all text-xs">{url}</p>
+          <p className="text-link mt-2 break-all text-footnote">{url}</p>
           <div className="mt-3 flex gap-3">
             <button
               type="button"
@@ -124,7 +124,7 @@ export default function ShareStatusLink() {
         </button>
       )}
 
-      {error ? <p className="mt-2 text-sm font-medium text-danger">{error}</p> : null}
+      {error ? <p className="mt-2 text-callout font-medium text-danger">{error}</p> : null}
     </div>
   );
 }

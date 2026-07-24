@@ -13,7 +13,7 @@ export default function GuidePage() {
           Situational basics, the scams that actually run, emergency Italian, city briefings, and
           how healthcare works. Loads once, then works offline.
         </p>
-        <p className="mt-1 text-xs leading-relaxed text-secondary">
+        <p className="mt-1 text-footnote text-secondary">
           External links open in your browser and need a connection — the guide itself doesn&apos;t.
         </p>
       </header>

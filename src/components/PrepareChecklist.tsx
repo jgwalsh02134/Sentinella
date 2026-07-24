@@ -94,7 +94,7 @@ export default function PrepareChecklist() {
                       ) : null}
                     </span>
                     <span
-                      className={`text-base font-bold leading-snug ${done ? "text-secondary line-through" : ""}`}
+                      className={`min-w-0 break-words text-headline ${done ? "text-secondary line-through" : ""}`}
                     >
                       {item.title}
                     </span>
@@ -103,14 +103,14 @@ export default function PrepareChecklist() {
                     {item.body}
                   </p>
                   {item.links.length > 0 ? (
-                    <p className="mt-2 space-x-4 pl-9">
+                    <p className="mt-2 space-x-4 break-words pl-9">
                       {item.links.map((link) => (
                         <a
                           key={link.href}
                           href={link.href}
                           target={link.href.startsWith("/") ? undefined : "_blank"}
                           rel={link.href.startsWith("/") ? undefined : "noreferrer"}
-                          className="text-link text-sm"
+                          className="text-link text-callout"
                         >
                           {link.label} →
                         </a>

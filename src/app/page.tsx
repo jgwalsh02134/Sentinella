@@ -18,10 +18,10 @@ export default async function HomePage() {
 
   return (
     <main>
-      <header className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+      <header className="flex flex-wrap items-center justify-between gap-y-2">
+        <div className="flex min-w-0 items-center gap-3">
           <Crest size={40} priority />
-          <div>
+          <div className="min-w-0">
             <p className="eyebrow">Sentinella</p>
             <h1 className="title-page">
               {session ? `Ciao, ${session.name.split(" ")[0]}` : "Italy, handled."}
@@ -31,7 +31,7 @@ export default async function HomePage() {
         {session ? (
           <SignOutButton />
         ) : (
-          <Link href="/login" className="text-link text-xs">
+          <Link href="/login" className="text-link text-footnote">
             Sign in
           </Link>
         )}
@@ -45,7 +45,7 @@ export default async function HomePage() {
           nameIt="Numero Unico di Emergenza"
           tier="primary"
         />
-        <Link href="/emergency" className="mt-2 block text-right text-sm font-semibold text-danger">
+        <Link href="/emergency" className="mt-2 block text-right text-callout font-semibold text-danger">
           All emergency numbers & embassies →
         </Link>
       </section>
@@ -57,22 +57,22 @@ export default async function HomePage() {
             <span className="block text-verde">
               <Icon icon={MapPin} size="lg" />
             </span>
-            <span className="mt-1 block text-sm font-bold">Check in</span>
-            <span className="block text-xs text-secondary">Log that you're safe</span>
+            <span className="mt-1 block text-headline">Check in</span>
+            <span className="block text-footnote text-secondary">Log that you're safe</span>
           </Link>
           <Link href="/guide" className="plate border border-default bg-card p-4">
             <span className="block text-verde">
               <Icon icon={Shield} size="lg" />
             </span>
-            <span className="mt-1 block text-sm font-bold">Field guide</span>
-            <span className="block text-xs text-secondary">Scams, phrases, cities</span>
+            <span className="mt-1 block text-headline">Field guide</span>
+            <span className="block text-footnote text-secondary">Scams, phrases, cities</span>
           </Link>
           <Link href="/map" className="plate col-span-2 border border-default bg-card p-4">
             <span className="block text-verde">
               <Icon icon={Map} size="lg" />
             </span>
-            <span className="mt-1 block text-sm font-bold">Offline map</span>
-            <span className="block text-xs text-secondary">
+            <span className="mt-1 block text-headline">Offline map</span>
+            <span className="block text-footnote text-secondary">
               Download city maps and see where you are, no signal needed
             </span>
           </Link>
@@ -80,8 +80,8 @@ export default async function HomePage() {
             <span className="block text-verde">
               <Icon icon={Plane} size="lg" />
             </span>
-            <span className="mt-1 block text-sm font-bold">Before you fly</span>
-            <span className="block text-xs text-secondary">US → Italy pre-departure checklist</span>
+            <span className="mt-1 block text-headline">Before you fly</span>
+            <span className="block text-footnote text-secondary">US → Italy pre-departure checklist</span>
           </Link>
         </div>
       </section>
@@ -101,8 +101,8 @@ export default async function HomePage() {
 
       <section className="mt-6" aria-label="Offline readiness">
         <div className="plate bg-verde-tint p-4">
-          <h2 className="text-sm font-bold text-verde-deep">Built for dead zones</h2>
-          <p className="mt-1 text-sm leading-relaxed text-verde-deep/80">
+          <h2 className="text-headline text-verde-deep">Built for dead zones</h2>
+          <p className="mt-1 text-subhead text-verde-deep/80">
             Open the Emergency and Guide screens once while online and they stay available without a
             connection — numbers, phrases, and briefings included.
           </p>
@@ -114,7 +114,7 @@ export default async function HomePage() {
       {!session ? (
         <section className="mt-6">
           <div className="plate border border-default bg-card p-4">
-            <p className="text-sm leading-relaxed text-secondary">
+            <p className="text-body text-secondary">
               {inviteOnly ? "Have an invite code? " : "New here? "}
               <Link href="/register" className="text-link">
                 Create your account

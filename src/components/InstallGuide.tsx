@@ -132,8 +132,8 @@ export default function InstallGuide() {
           </svg>
         </button>
 
-        <h2 className="pr-10 text-sm font-bold">Get Sentinella on your home screen</h2>
-        <p className="mt-1 pr-10 text-sm leading-relaxed text-secondary">
+        <h2 className="pr-10 text-headline">Get Sentinella on your home screen</h2>
+        <p className="mt-1 pr-10 text-subhead text-secondary">
           Installed, it opens full screen, keeps working offline, and stays one tap from 112.
         </p>
 
@@ -147,19 +147,19 @@ export default function InstallGuide() {
           </button>
         ) : (
           <ol className="mt-3 space-y-2">
-            <li className="flex gap-3 text-sm leading-relaxed">
+            <li className="flex gap-3 text-body">
               <span className="font-mono font-bold text-verde">1</span>
-              <span className="text-secondary">
+              <span className="min-w-0 text-secondary">
                 Tap the <strong className="whitespace-nowrap text-primary">Share <ShareGlyph /></strong>{" "}
                 button in Safari&apos;s toolbar.
               </span>
             </li>
-            <li className="flex gap-3 text-sm leading-relaxed">
+            <li className="flex gap-3 text-body">
               <span className="font-mono font-bold text-verde">2</span>
-              <span className="text-secondary">
+              <span className="min-w-0 text-secondary">
                 Choose{" "}
-                <strong className="whitespace-nowrap text-primary">
-                  Add to Home Screen <AddGlyph />
+                <strong className="text-primary">
+                  Add to Home&nbsp;Screen&nbsp;<AddGlyph />
                 </strong>
                 .
               </span>

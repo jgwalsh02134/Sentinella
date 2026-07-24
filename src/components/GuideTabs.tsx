@@ -75,7 +75,7 @@ function ColonLead({ text }: { text: string }) {
 function InfoCard({ item }: { item: InfoItem }) {
   return (
     <article className="plate border border-default border-l-4 border-l-accent bg-card p-5">
-      <h3 className="text-base font-bold leading-snug">{item.title}</h3>
+      <h3 className="text-headline">{item.title}</h3>
       <p className="body-copy mt-1.5 text-secondary">
         <LeadBody text={item.body} />
       </p>
@@ -99,7 +99,7 @@ function InfoCard({ item }: { item: InfoItem }) {
                 href={link.url}
                 target={external ? "_blank" : undefined}
                 rel={external ? "noopener noreferrer" : undefined}
-                className="flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-accent px-4 text-sm font-bold text-accent active:bg-accent-subtle"
+                className="flex min-h-[2.75rem] min-w-0 items-center justify-center rounded-xl border-2 border-accent px-4 text-center text-callout font-bold text-accent active:bg-accent-subtle"
               >
                 {link.label}
               </a>
@@ -130,7 +130,7 @@ export default function GuideTabs() {
               aria-selected={active}
               data-accent={tabAccents[t]}
               onClick={() => setTab(t)}
-              className={`min-h-[2.75rem] shrink-0 rounded-full border-2 px-5 text-sm font-bold transition-colors ${
+              className={`min-h-[2.75rem] shrink-0 rounded-full border-2 px-5 text-callout font-bold transition-colors ${
                 active ? "border-accent bg-accent-subtle text-accent" : "border-default bg-card text-secondary"
               }`}
             >
@@ -159,8 +159,8 @@ export default function GuideTabs() {
         {tab === "Scams" &&
           scams.map((s) => (
             <article key={s.title} className="plate border border-default border-l-4 border-l-accent bg-card p-5">
-              <h3 className="text-base font-bold leading-snug">{s.title}</h3>
-              <p className="mt-0.5 text-xs font-semibold uppercase tracking-wide text-secondary">
+              <h3 className="text-headline">{s.title}</h3>
+              <p className="mt-0.5 text-caption font-semibold uppercase tracking-wide text-secondary">
                 {s.where}
               </p>
               <p className="body-copy mt-2 text-secondary">{s.how}</p>
@@ -177,13 +177,13 @@ export default function GuideTabs() {
               <div className="mt-2 space-y-2">
                 {group.phrases.map((p) => (
                   <div key={p.it} className="plate border border-default border-l-4 border-l-accent bg-card p-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-secondary">
+                    <p className="text-caption font-semibold uppercase tracking-wide text-secondary">
                       {p.en}
                     </p>
-                    <p className="mt-1 text-lg font-bold leading-snug text-accent-deep">
+                    <p className="mt-1 text-title text-accent-deep">
                       <ItalyFlag /> <i lang="it">{p.it}</i>
                     </p>
-                    <p className="mt-0.5 text-sm italic text-secondary">{p.say}</p>
+                    <p className="mt-0.5 text-subhead italic text-secondary">{p.say}</p>
                   </div>
                 ))}
               </div>
@@ -231,7 +231,7 @@ export default function GuideTabs() {
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-accent px-4 text-sm font-bold text-accent active:bg-accent-subtle"
+                      className="flex min-h-[2.75rem] min-w-0 items-center justify-center rounded-xl border-2 border-accent px-4 text-center text-callout font-bold text-accent active:bg-accent-subtle"
                     >
                       {link.label}
                     </a>

@@ -171,14 +171,28 @@
   --accent-900: var(--oliva-900);
 }
 
+/* Dynamic Type. 17px root (Apple's default body size) everywhere; on
+   Apple browsers, `font: -apple-system-body` makes 1rem track the user's
+   iOS text-size setting, and the entire type ladder is defined in rem so
+   every style — and rem-based spacing/tap targets — scales with it. */
 html {
+  font-size: 106.25%; /* 17px on non-Apple browsers */
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
+}
+
+@supports (font: -apple-system-body) {
+  html {
+    font: -apple-system-body; /* family is re-applied by body's font-sans */
+  }
 }
 
 body {
   @apply bg-page text-primary font-sans antialiased;
   overflow-x: clip; /* belt-and-braces; root causes are fixed at the source */
+  /* At accessibility text sizes a single word can outgrow the line;
+     allow last-resort in-word breaks so nothing widens the page. */
+  overflow-wrap: break-word;
 }
 
 /* Deliberate, instant taps: no 300ms double-tap-zoom delay on controls. */
@@ -205,27 +219,29 @@ textarea,
 /* Uppercase micro-labels used as section eyebrows throughout the app.
    Accent-aware: verde by default, re-liveried inside data-accent scopes. */
 .eyebrow {
-  @apply text-[11px] font-semibold uppercase tracking-[0.14em];
+  @apply text-caption font-semibold uppercase tracking-[0.14em];
   color: rgb(var(--accent-700));
 }
 
 /* ---- Type scale -----------------------------------------------------
-   One system, defined here, applied everywhere. A person under stress,
-   outdoors, on a phone, should find the key fact in two seconds. */
+   The Apple-mirrored ladder lives in tailwind.config.ts (text-caption …
+   text-title-lg, all rem-based for Dynamic Type). These classes name the
+   recurring roles. A person under stress, outdoors, on a phone, should
+   find the key fact in two seconds. */
 
 /* Page title: exactly one per screen (the h1). */
 .title-page {
-  @apply text-2xl font-extrabold tracking-tight;
+  @apply text-title-lg tracking-tight;
 }
 
 /* Visible section heading; pairs with an .eyebrow on long sections. */
 .title-section {
-  @apply text-lg font-bold tracking-tight;
+  @apply text-title tracking-tight;
 }
 
 /* Default body copy on content screens. */
 .body-copy {
-  @apply text-[15px] leading-relaxed;
+  @apply text-body;
 }
 
 /* ---- Emphasis system ------------------------------------------------
@@ -237,9 +253,10 @@ textarea,
    Red is never an emphasis device — signal is reserved for emergency
    actions (if it's red, tapping it summons help). */
 
-/* Must-not-miss warning. Ambra only, never signal red. */
+/* Must-not-miss warning box. Ambra only, never signal red. (Distinct from
+   the text-callout size token, which it happens to use.) */
 .callout {
-  @apply rounded-r-xl border-l-[3px] border-ambra bg-ambra-tint p-3 text-[15px] leading-relaxed text-ink;
+  @apply rounded-r-xl border-l-[3px] border-ambra bg-ambra-tint p-3 text-callout text-ink;
 }
 
 /* Standalone text link — azzurro, so links stop competing with verde

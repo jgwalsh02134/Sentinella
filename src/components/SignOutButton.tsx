@@ -14,7 +14,7 @@ export default function SignOutButton() {
     <button
       type="button"
       onClick={signOut}
-      className="text-xs font-semibold text-secondary underline underline-offset-2"
+      className="text-footnote font-semibold text-secondary underline underline-offset-2"
     >
       Sign out
     </button>

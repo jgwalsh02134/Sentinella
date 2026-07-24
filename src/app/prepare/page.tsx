@@ -21,7 +21,7 @@ export default function PreparePage() {
         </p>
       </header>
 
-      <p className="mt-4 rounded-xl bg-ambra-tint p-3 text-sm font-semibold text-ambra">
+      <p className="mt-4 rounded-xl bg-ambra-tint p-3 text-callout font-semibold text-ambra">
         Last verified: {lastVerified}. Entry rules and health guidance shift — recheck anything
         critical close to departure.
       </p>

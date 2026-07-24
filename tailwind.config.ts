@@ -29,6 +29,42 @@ const config: Config = {
   // iOS sticky-hover fix: hover: styles only apply on devices that hover.
   future: { hoverOnlyWhenSupported: true },
   theme: {
+    /* Type ladder mirroring Apple's text styles (size/line-height at the
+       default setting), defined in rem so the whole scale tracks iOS
+       Dynamic Type: globals.css sets `font: -apple-system-body` on <html>,
+       making 1rem = the user's chosen body size (17px at default).
+
+       This REPLACES Tailwind's default sizes on purpose — text-sm/text-lg
+       etc. no longer exist, so every size in the app is one of these and
+       nothing can quietly fall below caption (12px).
+
+         title-lg 28/34 bold   — the page h1 (Apple: Title 1)
+         title    22/28 bold   — major sections (Apple: Title 2)
+         headline 17/22 semi   — card titles (Apple: Headline)
+         body     17/24        — default reading text (Apple: Body)
+         callout  16/21        — buttons, highlighted notes (Apple: Callout)
+         subhead  15/20        — secondary text (Apple: Subheadline)
+         footnote 13/18        — metadata, attributions (Apple: Footnote)
+         caption  12/16        — badges, micro-labels (Apple: Caption 1)
+
+       numeral/numeral-lg are the plate signage sizes — display numerals,
+       not text; they scale with the same root. */
+    fontSize: {
+      caption: ["0.7059rem", { lineHeight: "0.9412rem" }],
+      footnote: ["0.7647rem", { lineHeight: "1.0588rem" }],
+      subhead: ["0.8824rem", { lineHeight: "1.1765rem" }],
+      callout: ["0.9412rem", { lineHeight: "1.2353rem" }],
+      body: ["1rem", { lineHeight: "1.4118rem" }],
+      headline: ["1rem", { lineHeight: "1.2941rem", fontWeight: "600" }],
+      title: ["1.2941rem", { lineHeight: "1.6471rem", fontWeight: "700" }],
+      "title-lg": ["1.6471rem", { lineHeight: "2rem", fontWeight: "700" }],
+      /* Signage numerals and tab-bar labels scale with Dynamic Type but are
+         capped (as iOS caps tab bars and large titles at accessibility
+         sizes) so the layout survives the largest settings. */
+      numeral: ["min(2.125rem, 15vw)", { lineHeight: "1" }],
+      "numeral-lg": ["min(3.5rem, 26vw)", { lineHeight: "1" }],
+      "nav-label": ["min(0.7059rem, 15px)", { lineHeight: "1.35" }],
+    },
     extend: {
       colors: {
         verde: {

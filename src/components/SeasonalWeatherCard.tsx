@@ -37,9 +37,9 @@ export default function SeasonalWeatherCard() {
         <span className={card.id === "heat" ? "mt-0.5 text-icon-warning" : "mt-0.5 text-icon-info"}>
           <Icon icon={card.id === "heat" ? Sun : CloudRain} size="lg" />
         </span>
-        <div>
+        <div className="min-w-0">
           <p className="eyebrow">Seasonal weather safety</p>
-          <h3 className="text-base font-bold leading-snug">{card.title}</h3>
+          <h3 className="text-headline">{card.title}</h3>
         </div>
       </div>
 
@@ -73,15 +73,15 @@ export default function SeasonalWeatherCard() {
             target="_blank"
             rel="noopener noreferrer"
             className={card.id === "heat"
-              ? "flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-ambra px-4 text-sm font-bold text-warning active:bg-warning-subtle"
-              : "flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-accent px-4 text-sm font-bold text-accent active:bg-accent-subtle"}
+              ? "flex min-h-[2.75rem] min-w-0 items-center justify-center rounded-xl border-2 border-ambra px-4 text-center text-callout font-bold text-warning active:bg-warning-subtle"
+              : "flex min-h-[2.75rem] min-w-0 items-center justify-center rounded-xl border-2 border-accent px-4 text-center text-callout font-bold text-accent active:bg-accent-subtle"}
           >
             {link.label}
           </a>
         ))}
       </div>
 
-      <p className="mt-3 text-xs leading-relaxed text-secondary">
+      <p className="mt-3 text-footnote text-secondary">
         Links and schedules last verified {weatherLastVerified} —{" "}
         <strong className="font-bold">verify against official sources before travel.</strong>
       </p>

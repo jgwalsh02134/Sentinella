@@ -205,13 +205,13 @@ export default function MapView() {
         <h2 className="eyebrow">Your position</h2>
         {fix ? (
           <>
-            <p className="mt-1 font-mono text-lg font-bold tabular-nums text-verde-deep">
+            <p className="mt-1 font-mono text-title font-bold tabular-nums text-verde-deep">
               {fix.lat.toFixed(5)}, {fix.lng.toFixed(5)}
             </p>
-            <p className="mt-0.5 text-xs text-secondary">Accurate to ~{Math.round(fix.accuracyM)} m.</p>
+            <p className="mt-0.5 text-footnote text-secondary">Accurate to ~{Math.round(fix.accuracyM)} m.</p>
           </>
         ) : (
-          <p className="mt-1 text-sm leading-relaxed text-secondary">
+          <p className="mt-1 text-body text-secondary">
             {locating
               ? "Getting a fix… without cell service the first one can take a minute — stand outdoors with a clear view of the sky."
               : "Tap the location button on the map for the blue dot and your coordinates. GPS works with no signal; the first fix without cell service can take a minute outdoors."}
@@ -221,7 +221,7 @@ export default function MapView() {
 
       <section className="mt-5" aria-label="Offline maps">
         <h2 className="eyebrow">Offline maps</h2>
-        <p className="mt-1 text-xs leading-relaxed text-secondary">
+        <p className="mt-1 text-subhead text-secondary">
           Download a city before you travel and the map works with no connection. Each pack covers
           the metro area with streets down to building level.
         </p>
@@ -237,18 +237,18 @@ export default function MapView() {
                   <button
                     type="button"
                     onClick={() => void selectCity(city)}
-                    className="min-h-[2.75rem] flex-1 rounded-lg text-left"
+                    className="min-h-[2.75rem] min-w-0 flex-1 rounded-lg text-left"
                     aria-label={`Show ${city.name} on the map`}
                   >
-                    <span className="block text-sm font-bold">
+                    <span className="block text-callout font-bold">
                       {city.name} <span className="font-normal text-secondary">· {city.nameIt}</span>
                       {isActive ? (
-                        <span className="ml-2 rounded-full bg-verde-tint px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-verde-deep">
+                        <span className="ml-2 inline-block rounded-full bg-verde-tint px-2 py-0.5 text-caption font-bold uppercase tracking-wide text-verde-deep">
                           Viewing
                         </span>
                       ) : null}
                     </span>
-                    <span className="block text-xs text-secondary">
+                    <span className="block text-footnote text-secondary">
                       {isDownloading
                         ? `Downloading… ${Math.round((pct ?? 0) * 100)}%`
                         : isDownloaded
@@ -289,13 +289,13 @@ export default function MapView() {
                   </div>
                 ) : null}
                 {errors[city.id] ? (
-                  <p className="px-3 pb-3 text-sm font-medium text-ambra">{errors[city.id]}</p>
+                  <p className="px-3 pb-3 text-callout font-medium text-ambra">{errors[city.id]}</p>
                 ) : null}
               </div>
             );
           })}
         </div>
-        <p className="mt-2 text-xs leading-relaxed text-secondary">
+        <p className="mt-2 text-footnote text-secondary">
           Downloads live in this browser's storage. iOS may evict them if the device runs low on
           space — re-download before you travel. Outside a downloaded city the map needs a
           connection. Map data © OpenStreetMap contributors.

@@ -39,20 +39,18 @@ export default function CallPlate({
       aria-label={`Call ${name} at ${number}`}
       className={`plate ${tierStyles[tier]} p-5 transition-transform duration-100 active:scale-[0.99]`}
     >
-      <span className="flex items-center gap-4">
+      <span className="flex flex-wrap items-center gap-4">
         <span
           className={`font-mono font-bold tracking-tight ${
-            isPrimary ? "text-6xl" : "text-4xl"
-          } ${isSupport ? "text-verde" : ""} tabular-nums leading-none`}
+            isPrimary ? "text-numeral-lg" : "text-numeral"
+          } ${isSupport ? "text-verde" : ""} tabular-nums`}
         >
           {number}
         </span>
         <span className="min-w-0 flex-1">
-          <span className={`block font-semibold ${isPrimary ? "text-xl" : "text-base"}`}>
-            {name}
-          </span>
+          <span className={`block ${isPrimary ? "text-title" : "text-headline"}`}>{name}</span>
           {nameIt ? (
-            <i lang="it" className={`block text-sm italic ${isSupport ? "text-mist" : "text-white/75"}`}>
+            <i lang="it" className={`block text-subhead italic ${isSupport ? "text-mist" : "text-white/75"}`}>
               {nameIt}
             </i>
           ) : null}
@@ -71,7 +69,7 @@ export default function CallPlate({
         </svg>
       </span>
       {detail ? (
-        <span className={`mt-3 block text-sm leading-relaxed ${isSupport ? "text-mist" : "text-white/85"}`}>
+        <span className={`mt-3 block text-subhead ${isSupport ? "text-mist" : "text-white/85"}`}>
           {detail}
         </span>
       ) : null}
