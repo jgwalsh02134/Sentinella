@@ -15,6 +15,7 @@ export const userRole = pgEnum("user_role", ["traveler", "admin"]);
 export const checkInStatus = pgEnum("check_in_status", ["safe", "caution", "help"]);
 export const alertSeverity = pgEnum("alert_severity", ["info", "advisory", "critical"]);
 export const advisorySource = pgEnum("advisory_source", ["state_advisory", "state_rss", "embassy"]);
+export const warningSource = pgEnum("warning_source", ["meteoalarm", "ingv", "gdacs"]);
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -115,6 +116,59 @@ export const externalAdvisories = pgTable("external_advisories", {
 });
 
 /**
+ * Official emergency warnings ingested from public feeds — MeteoAlarm
+ * (Italy's civil-protection weather warnings via EUMETNET), INGV
+ * earthquakes, and GDACS disaster events. Rows are upserted on the feed's
+ * stable ID so refreshes never duplicate, and NOTHING in this table is
+ * ever fabricated — every row is a parse of a real feed item.
+ */
+export const officialWarnings = pgTable("official_warnings", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  source: warningSource("source").notNull(),
+  /** Stable per-feed ID: MeteoAlarm area+event key, INGV eventId, GDACS guid. */
+  externalId: text("external_id").notNull().unique(),
+  /** Hazard type: "High-temperature", "Thunderstorm", "earthquake", "flood"… */
+  kind: text("kind").notNull(),
+  /**
+   * MeteoAlarm/GDACS color: yellow | orange | red. Null for earthquakes —
+   * quakes carry magnitude instead; severity is never inferred.
+   */
+  severity: text("severity"),
+  title: text("title").notNull(),
+  /** Human area: "Toscana", "5 km SW Campello sul Clitunno (PG)", "Italy". */
+  area: text("area").notNull(),
+  /** Administrative region tags for filtering: Lazio, Toscana. */
+  regions: text("regions")
+    .array()
+    .notNull()
+    .default(sql`'{}'::text[]`),
+  magnitude: doublePrecision("magnitude"),
+  depthKm: doublePrecision("depth_km"),
+  lat: doublePrecision("lat"),
+  lng: doublePrecision("lng"),
+  onsetAt: timestamp("onset_at", { withTimezone: true }),
+  /** Warnings vanish from the UI at expiry automatically (read-time filter). */
+  expiresAt: timestamp("expires_at", { withTimezone: true }),
+  publishedAt: timestamp("published_at", { withTimezone: true }),
+  url: text("url").notNull(),
+  fetchedAt: timestamp("fetched_at", { withTimezone: true }).notNull().defaultNow(),
+  /** Push dedupe stamp — set exactly once, same pattern as advisories. */
+  notifiedAt: timestamp("notified_at", { withTimezone: true }),
+});
+
+/**
+ * One row per warning source recording the latest refresh attempt — the
+ * UI's "checked Xm ago" and per-source error states need this even when a
+ * source currently has zero warnings (the normal, good case).
+ */
+export const warningChecks = pgTable("warning_checks", {
+  source: warningSource("source").primaryKey(),
+  checkedAt: timestamp("checked_at", { withTimezone: true }).notNull().defaultNow(),
+  ok: boolean("ok").notNull(),
+  error: text("error"),
+});
+
+/**
  * Last-good Open-Meteo forecasts, one row per rounded-coordinate key
  * ("41.90,12.50"). Upserted on every successful fetch; when Open-Meteo is
  * unreachable the API serves this copy labeled with its age — weather
@@ -130,3 +184,5 @@ export type User = typeof users.$inferSelect;
 export type CheckIn = typeof checkIns.$inferSelect;
 export type Alert = typeof alerts.$inferSelect;
 export type ExternalAdvisory = typeof externalAdvisories.$inferSelect;
+export type OfficialWarning = typeof officialWarnings.$inferSelect;
+export type WarningCheck = typeof warningChecks.$inferSelect;

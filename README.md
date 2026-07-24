@@ -96,21 +96,27 @@ Or with the GitHub CLI: `gh repo create sentinella --private --source=. --push`.
 
 Every push to `main` redeploys. Migrations you generate locally (`npm run db:generate` after schema changes, committed under `drizzle/`) are applied on the next deploy.
 
-### Scheduled jobs (advisories + reminders)
+### Scheduled jobs (advisories + warnings + reminders)
 
-Two authenticated endpoints do the recurring work; schedule them with Railway cron services in the same project:
+Four authenticated endpoints do the recurring work; schedule them with Railway cron services in the same project:
 
-- `GET /api/cron/refresh-advisories` — refreshes the official U.S. feeds and push-notifies new items. Run **every 6 hours**.
-- `GET /api/cron/checkin-reminders` — sends overdue check-in reminders and escalates unanswered ones to admins. Run **every 15 minutes**.
+- `GET /api/cron/refresh-advisories` — refreshes the official U.S. feeds and push-notifies new items. Run **every 6 hours** (`0 */6 * * *`).
+- `GET /api/cron/refresh-warnings` — refreshes MeteoAlarm weather warnings (Lazio/Toscana) and INGV earthquakes. Run **every 30 minutes** (`*/30 * * * *`).
+- `GET /api/cron/refresh-gdacs` — refreshes GDACS disaster events for Italy. Run **hourly** (`0 * * * *`).
+- `GET /api/cron/checkin-reminders` — sends overdue check-in reminders and escalates unanswered ones to admins. Run **every 15 minutes** (`*/15 * * * *`).
 
-Both require `Authorization: Bearer ${CRON_SECRET}`. Set `CRON_SECRET` (e.g. `openssl rand -hex 32`) on the app service first, then for each job: **New → Empty Service**, set the Docker image to `curlimages/curl:latest`, add a `CRON_SECRET` variable referencing the app's (`${{Sentinella.CRON_SECRET}}`), set the **Cron Schedule** (`0 */6 * * *` for advisories, `*/15 * * * *` for reminders), and set the start command to the matching curl:
+All require `Authorization: Bearer ${CRON_SECRET}`. Set `CRON_SECRET` (e.g. `openssl rand -hex 32`) on the app service first, then for each job: **New → Empty Service**, set the Docker image to `curlimages/curl:latest`, add a `CRON_SECRET` variable referencing the app's (`${{Sentinella.CRON_SECRET}}`), set the **Cron Schedule** from the list above, and set the start command to the matching curl:
 
 ```bash
 curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://<your-app>.up.railway.app/api/cron/refresh-advisories
+curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://<your-app>.up.railway.app/api/cron/refresh-warnings
+curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://<your-app>.up.railway.app/api/cron/refresh-gdacs
 curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://<your-app>.up.railway.app/api/cron/checkin-reminders
 ```
 
-The same commands (with the secret filled in) are also the manual test: a JSON summary comes back — `{"state":"ok","embassy":"ok","newItems":0}` / `{"reminded":0,"escalated":0}` — and anything else means check the app service logs.
+The same commands (with the secret filled in) are also the manual test: a JSON summary comes back — `{"state":"ok","embassy":"ok","newItems":0}` / `{"meteoalarm":"ok","ingv":"ok","newItems":0}` / `{"gdacs":"ok","newItems":0}` / `{"reminded":0,"escalated":0}` — and anything else means check the app service logs.
+
+If the app misses a cron run (e.g. the service was asleep), `/api/warnings` also refreshes inline on read, respecting each source's cadence, so the data self-heals on the next visit.
 
 ## Project structure
 

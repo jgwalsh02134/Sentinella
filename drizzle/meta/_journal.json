@@ -50,6 +50,13 @@
       "when": 1784881284650,
       "tag": "0006_sticky_mister_sinister",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1784881672580,
+      "tag": "0007_chubby_james_howlett",
+      "breakpoints": true
     }
   ]
 }
