@@ -33,10 +33,17 @@ function infoEntries(items: InfoItem[], slug: GuideSlug): GuideSearchEntry[] {
     slug,
     section,
     title: item.title,
-    summary: clip(item.body),
-    haystack: `${item.title} ${item.body} ${item.bullets?.join(" ") ?? ""}`.toLowerCase(),
+    summary: clip(item.summary),
+    haystack: [item.title, item.summary, item.detail, ...(item.bullets ?? []), ...(item.steps ?? [])]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase(),
     anchor: guideAnchor(item.title),
   }));
+}
+
+function briefText(items: { lead: string; detail?: string }[]): string {
+  return items.map((i) => `${i.lead} ${i.detail ?? ""}`).join(" ");
 }
 
 export function buildGuideSearchIndex(): GuideSearchEntry[] {
@@ -45,8 +52,8 @@ export function buildGuideSearchIndex(): GuideSearchEntry[] {
       slug: "scams" as const,
       section: "Scams",
       title: s.title,
-      summary: clip(s.how),
-      haystack: `${s.title} ${s.where} ${s.how} ${s.counter}`.toLowerCase(),
+      summary: clip(s.hook),
+      haystack: `${s.title} ${s.hook} ${s.how} ${s.counter} ${s.detail}`.toLowerCase(),
       anchor: guideAnchor(s.title),
     })),
     ...phraseGroups.flatMap((group) =>
@@ -65,7 +72,7 @@ export function buildGuideSearchIndex(): GuideSearchEntry[] {
       section: "Cities & regions",
       title: r.name,
       summary: clip(r.headline),
-      haystack: `${r.name} ${r.headline} ${r.watch.join(" ")} ${r.move.join(" ")}`.toLowerCase(),
+      haystack: `${r.name} ${r.headline} ${briefText(r.watch)} ${briefText(r.move)}`.toLowerCase(),
       anchor: guideAnchor(r.name),
     })),
     ...infoEntries(healthItems, "health"),

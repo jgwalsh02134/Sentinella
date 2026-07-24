@@ -11,14 +11,13 @@ export type PhraseGroup = {
 
 export const phraseGroups: PhraseGroup[] = [
   {
-    label: "Getting help",
+    label: "Emergency",
     phrases: [
       { it: "Aiuto!", en: "Help!", say: "ah-YOO-toh" },
       { it: "È un'emergenza", en: "It's an emergency", say: "eh oon eh-mer-JEN-tsah" },
       { it: "Chiamate la polizia!", en: "Call the police!", say: "kyah-MAH-teh lah po-lee-TSEE-ah" },
       { it: "Chiamate un'ambulanza!", en: "Call an ambulance!", say: "kyah-MAH-teh oon am-boo-LAHN-tsah" },
       { it: "Al fuoco!", en: "Fire!", say: "ahl FWOH-koh" },
-      { it: "Parla inglese?", en: "Do you speak English?", say: "PAR-lah een-GLEH-zeh" },
     ],
   },
   {
@@ -33,7 +32,7 @@ export const phraseGroups: PhraseGroup[] = [
     ],
   },
   {
-    label: "Crime & loss",
+    label: "Police",
     phrases: [
       { it: "Mi hanno derubato/a", en: "I've been robbed", say: "mee AHN-noh deh-roo-BAH-toh/tah" },
       { it: "Al ladro!", en: "Stop, thief!", say: "ahl LAH-droh" },
@@ -43,13 +42,14 @@ export const phraseGroups: PhraseGroup[] = [
     ],
   },
   {
-    label: "Orientation",
+    label: "Getting help",
     phrases: [
+      { it: "Parla inglese?", en: "Do you speak English?", say: "PAR-lah een-GLEH-zeh" },
+      { it: "Ho bisogno di aiuto", en: "I need help", say: "oh bee-ZOHN-yoh dee ah-YOO-toh" },
       { it: "Mi sono perso/a", en: "I'm lost", say: "mee SOH-noh PEHR-soh/sah" },
       { it: "Dove siamo?", en: "Where are we?", say: "DOH-veh see-AH-moh" },
       { it: "Può scriverlo?", en: "Can you write it down?", say: "pwoh SKREE-vehr-loh" },
       { it: "Dov'è la stazione?", en: "Where is the station?", say: "doh-VEH lah stah-TSYOH-neh" },
-      { it: "Ho bisogno di aiuto", en: "I need help", say: "oh bee-ZOHN-yoh dee ah-YOO-toh" },
     ],
   },
 ];

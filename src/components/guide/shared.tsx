@@ -6,36 +6,6 @@ import TelText from "@/components/TelText";
  * basics, health, and cities detail pages.
  */
 
-/**
- * Split off the first sentence so an item's lead can render bold and the
- * key fact scans in two seconds. Avoids false breaks after abbreviations
- * ("U.S. STEP") by requiring a lowercase letter, digit, or closing
- * punctuation before the period. Returns null for single-sentence bodies —
- * if everything is bold, nothing is.
- */
-function splitFirstSentence(text: string): [string, string] | null {
-  for (let i = 1; i < text.length - 2; i++) {
-    if (text[i] === "." && text[i + 1] === " " && /[a-z0-9)'"’”]/.test(text[i - 1])) {
-      return [text.slice(0, i + 1), text.slice(i + 2)];
-    }
-  }
-  return null;
-}
-
-/** Body copy with a bold first-sentence lead. Phone numbers become tel: links. */
-export function LeadBody({ text }: { text: string }) {
-  const split = splitFirstSentence(text);
-  if (!split) return <TelText text={text} />;
-  return (
-    <>
-      <strong className="font-bold text-primary">
-        <TelText text={split[0]} />
-      </strong>{" "}
-      <TelText text={split[1]} />
-    </>
-  );
-}
-
 /** Bullets: bold the place/topic before a leading colon. */
 export function ColonLead({ text }: { text: string }) {
   const idx = text.indexOf(":");

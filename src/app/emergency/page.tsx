@@ -310,7 +310,7 @@ export default function EmergencyPage() {
       </section>
 
       {/* e. Support lines. */}
-      <section className="mt-8 space-y-3" aria-label="Support lines">
+      <section id="support" className="mt-8 scroll-mt-4 space-y-3" aria-label="Support lines">
         <SectionHeader title="Support lines" />
         {support.map((n) => (
           <CallPlate

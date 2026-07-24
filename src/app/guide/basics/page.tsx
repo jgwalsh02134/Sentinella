@@ -23,6 +23,9 @@ export default function GuideBasicsPage() {
           </Fragment>
         ))}
       </div>
+      <p className="mt-4 text-footnote text-secondary">
+        External links open in your browser and need a connection — the guide itself doesn&apos;t.
+      </p>
     </main>
   );
 }
