@@ -74,6 +74,13 @@ export default async function HomePage() {
               Download city maps and see where you are, no signal needed
             </span>
           </Link>
+          <Link href="/prepare" className="plate col-span-2 border border-line bg-white p-4">
+            <span className="block text-2xl" aria-hidden="true">
+              ✈️
+            </span>
+            <span className="mt-1 block text-sm font-bold">Before you fly</span>
+            <span className="block text-xs text-mist">US → Italy pre-departure checklist</span>
+          </Link>
         </div>
       </section>
 

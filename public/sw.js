@@ -11,13 +11,14 @@
  *    files managed in IndexedDB by the Map screen, and their online mode uses
  *    HTTP range requests the Cache API can't store.
  */
-// v4: web push — notification display and click-through handlers.
-const VERSION = "sentinella-v4";
+// v5: Before You Fly checklist — /prepare joins the precached safety screens.
+const VERSION = "sentinella-v5";
 const PRECACHE = [
   "/",
   "/emergency",
   "/guide",
   "/map",
+  "/prepare",
   "/offline",
   "/manifest.json",
   "/favicon.ico",
