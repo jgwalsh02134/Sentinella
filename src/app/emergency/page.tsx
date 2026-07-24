@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Car, Hospital, Map } from "lucide-react";
+import { Car, Hospital, Map, Navigation } from "lucide-react";
 import CallPlate from "@/components/ui/CallPlate";
 import ActionRow from "@/components/ui/ActionRow";
 import Callout from "@/components/ui/Callout";
@@ -8,7 +8,6 @@ import Disclosure from "@/components/ui/Disclosure";
 import ListRow from "@/components/ui/ListRow";
 import NavTile from "@/components/ui/NavTile";
 import SectionHeader from "@/components/ui/SectionHeader";
-import BrandIcon from "@/components/BrandIcon";
 import EmergencyJumpChips from "@/components/EmergencyJumpChips";
 import Icon from "@/components/Icon";
 import SealBadge from "@/components/SealBadge";
@@ -103,10 +102,8 @@ function EmbassyBody({ embassy, headingLevel }: { embassy: Embassy; headingLevel
         actions={[
           { label: "Call", href: `tel:${embassy.dial}` },
           {
-            label: "Get directions",
+            label: "Directions",
             href: appleMapsDirectionsUrl(`${embassy.address}, Italy`),
-            // Brand mark: the destination is Apple Maps.
-            icon: <BrandIcon brand="apple" size={16} />,
           },
           { label: "Website", href: embassy.website },
         ]}
@@ -155,9 +152,8 @@ function ErCard({ er, headingLevel = 3 }: { er: EmergencyRoom; headingLevel?: 3 
         actions={[
           ...(er.phone && er.dial ? [{ label: "Call", href: `tel:${er.dial}` }] : []),
           {
-            label: "Get directions",
+            label: "Directions",
             href: appleMapsDirectionsUrl(`${er.address}, Italy`),
-            icon: <BrandIcon brand="apple" size={16} />,
           },
         ]}
       />
@@ -359,11 +355,10 @@ export default function EmergencyPage() {
               actions={[
                 { label: "Call", href: `tel:${p.dial}` },
                 {
-                  label: "Get directions",
+                  label: "Directions",
                   href: appleMapsDirectionsUrl(
                     `${p.hospital.replace(/\s*\([^)]*\)/g, "")}, ${p.city}, Italy`,
                   ),
-                  icon: <BrandIcon brand="apple" size={16} />,
                 },
               ]}
             />
@@ -506,7 +501,7 @@ export default function EmergencyPage() {
                       rel="noopener noreferrer"
                       className="inline-flex min-h-control items-center gap-1.5 text-link"
                     >
-                      <BrandIcon brand="apple" size={16} /> Directions
+                      <Icon icon={Navigation} size="sm" /> Directions
                     </a>
                   </p>
                 </li>

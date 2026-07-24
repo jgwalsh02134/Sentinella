@@ -2,14 +2,16 @@
  * Inline-SVG brand marks. Apple's own rule, enforced here: a brand mark
  * appears ONLY when the brand is the destination —
  *
- *   apple   App Store links, "Open in Apple Maps" directions
- *   google  Google Play links, share-position Google Maps links
+ *   apple   App Store links, nowhere else
+ *   google  Google Play links and share-position Google Maps links
  *
- * Nowhere else. Government/rail/official links keep generic icons
- * (external-link/globe); no third-party logos beyond these two. The
- * Apple mark is mono and takes currentColor; the Google "G" keeps its
- * fixed brand colors (sanctioned brand-artwork hex, like flags/crest).
- * Marks are decorative — the adjacent label carries the meaning.
+ * Directions buttons are destination-agnostic UI and use the Lucide
+ * Navigation icon — even though the link opens Apple Maps. Government/
+ * rail/official links keep generic icons (external-link/globe); no
+ * third-party logos beyond these two. The Apple mark is mono and takes
+ * currentColor; the Google "G" keeps its fixed brand colors (sanctioned
+ * brand-artwork hex, like flags/crest). Marks are decorative — the
+ * adjacent label carries the meaning.
  */
 
 type Brand = "apple" | "google";

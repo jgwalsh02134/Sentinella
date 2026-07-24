@@ -44,6 +44,11 @@ DATABASE_URL, AUTH_SECRET, INVITE_CODES (comma-separated), ADMIN_EMAILS
    "verify against official sources" caveat in the UI.
 8. UI copy: plain verbs, sentence case, specific instructions. Errors say what
    happened and what to do next.
+9. Brand marks (src/components/BrandIcon.tsx): the Apple mark appears ONLY on
+   App Store links; the Google mark ONLY on Google Play / Google Maps share
+   links. Directions buttons are destination-agnostic UI — Lucide Navigation
+   icon + label "Directions", never a brand mark, even though the link opens
+   Apple Maps. No third-party logos beyond these two.
 
 ## Glossary (one term per concept — enforce in all UI copy)
 - "advisory" = official government guidance (State Dept, embassy). Never for team posts.

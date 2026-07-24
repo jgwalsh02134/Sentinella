@@ -1,4 +1,5 @@
-import BrandIcon from "@/components/BrandIcon";
+import { Navigation } from "lucide-react";
+import Icon from "@/components/Icon";
 import TelText from "@/components/TelText";
 
 /**
@@ -21,13 +22,14 @@ export function ColonLead({ text }: { text: string }) {
 }
 
 /** Official external resources render as PLAIN links, not fake buttons.
- *  Brand mark only when the brand is the destination (Apple Maps). */
+ *  Directions links are destination-agnostic UI: Navigation icon, never
+ *  a brand mark (brand marks are for store links only — BrandIcon rules). */
 export function ResourceLinks({ links }: { links: { label: string; url: string }[] }) {
   return (
     <p className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
       {links.map((link) => {
         const external = !link.url.startsWith("/");
-        const appleMaps = link.url.startsWith("https://maps.apple.com");
+        const directions = link.url.startsWith("https://maps.apple.com");
         return (
           <a
             key={link.url}
@@ -36,7 +38,7 @@ export function ResourceLinks({ links }: { links: { label: string; url: string }
             rel={external ? "noopener noreferrer" : undefined}
             className="text-link inline-flex items-center gap-1 py-1 text-callout"
           >
-            {appleMaps ? <BrandIcon brand="apple" size={16} /> : null}
+            {directions ? <Icon icon={Navigation} size="sm" /> : null}
             {link.label}
           </a>
         );
