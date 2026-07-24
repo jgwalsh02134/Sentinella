@@ -27,12 +27,12 @@ export default function SeasonalWeatherCard() {
   }, []);
 
   if (!card) {
-    return <div className="plate min-h-[8rem] border border-default bg-card p-5" aria-hidden="true" />;
+    return <div className="plate min-h-[8rem] border border-default bg-card p-4" aria-hidden="true" />;
   }
 
   return (
     <article
-      className="plate border border-default bg-card p-5"
+      className="plate border border-default bg-card p-4"
       data-accent={card.id === "allerta" ? "azzurro" : undefined}
     >
       <div className="flex items-start gap-3">

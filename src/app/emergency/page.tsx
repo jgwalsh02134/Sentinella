@@ -46,7 +46,7 @@ export default function EmergencyPage() {
             <p className="mt-2 px-1 text-footnote text-secondary">{n.detail}</p>
           </div>
         ))}
-        <div className="plate border border-default bg-card p-5">
+        <div className="plate border border-default bg-card p-4">
           <h2 className="text-headline">When the operator answers</h2>
           <ol className="mt-2 space-y-2">
             {callScript.map((step, i) => (
@@ -72,7 +72,7 @@ export default function EmergencyPage() {
       </section>
 
       <section className="mt-6" aria-label="112 companion app">
-        <div className="plate border border-default bg-card p-5">
+        <div className="plate border border-default bg-card p-4">
           <h2 className="text-headline">{whereAreUApp.title}</h2>
           <p className="body-copy mt-2 text-secondary">{whereAreUApp.body}</p>
           <ul className="mt-2 space-y-2">
@@ -201,7 +201,7 @@ export default function EmergencyPage() {
 
       <section className="mt-8" aria-label="Lost documents">
         <h2 className="title-section">Passport lost or stolen</h2>
-        <div className="plate mt-2 border border-default bg-card p-5">
+        <div className="plate mt-2 border border-default bg-card p-4">
           <ol className="space-y-3">
             {lostDocumentSteps.map((step, i) => (
               <li key={step.lead} className="body-copy flex gap-3">

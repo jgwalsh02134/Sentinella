@@ -81,7 +81,7 @@ export default function ShareLocation() {
   }
 
   return (
-    <div className="plate border border-default bg-card p-5">
+    <div className="plate border border-default bg-card p-4">
       <h2 className="text-headline">Your position</h2>
       <p className="mt-1 text-body text-secondary">
         Read your coordinates to a 112 operator, or send them to a contact.

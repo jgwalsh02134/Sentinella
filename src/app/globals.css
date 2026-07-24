@@ -266,9 +266,12 @@ textarea,
   color: rgb(var(--text-link));
 }
 
-/* Signage-style plate: the app's signature element. */
+/* Signage-style plate: the app's signature element. Elevation is a 1px
+   border everywhere — the ONLY shadow in the app belongs to the 112
+   emergency plate (shadow-plate, applied by CallPlate tier="primary"),
+   so the deepest element on any screen is the one that summons help. */
 .plate {
-  @apply block max-w-full rounded-plate shadow-plate;
+  @apply block max-w-full rounded-2xl;
 }
 
 /* Horizontal scroller that hides its scrollbar. Content may scroll within
@@ -295,6 +298,40 @@ textarea,
 
 .bottom-nav-safe {
   padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ---- Motion system ----------------------------------------------------
+   ONE system: 150–200ms ease-out, applied only to disclosure, pressed
+   states, and the skeleton shimmer. No entrance animations. Everything
+   collapses under prefers-reduced-motion below. */
+
+/* Skeleton shimmer for loading placeholders (see ui/Skeleton). */
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton {
+  @apply rounded-xl bg-sunken;
+  background-image: linear-gradient(
+    90deg,
+    rgb(var(--neutral-100)) 40%,
+    rgb(var(--neutral-200) / 0.6) 50%,
+    rgb(var(--neutral-100)) 60%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.6s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    background-image: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

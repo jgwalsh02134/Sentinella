@@ -50,7 +50,7 @@ export default function ReminderSettings() {
   }
 
   return (
-    <div className="plate border border-default bg-card p-5">
+    <div className="plate border border-default bg-card p-4">
       <h2 className="text-headline">Check-in reminders</h2>
       <p className="mt-1 text-subhead text-secondary">
         Get a nudge when you haven't checked in for a while. If a reminder goes unanswered for an

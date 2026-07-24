@@ -13,6 +13,13 @@ import type { Config } from "tailwindcss";
  * is a decorative accent and never a danger color; ambra owns warning.
  * Old names (paper/ink/mist/line, verde-deep/-tint, …) remain as aliases —
  * zero forced renames.
+ *
+ * Spacing rhythm (4/8 ladder, Tailwind's default scale IS the token set —
+ * 1=4 2=8 3=12 4=16 5=20 6=24 8=32 10=40 12=48):
+ *   page gutter 16 (px-4) · card padding 16 (p-4) · gap between cards 12
+ *   (gap-3/space-y-3) · gap between sections 32 (mt-8) · eyebrow→heading 4
+ *   (mt-1) · heading→body 8 (mt-2). No arbitrary spacing values in
+ *   components.
  */
 const v = (name: string) => `rgb(var(--${name}) / <alpha-value>)`;
 
@@ -64,6 +71,27 @@ const config: Config = {
       numeral: ["min(2.125rem, 15vw)", { lineHeight: "1" }],
       "numeral-lg": ["min(3.5rem, 26vw)", { lineHeight: "1" }],
       "nav-label": ["min(0.7059rem, 15px)", { lineHeight: "1.35" }],
+    },
+    /* Shape: exactly two surface radii — 2xl (16px) for cards, plates, and
+       buttons; xl (12px) for inputs and chips. This REPLACES Tailwind's
+       default radius scale so nothing off-scale can be written. `xs` is not
+       a surface radius: it exists only for micro glyphs (the checklist
+       checkbox) and the focus-ring underlay. */
+    borderRadius: {
+      none: "0",
+      xs: "0.25rem",
+      xl: "0.75rem",
+      "2xl": "1rem",
+      full: "9999px",
+    },
+    /* Elevation: ONE treatment. Cards separate from the page with a 1px
+       border-default. Shadow exists solely for the 112 emergency plate so
+       it is physically the deepest thing on any screen. This REPLACES the
+       default shadow scale — shadow-sm/md/lg cannot be written. */
+    boxShadow: {
+      none: "none",
+      plate:
+        "0 2px 4px rgba(23, 32, 29, 0.14), 0 10px 28px rgba(23, 32, 29, 0.14)",
     },
     extend: {
       colors: {
@@ -178,11 +206,12 @@ const config: Config = {
           "monospace",
         ],
       },
-      borderRadius: {
-        plate: "1.25rem",
-      },
-      boxShadow: {
-        plate: "0 1px 2px rgba(23, 32, 29, 0.08), 0 4px 16px rgba(23, 32, 29, 0.06)",
+      /* Control heights, rem-based so they grow with Dynamic Type:
+         md ≈ 47px (comfortably past the 44px HIG floor), lg ≈ 55px for the
+         screen's main action. minHeight/minWidth read the spacing scale. */
+      spacing: {
+        control: "2.75rem",
+        "control-lg": "3.25rem",
       },
     },
   },

@@ -36,7 +36,7 @@ export default function RegisterForm({ invitesRequired }: { invitesRequired: boo
   }
 
   return (
-    <form onSubmit={submit} className="plate mt-5 space-y-3 border border-default bg-card p-5">
+    <form onSubmit={submit} className="plate mt-5 space-y-3 border border-default bg-card p-4">
       {invitesRequired ? (
         <label className="block">
           <span className="eyebrow">Invite code</span>

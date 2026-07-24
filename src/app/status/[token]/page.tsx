@@ -64,7 +64,7 @@ export default async function StatusPage({ params }: { params: { token: string }
       </header>
 
       {latest && meta ? (
-        <div className="plate mt-5 border border-default bg-card p-5">
+        <div className="plate mt-5 border border-default bg-card p-4">
           <span
             className={`inline-block rounded-full px-4 py-2 text-callout font-bold uppercase tracking-wide ${meta.chip}`}
           >
@@ -88,7 +88,7 @@ export default async function StatusPage({ params }: { params: { token: string }
           </div>
         </div>
       ) : (
-        <div className="plate mt-5 border border-default bg-card p-5">
+        <div className="plate mt-5 border border-default bg-card p-4">
           <p className="body-copy text-secondary">
             {firstName} hasn't checked in yet. This page updates the moment they do.
           </p>

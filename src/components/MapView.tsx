@@ -79,7 +79,7 @@ function markerElement(kind: SafetyPoi["kind"] | "base", label: string): HTMLBut
   el.className = "flex h-11 w-11 items-center justify-center";
   const color =
     kind === "er" ? "bg-verde" : kind === "embassy" ? "bg-azzurro" : "bg-terracotta";
-  el.innerHTML = `<span class="pointer-events-none flex h-[1.875rem] w-[1.875rem] items-center justify-center rounded-full ${color} text-white shadow-md ring-2 ring-white">${
+  el.innerHTML = `<span class="pointer-events-none flex h-[1.875rem] w-[1.875rem] items-center justify-center rounded-full ${color} text-white ring-2 ring-white">${
     kind === "base" ? BASE_GLYPH : POI_GLYPHS[kind]
   }</span>`;
   return el;
@@ -400,7 +400,7 @@ export default function MapView() {
         />
         {base && baseReadout ? (
           <p
-            className="pointer-events-none absolute left-2 top-2 flex items-center gap-2 rounded-full bg-card/95 px-3 py-2 text-footnote font-bold shadow"
+            className="pointer-events-none absolute left-2 top-2 flex items-center gap-2 rounded-full border border-default bg-card/95 px-3 py-2 text-footnote font-bold"
             role="status"
           >
             <svg
@@ -528,7 +528,7 @@ export default function MapView() {
                   <button
                     type="button"
                     onClick={() => void selectCity(city)}
-                    className="min-h-[2.75rem] min-w-0 flex-1 rounded-lg text-left"
+                    className="min-h-control min-w-0 flex-1 rounded-xl text-left"
                     aria-label={`Show ${city.name} on the map`}
                   >
                     <span className="block text-callout font-bold">
@@ -553,7 +553,7 @@ export default function MapView() {
                     aria-checked={isDownloaded || isDownloading}
                     aria-label={`Offline map for ${city.name}`}
                     onClick={() => void togglePack(city)}
-                    className="flex h-11 w-14 shrink-0 items-center justify-center rounded-lg"
+                    className="flex h-11 w-14 shrink-0 items-center justify-center rounded-xl"
                   >
                     <span
                       aria-hidden="true"
@@ -562,7 +562,7 @@ export default function MapView() {
                       }`}
                     >
                       <span
-                        className={`absolute top-1 h-6 w-6 rounded-full bg-card shadow transition-transform motion-reduce:transition-none ${
+                        className={`absolute top-1 h-6 w-6 rounded-full border border-default bg-card transition-transform motion-reduce:transition-none ${
                           isDownloaded || isDownloading ? "translate-x-[1.5rem]" : "translate-x-1"
                         }`}
                       />
@@ -610,7 +610,7 @@ export default function MapView() {
           aria-label={selectedPoi.name}
           className="fixed inset-x-0 bottom-[calc(3.5rem+env(safe-area-inset-bottom))] z-30 mx-auto max-w-md px-4 pb-2"
         >
-          <div className="plate border border-default bg-card p-4 shadow-lg">
+          <div className="plate border border-strong bg-card p-4">
             <div className="flex items-start gap-3">
               <div className="min-w-0 flex-1">
                 <p className="eyebrow">

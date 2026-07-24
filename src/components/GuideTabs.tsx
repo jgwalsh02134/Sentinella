@@ -80,7 +80,7 @@ function ColonLead({ text }: { text: string }) {
 /** Basics and Health share one card layout. */
 function InfoCard({ item }: { item: InfoItem }) {
   return (
-    <article className="plate border border-default border-l-4 border-l-accent bg-card p-5">
+    <article className="plate border border-default border-l-4 border-l-accent bg-card p-4">
       <h3 className="text-headline">{item.title}</h3>
       <p className="body-copy mt-2 text-secondary">
         <LeadBody text={item.body} />
@@ -168,7 +168,7 @@ export default function GuideTabs() {
 
         {tab === "Scams" &&
           scams.map((s) => (
-            <article key={s.title} className="plate border border-default border-l-4 border-l-accent bg-card p-5">
+            <article key={s.title} className="plate border border-default border-l-4 border-l-accent bg-card p-4">
               <h3 className="text-headline">{s.title}</h3>
               <p className="mt-1 text-caption font-semibold uppercase tracking-wide text-secondary">
                 {s.where}
@@ -202,7 +202,7 @@ export default function GuideTabs() {
 
         {tab === "Cities" &&
           regions.map((r) => (
-            <article key={r.name} className="plate border border-default border-l-4 border-l-accent bg-card p-5">
+            <article key={r.name} className="plate border border-default border-l-4 border-l-accent bg-card p-4">
               <h3 className="title-section">{r.name}</h3>
               <p className="body-copy mt-1 font-medium text-accent">{r.headline}</p>
               <h4 className="eyebrow mt-3">Watch for</h4>

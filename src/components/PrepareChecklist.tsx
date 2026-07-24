@@ -76,7 +76,7 @@ export default function PrepareChecklist() {
                   >
                     <span
                       aria-hidden="true"
-                      className={`mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 ${
+                      className={`mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-xs border-2 ${
                         done ? "border-accent bg-accent text-on-accent" : "border-default bg-card"
                       }`}
                     >

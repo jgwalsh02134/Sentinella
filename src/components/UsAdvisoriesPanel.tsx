@@ -111,7 +111,7 @@ export default function UsAdvisoriesPanel() {
 
   if (state === "offline" || !data) {
     return (
-      <div className="plate border border-default bg-card p-5">
+      <div className="plate border border-default bg-card p-4">
         <p className="body-copy text-secondary">
           Official advisories need a connection and couldn't load. The Emergency and Guide screens
           keep working offline.
@@ -125,7 +125,7 @@ export default function UsAdvisoriesPanel() {
   return (
     <div className="space-y-3">
       {adv?.level ? (
-        <div className="plate border border-default bg-card p-5">
+        <div className="plate border border-default bg-card p-4">
           <div className="flex items-center gap-2">
             <span
               className={`rounded-full px-2.5 py-1 text-caption font-bold uppercase tracking-wide ${LEVEL_BADGE[adv.level] ?? "bg-warning-subtle text-warning"}`}
@@ -144,7 +144,7 @@ export default function UsAdvisoriesPanel() {
           </a>
         </div>
       ) : (
-        <div className="plate border border-default bg-card p-5">
+        <div className="plate border border-default bg-card p-4">
           <p className="body-copy text-secondary">
             The current Italy advisory level hasn't been fetched yet. It appears after the first
             successful check of travel.state.gov.
@@ -173,7 +173,7 @@ export default function UsAdvisoriesPanel() {
           <AdvisoryList items={lists.rest} />
         </>
       ) : lists.near.length === 0 ? (
-        <div className="plate border border-default bg-card p-5">
+        <div className="plate border border-default bg-card p-4">
           <p className="body-copy text-secondary">No embassy or consulate advisories on file yet.</p>
         </div>
       ) : null}
@@ -190,7 +190,7 @@ function AdvisoryList({ items }: { items: Item[] }) {
   return (
     <ul className="space-y-3">
       {items.map((item) => (
-        <li key={item.id} className="plate border border-default bg-card p-5">
+        <li key={item.id} className="plate border border-default bg-card p-4">
           <div className="flex flex-wrap items-center gap-2">
             <span className="rounded-full bg-info-subtle px-2.5 py-1 text-caption font-bold uppercase tracking-wide text-info">
               Official

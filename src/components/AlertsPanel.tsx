@@ -157,14 +157,14 @@ export default function AlertsPanel() {
       {loading ? (
         <p className="text-body text-secondary">Loading alerts…</p>
       ) : offline ? (
-        <div className="plate border border-default bg-card p-5">
+        <div className="plate border border-default bg-card p-4">
           <p className="text-body text-secondary">
             Alerts need a connection and couldn't load. The Emergency and Guide screens keep
             working offline.
           </p>
         </div>
       ) : alerts.length === 0 ? (
-        <div className="plate border border-default bg-card p-5">
+        <div className="plate border border-default bg-card p-4">
           <p className="text-body text-secondary">
             No active alerts. When one is published it appears here — check back before travel
             days and after any major news.
@@ -173,7 +173,7 @@ export default function AlertsPanel() {
       ) : (
         <ul className="space-y-3">
           {alerts.map((a) => (
-            <li key={a.id} className="plate border border-default bg-card p-5">
+            <li key={a.id} className="plate border border-default bg-card p-4">
               <div className="flex items-center gap-2">
                 <span
                   className={`rounded-full px-2.5 py-1 text-caption font-bold uppercase tracking-wide ${severityMeta[a.severity].badge}`}

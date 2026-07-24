@@ -20,7 +20,9 @@ type CallPlateProps = {
 };
 
 const tierStyles: Record<NonNullable<CallPlateProps["tier"]>, string> = {
-  primary: "bg-signal text-white active:bg-signal-deep",
+  // The 112 plate carries the app's ONLY shadow — the deepest element on
+  // any screen is the one that summons help.
+  primary: "bg-signal text-white shadow-plate active:bg-signal-deep",
   service: "bg-verde text-white active:bg-verde-deep",
   support: "bg-white text-ink border border-line active:bg-paper",
 };

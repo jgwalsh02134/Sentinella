@@ -178,14 +178,14 @@ export default function NotificationSettings() {
           aria-label="Notifications"
           disabled={busy}
           onClick={() => void toggle()}
-          className="flex h-11 w-14 shrink-0 items-center justify-center rounded-lg disabled:border-neutral-300 disabled:text-tertiary"
+          className="flex h-11 w-14 shrink-0 items-center justify-center rounded-xl disabled:border-neutral-300 disabled:text-tertiary"
         >
           <span
             aria-hidden="true"
             className={`relative h-8 w-[3.25rem] rounded-full transition-colors motion-reduce:transition-none ${enabled ? "bg-verde" : "bg-line"}`}
           >
             <span
-              className={`absolute top-1 h-6 w-6 rounded-full bg-card shadow transition-transform motion-reduce:transition-none ${enabled ? "translate-x-[1.5rem]" : "translate-x-1"}`}
+              className={`absolute top-1 h-6 w-6 rounded-full border border-default bg-card transition-transform motion-reduce:transition-none ${enabled ? "translate-x-[1.5rem]" : "translate-x-1"}`}
             />
           </span>
         </button>

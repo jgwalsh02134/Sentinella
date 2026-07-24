@@ -36,7 +36,7 @@ function LoginForm() {
   }
 
   return (
-    <form onSubmit={submit} className="plate mt-5 space-y-3 border border-default bg-card p-5">
+    <form onSubmit={submit} className="plate mt-5 space-y-3 border border-default bg-card p-4">
       <label className="block">
         <span className="eyebrow">Email</span>
         <input

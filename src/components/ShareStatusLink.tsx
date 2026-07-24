@@ -84,7 +84,7 @@ export default function ShareStatusLink() {
   if (!loaded) return null;
 
   return (
-    <div className="plate border border-default bg-card p-5">
+    <div className="plate border border-default bg-card p-4">
       <h2 className="text-headline">Share with family</h2>
       <p className="mt-1 text-subhead text-secondary">
         A private link that shows your latest check-in status and approximate area — never exact

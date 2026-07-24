@@ -161,7 +161,7 @@ export default function TripTracking({ onAutoCheckIn }: Props) {
         </div>
       ) : null}
 
-      <div className="plate border border-default bg-card p-5">
+      <div className="plate border border-default bg-card p-4">
         <div className="flex min-h-[2.75rem] items-center gap-3">
           <div className="flex-1">
             <h2 className="text-headline">Track my trip</h2>
@@ -173,14 +173,14 @@ export default function TripTracking({ onAutoCheckIn }: Props) {
             aria-checked={active}
             aria-label="Track my trip"
             onClick={() => (active ? stop() : start())}
-            className="flex h-11 w-14 shrink-0 items-center justify-center rounded-lg"
+            className="flex h-11 w-14 shrink-0 items-center justify-center rounded-xl"
           >
             <span
               aria-hidden="true"
               className={`relative h-8 w-[3.25rem] rounded-full transition-colors motion-reduce:transition-none ${active ? "bg-verde" : "bg-line"}`}
             >
               <span
-                className={`absolute top-1 h-6 w-6 rounded-full bg-card shadow transition-transform motion-reduce:transition-none ${active ? "translate-x-[1.5rem]" : "translate-x-1"}`}
+                className={`absolute top-1 h-6 w-6 rounded-full border border-default bg-card transition-transform motion-reduce:transition-none ${active ? "translate-x-[1.5rem]" : "translate-x-1"}`}
               />
             </span>
           </button>

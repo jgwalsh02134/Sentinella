@@ -148,7 +148,7 @@ export default function CheckinPanel() {
         </div>
       ) : null}
 
-      <div className="plate border border-default bg-card p-5">
+      <div className="plate border border-default bg-card p-4">
         <h2 className="text-headline">New check-in</h2>
 
         <div className="mt-3 grid grid-cols-3 gap-2" role="radiogroup" aria-label="Status">
