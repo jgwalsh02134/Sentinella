@@ -71,7 +71,7 @@ export async function POST(req: Request) {
   } catch (err) {
     console.error("register failed:", err);
     return NextResponse.json(
-      { error: "Something went wrong creating your account. Please try again." },
+      { error: "Account creation failed. Try again." },
       { status: 500 },
     );
   }

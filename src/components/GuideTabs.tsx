@@ -3,6 +3,7 @@
 import { useState } from "react";
 import ItalyFlag from "@/components/ItalyFlag";
 import SeasonalWeatherCard from "@/components/SeasonalWeatherCard";
+import TelText from "@/components/TelText";
 import { scams } from "@/data/scams";
 import { phraseGroups } from "@/data/phrases";
 import { regions } from "@/data/regions";
@@ -48,13 +49,16 @@ function splitFirstSentence(text: string): [string, string] | null {
   return null;
 }
 
-/** Body copy with a bold first-sentence lead. */
+/** Body copy with a bold first-sentence lead. Phone numbers become tel: links. */
 function LeadBody({ text }: { text: string }) {
   const split = splitFirstSentence(text);
-  if (!split) return <>{text}</>;
+  if (!split) return <TelText text={text} />;
   return (
     <>
-      <strong className="font-bold text-primary">{split[0]}</strong> {split[1]}
+      <strong className="font-bold text-primary">
+        <TelText text={split[0]} />
+      </strong>{" "}
+      <TelText text={split[1]} />
     </>
   );
 }
@@ -62,11 +66,13 @@ function LeadBody({ text }: { text: string }) {
 /** City-briefing bullets: bold the place/topic before a leading colon. */
 function ColonLead({ text }: { text: string }) {
   const idx = text.indexOf(":");
-  if (idx === -1 || idx > 40) return <>{text}</>;
+  if (idx === -1 || idx > 40) return <TelText text={text} />;
   return (
     <>
-      <strong className="font-bold text-primary">{text.slice(0, idx + 1)}</strong>
-      {text.slice(idx + 1)}
+      <strong className="font-bold text-primary">
+        <TelText text={text.slice(0, idx + 1)} />
+      </strong>
+      <TelText text={text.slice(idx + 1)} />
     </>
   );
 }
@@ -88,7 +94,11 @@ function InfoCard({ item }: { item: InfoItem }) {
           ))}
         </ul>
       ) : null}
-      {item.warning ? <p className="callout mt-2.5">{item.warning}</p> : null}
+      {item.warning ? (
+        <p className="callout mt-2.5">
+          <TelText text={item.warning} />
+        </p>
+      ) : null}
       {item.links?.length ? (
         <div className="mt-3 flex flex-wrap gap-2">
           {item.links.map((link) => {

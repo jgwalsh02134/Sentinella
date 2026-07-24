@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import CallPlate from "@/components/CallPlate";
 import ShareLocation from "@/components/ShareLocation";
+import TelText from "@/components/TelText";
 import AustraliaFlag from "@/components/AustraliaFlag";
 import IrelandFlag from "@/components/IrelandFlag";
 import NewZealandFlag from "@/components/NewZealandFlag";
@@ -33,8 +34,7 @@ export default function EmergencyPage() {
         <p className="eyebrow">Emergency</p>
         <h1 className="title-page">One tap to help</h1>
         <p className="body-copy mt-1 text-secondary">
-          Every plate below is a phone number. All core lines are free and work from any phone, with
-          or without a local SIM.
+          Tap any plate to call. Core lines are free from any phone, even without a SIM.
         </p>
       </header>
 
@@ -65,7 +65,7 @@ export default function EmergencyPage() {
         <Link href="/map" className="plate mt-3 block border border-default bg-card p-4">
           <p className="text-headline">Offline map →</p>
           <p className="mt-0.5 text-subhead text-secondary">
-            See where you are on a downloaded city map — works without a connection.
+            See your position on a downloaded city map — no connection needed.
           </p>
         </Link>
       </section>
@@ -153,7 +153,11 @@ export default function EmergencyPage() {
               </h3>
               <p className="mt-0.5 text-subhead text-secondary">{e.address}</p>
               <p className="mt-0.5 font-mono text-callout font-semibold tabular-nums">{e.phone}</p>
-              {e.notes ? <p className="mt-1 text-subhead text-secondary">{e.notes}</p> : null}
+              {e.notes ? (
+                <p className="mt-1 text-subhead text-secondary">
+                  <TelText text={e.notes} />
+                </p>
+              ) : null}
               {e.email ? (
                 <p className="mt-1 text-subhead text-secondary">
                   Email:{" "}

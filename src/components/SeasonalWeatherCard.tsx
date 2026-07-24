@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { CloudRain, Sun } from "lucide-react";
 import Icon from "@/components/Icon";
+import TelText from "@/components/TelText";
 import { allertaMeteoCard, heatCard, weatherLastVerified, type WeatherCard } from "@/data/weather";
 import { isHeatSeason } from "@/lib/season";
 
@@ -58,12 +59,14 @@ export default function SeasonalWeatherCard() {
       <ul className="mt-3 space-y-2">
         {card.points.map((point) => (
           <li key={point} className="body-copy text-secondary">
-            {point}
+            <TelText text={point} />
           </li>
         ))}
       </ul>
 
-      <p className="callout mt-3">{card.warning}</p>
+      <p className="callout mt-3">
+        <TelText text={card.warning} />
+      </p>
 
       <div className="mt-3 flex flex-wrap gap-2">
         {card.links.map((link) => (

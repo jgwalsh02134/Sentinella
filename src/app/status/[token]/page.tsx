@@ -4,6 +4,7 @@ import { desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { checkIns, users } from "@/db/schema";
 import DstNote from "@/components/DstNote";
+import TelText from "@/components/TelText";
 import { nearestRegion } from "@/lib/region-geo";
 import { relativeTime } from "@/lib/relative-time";
 import { formatDualDateTime } from "@/lib/timezones";
@@ -95,9 +96,7 @@ export default async function StatusPage({ params }: { params: { token: string }
       )}
 
       <p className="mt-4 text-footnote text-secondary">
-        Shared from Sentinella, a travel safety app. This page shows an approximate area at most —
-        never exact coordinates — and is informational, not monitored in real time. In an emergency
-        in Italy, call 112.
+        <TelText text="Shared from Sentinella, a travel safety app. This page shows an approximate area at most — never exact coordinates — and is informational, not monitored in real time. In an emergency in Italy, call 112." />
       </p>
     </main>
   );

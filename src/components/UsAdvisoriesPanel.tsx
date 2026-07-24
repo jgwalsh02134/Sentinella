@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import TelText from "@/components/TelText";
 import { ADVISORY_LEVEL_NAMES } from "@/lib/advisory-levels";
 import { readLastFix } from "@/lib/lastFix";
 import { nearestRegion } from "@/lib/region-geo";
@@ -173,7 +174,7 @@ export default function UsAdvisoriesPanel() {
         </>
       ) : lists.near.length === 0 ? (
         <div className="plate border border-default bg-card p-5">
-          <p className="body-copy text-secondary">No embassy or consulate alerts on file yet.</p>
+          <p className="body-copy text-secondary">No embassy or consulate advisories on file yet.</p>
         </div>
       ) : null}
 
@@ -210,7 +211,9 @@ function AdvisoryList({ items }: { items: Item[] }) {
               <summary className="cursor-pointer text-callout font-semibold text-info">
                 Details
               </summary>
-              <p className="body-copy mt-1 whitespace-pre-line break-words text-secondary">{item.body}</p>
+              <p className="body-copy mt-1 whitespace-pre-line break-words text-secondary">
+                <TelText text={item.body} />
+              </p>
             </details>
           ) : null}
           <p className="mt-2 text-footnote text-secondary">

@@ -36,7 +36,7 @@ export async function POST(req: Request) {
   } catch (err) {
     console.error("login failed:", err);
     return NextResponse.json(
-      { error: "Something went wrong signing you in. Please try again." },
+      { error: "Sign-in failed. Try again." },
       { status: 500 },
     );
   }

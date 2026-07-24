@@ -31,17 +31,19 @@ type Candidate = {
   at: number;
 };
 
-const TEAM_BADGE: Record<TeamAlert["severity"], { rank: number; className: string }> = {
-  info: { rank: 1, className: "bg-info-subtle text-info" },
-  advisory: { rank: 2, className: "bg-warning-subtle text-warning" },
-  critical: { rank: 3, className: "bg-danger-subtle text-danger" },
+/* Team severities display as Info/Caution/Critical — "advisory" is
+   reserved app-wide for official government guidance. */
+const TEAM_BADGE: Record<TeamAlert["severity"], { rank: number; label: string; className: string }> = {
+  info: { rank: 1, label: "Info", className: "bg-info-subtle text-info" },
+  advisory: { rank: 2, label: "Caution", className: "bg-warning-subtle text-warning" },
+  critical: { rank: 3, label: "Critical", className: "bg-danger-subtle text-danger" },
 };
 
 function teamCandidate(alert: TeamAlert): Candidate {
   const meta = TEAM_BADGE[alert.severity];
   return {
     title: alert.title,
-    badge: alert.severity,
+    badge: meta.label,
     badgeClass: meta.className,
     region: alert.region,
     rank: meta.rank,
@@ -158,7 +160,7 @@ export default function LatestAlert() {
         <span className="min-w-0 truncate text-footnote font-semibold text-secondary">{candidate.region}</span>
       </span>
       <span className="mt-2 block break-words text-headline">{candidate.title}</span>
-      <span className="mt-1 block text-footnote font-semibold text-info">All advisories →</span>
+      <span className="mt-1 block text-footnote font-semibold text-info">See all →</span>
     </Link>
   );
 }

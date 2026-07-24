@@ -10,9 +10,9 @@ export default function AlertsPage() {
     <main>
       <header>
         <p className="eyebrow">Alerts</p>
-        <h1 className="title-page">Active advisories</h1>
+        <h1 className="title-page">Alerts & advisories</h1>
         <p className="body-copy mt-1 text-secondary">
-          Advisories from your group's admins and official U.S. government sources, in one place.
+          Alerts from your group's admins and advisories from official U.S. sources, in one place.
         </p>
       </header>
 

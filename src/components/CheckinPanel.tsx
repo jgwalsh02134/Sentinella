@@ -124,7 +124,7 @@ export default function CheckinPanel() {
     <div className="space-y-6">
       {nearby.length > 0 ? (
         <div className="rounded-xl bg-ambra-tint p-4" role="status">
-          <p className="text-callout font-bold text-ambra">Active advisories near your position</p>
+          <p className="text-callout font-bold text-ambra">Alerts and advisories near your position</p>
           <ul className="mt-1.5 space-y-1">
             {nearby.map((a) => (
               <li key={a.title} className="text-subhead text-ambra">

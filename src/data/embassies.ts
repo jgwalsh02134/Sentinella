@@ -32,7 +32,7 @@ export const embassies: Embassy[] = [
     email: "USCitizensFlorence@state.gov",
     website: "https://it.usembassy.gov/embassy-consulates/florence/",
     notes:
-      "Serves Tuscany, Emilia-Romagna (except Piacenza/Parma), and San Marino. Issues same-day emergency passports for lost/stolen cases — for a Tuscany trip, this beats going to Rome. The same number answers after hours.",
+      "Issues same-day emergency passports for lost or stolen cases — for a Tuscany trip, this beats Rome. Serves Tuscany, Emilia-Romagna (except Piacenza/Parma), and San Marino. The same number answers after hours.",
   },
   {
     country: "United States",
@@ -43,7 +43,7 @@ export const embassies: Embassy[] = [
     phone: "+39 06 46741",
     dial: "+390646741",
     website: "https://it.usembassy.gov",
-    notes: "Consulates General in Milan, Florence, and Naples. After hours, the switchboard connects to the duty officer for citizen emergencies.",
+    notes: "After hours, the switchboard connects to the duty officer for citizen emergencies. Consulates General in Milan, Florence, and Naples.",
   },
   {
     country: "United Kingdom",
@@ -54,7 +54,7 @@ export const embassies: Embassy[] = [
     phone: "+39 06 4220 0001",
     dial: "+390642200001",
     website: "https://www.gov.uk/world/italy",
-    notes: "For consular emergencies the FCDO line in London (+44 20 7008 5000) answers 24/7.",
+    notes: "Call the FCDO in London (+44 20 7008 5000) for consular emergencies — answers 24/7.",
   },
   {
     country: "Canada",
@@ -115,6 +115,6 @@ export const lostDocumentSteps: Step[] = [
   },
   {
     lead: "Keep a paper copy",
-    rest: "and an offline photo of your passport, insurance card, and itinerary separate from the originals for exactly this situation.",
+    rest: "and an offline photo of your passport, insurance card, and itinerary, separate from the originals.",
   },
 ];

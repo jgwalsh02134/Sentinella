@@ -45,6 +45,14 @@ DATABASE_URL, AUTH_SECRET, INVITE_CODES (comma-separated), ADMIN_EMAILS
 8. UI copy: plain verbs, sentence case, specific instructions. Errors say what
    happened and what to do next.
 
+## Glossary (one term per concept — enforce in all UI copy)
+- "advisory" = official government guidance (State Dept, embassy). Never for team posts.
+- "alert" = a notice published by group admins. Severity labels: Info / Caution / Critical.
+- "check in" is the verb ("Check in now"); "check-in" is the noun ("your last check-in").
+- "Emergency", never "SOS" (exception: Apple's product name "Emergency SOS via satellite").
+- "position" = where the user is now (GPS); "location" = a fixed place (embassy, hospital).
+- "guide" = the offline reference content; "advisories/alerts" are never part of the guide.
+
 ## Layout language
 Signage plates (.plate + CallPlate component) are the signature element — emergency
 numbers rendered like Italian road signs with large monospace numerals. Keep new

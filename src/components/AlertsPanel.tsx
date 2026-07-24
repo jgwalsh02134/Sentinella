@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import TelText from "@/components/TelText";
 
 type Severity = "info" | "advisory" | "critical";
 
@@ -13,9 +14,12 @@ type Alert = {
   createdAt: string;
 };
 
+/* Display labels only — the stored severity values are unchanged. The
+   middle tier shows as "Caution" because "advisory" is reserved app-wide
+   for official government guidance (see the glossary in .cursorrules). */
 const severityMeta: Record<Severity, { label: string; badge: string }> = {
   info: { label: "Info", badge: "bg-info-subtle text-info" },
-  advisory: { label: "Advisory", badge: "bg-warning-subtle text-warning" },
+  advisory: { label: "Caution", badge: "bg-warning-subtle text-warning" },
   critical: { label: "Critical", badge: "bg-danger-subtle text-danger" },
 };
 
@@ -124,7 +128,7 @@ export default function AlertsPanel() {
                   className="min-h-[3rem] rounded-xl border border-default bg-card px-3 text-body outline-none focus:border-verde"
                 >
                   <option value="info">Info</option>
-                  <option value="advisory">Advisory</option>
+                  <option value="advisory">Caution</option>
                   <option value="critical">Critical</option>
                 </select>
                 <input
@@ -180,7 +184,9 @@ export default function AlertsPanel() {
                 <span className="ml-auto text-footnote text-secondary">{formatWhen(a.createdAt)}</span>
               </div>
               <h3 className="mt-2 break-words text-headline">{a.title}</h3>
-              <p className="body-copy mt-1 break-words text-secondary">{a.body}</p>
+              <p className="body-copy mt-1 break-words text-secondary">
+                <TelText text={a.body} />
+              </p>
             </li>
           ))}
         </ul>
