@@ -12,6 +12,7 @@ export default function Card({
   as: Tag = "div",
   accentEdge = false,
   padded = true,
+  id,
   className = "",
   children,
 }: {
@@ -19,11 +20,14 @@ export default function Card({
   accentEdge?: boolean;
   /** false for grouped lists that manage their own row padding. */
   padded?: boolean;
+  /** Anchor id — guide search deep-links to individual cards. */
+  id?: string;
   className?: string;
   children: ReactNode;
 }) {
   return (
     <Tag
+      id={id}
       className={`plate border border-default bg-card ${padded ? "p-4" : ""} ${
         accentEdge ? "accent-edge" : ""
       } ${className}`}

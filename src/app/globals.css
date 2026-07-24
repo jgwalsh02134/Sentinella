@@ -437,6 +437,13 @@ textarea,
   display: block;
 }
 
+/* Guide search deep-links land on an item card; :target makes the card
+   visually distinct on arrival (accent ring, no motion). */
+.guide-item:target {
+  outline: 2px solid rgb(var(--accent-600));
+  outline-offset: 2px;
+}
+
 /* Legend chips reuse the exact badge artwork at 20px; an OFF chip goes
    gray + hollow (never color alone — aria-pressed carries the state). */
 .legend-chip svg {

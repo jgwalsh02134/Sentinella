@@ -236,7 +236,7 @@ export default function WeatherCard({ className = "" }: { className?: string }) 
           Open-Meteo
         </a>{" "}
         · Seasonal safety advice is in the{" "}
-        <a href="/guide#basics" className="text-link">
+        <a href="/guide/basics" className="text-link">
           field guide
         </a>
         .

@@ -41,7 +41,7 @@ export default function SeasonalWeatherCard() {
           </span>
           <div className="min-w-0">
             <p className="eyebrow">Seasonal weather safety</p>
-            <h3 className="mt-1 text-headline">{card.title}</h3>
+            <h2 className="mt-1 text-headline">{card.title}</h2>
           </div>
         </div>
 

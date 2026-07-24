@@ -11,13 +11,18 @@
  *    files managed in IndexedDB by the Map screen, and their online mode uses
  *    HTTP range requests the Cache API can't store.
  */
-// v8: precache the State Dept seal — the Emergency screen's U.S.
-// citizens section must render complete offline, seal included.
-const VERSION = "sentinella-v8";
+// v9: guide became list→detail routes — precache every /guide/* page so
+// the whole guide keeps its offline guarantee.
+const VERSION = "sentinella-v9";
 const PRECACHE = [
   "/",
   "/emergency",
   "/guide",
+  "/guide/basics",
+  "/guide/scams",
+  "/guide/phrases",
+  "/guide/cities",
+  "/guide/health",
   "/map",
   "/prepare",
   "/offline",

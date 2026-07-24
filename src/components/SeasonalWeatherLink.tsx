@@ -23,7 +23,7 @@ export default function SeasonalWeatherLink() {
 
   return (
     <ListRow
-      href="/guide#basics"
+      href="/guide/basics"
       icon={
         <span className={heat ? "text-icon-warning" : "text-icon-info"}>
           <Icon icon={heat ? Sun : CloudRain} size="lg" />
