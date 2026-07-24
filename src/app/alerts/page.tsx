@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import AlertsPanel from "@/components/AlertsPanel";
+import SeasonalWeatherLink from "@/components/SeasonalWeatherLink";
 import UsAdvisoriesPanel from "@/components/UsAdvisoriesPanel";
 
 export const metadata: Metadata = { title: "Alerts" };
@@ -14,6 +15,10 @@ export default function AlertsPage() {
           Advisories from your group's admins and official U.S. government sources, in one place.
         </p>
       </header>
+
+      <div className="mt-4">
+        <SeasonalWeatherLink />
+      </div>
 
       <section className="mt-4" aria-label="Team advisories">
         <h2 className="eyebrow">Team advisories</h2>

@@ -39,16 +39,22 @@ export const heatCard: WeatherCard = {
   id: "heat",
   title: "Summer heat: check the daily bollino",
   intro:
-    "Through the heat season the Ministry of Health publishes daily heat-health bulletins (bollini) for 27 cities, graded green, yellow, orange, and red. The 2026 season runs 25 May – 20 September (circular 3873/2026).",
+    "Through the heat season the Ministry of Health publishes daily heat-health bulletins (bollini) for 27 cities including Rome and Florence — on salute.gov.it, search \"ondate di calore\". The 2026 season runs 25 May – 20 September (circular 3873/2026).",
+  levels: [
+    { code: "VERDE", meaning: "no heat risk expected." },
+    { code: "GIALLO", meaning: "pre-alert — conditions could escalate." },
+    { code: "ARANCIONE", meaning: "health risk for vulnerable people." },
+    { code: "ROSSO", meaning: "dangerous for everyone — healthy adults included, not just the vulnerable." },
+  ],
   points: [
-    "On orange and red days, move sightseeing to early morning and evening, and plan shade or indoor stops at midday.",
-    "Hydrate steadily — public fountains are drinkable — and check on the over-75s in your group. Heat is Italy's most common summer health incident.",
+    "On orange and red days, move sightseeing to early morning and evening, and plan shade or indoor stops at midday. Attractions may cap admissions on red days.",
+    "Hydrate steadily — public fountain water is safe, including Rome's nasoni — and check on the over-75s in your group. Heat is Italy's most common summer health incident.",
   ],
   warning:
     "Bulletins are published each afternoon and cover the next 24–72 hours — check your city's bollino before committing to a full day outdoors.",
   links: [
     {
-      label: "Ministero della Salute — daily heat bulletins",
+      label: "Ministero della Salute — \"ondate di calore\" bulletins",
       url: "https://www.salute.gov.it/portale/caldo/homeCaldo.jsp",
     },
   ],
@@ -66,7 +72,7 @@ export const allertaMeteoCard: WeatherCard = {
     { code: "ROSSO", meaning: "extreme events, very dangerous — follow official instructions." },
   ],
   points: [
-    "Autumn brings flood and flash-flood risk in Tuscany and Lazio — the November 2023 floods in Prato and Campi Bisenzio are the recent reference. On arancione or rosso days, stay clear of underpasses, riverbanks, and basements.",
+    "Autumn is flash-flood season in Tuscany and Lazio — the November 2023 floods in Prato and Campi Bisenzio killed people; this is not theoretical. On arancione or rosso days, stay clear of underpasses, riverbanks, and basements.",
     "Wet cobblestones: October rain makes cobblestones and hill-town steps genuinely slippery — a real fall risk for older travelers. Wear sturdy shoes with good tread and slow down on grades and stairs.",
   ],
   warning:
