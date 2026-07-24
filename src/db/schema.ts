@@ -26,6 +26,12 @@ export const users = pgTable("users", {
   notifyOfficial: boolean("notify_official").notNull().default(true),
   notifyTeam: boolean("notify_team").notNull().default(true),
   notifyReminders: boolean("notify_reminders").notNull().default(true),
+  /**
+   * Token for the public /status/<token> page showing this user's latest
+   * check-in. One active link per user: null = no link (revoked). The link
+   * follows the person, not a single check-in row, so it never goes stale.
+   */
+  shareToken: text("share_token").unique(),
   /** Check-in reminder interval in hours: 0 = off, else 4/8/24. */
   checkinReminderHours: integer("checkin_reminder_hours").notNull().default(0),
   /** When the user was last push-reminded to check in. */

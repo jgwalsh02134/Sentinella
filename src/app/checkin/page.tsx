@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import CheckinPanel from "@/components/CheckinPanel";
+import ShareStatusLink from "@/components/ShareStatusLink";
 
 export const metadata: Metadata = { title: "Check in" };
 
@@ -16,6 +17,9 @@ export default function CheckinPage() {
       </header>
       <div className="mt-4">
         <CheckinPanel />
+      </div>
+      <div className="mt-6">
+        <ShareStatusLink />
       </div>
     </main>
   );
