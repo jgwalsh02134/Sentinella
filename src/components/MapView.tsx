@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as maplibregl from "maplibre-gl";
 import { FetchSource, PMTiles, Protocol } from "pmtiles";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { MAP_PACKS, type MapPack } from "@/data/mapPacks";
+import { safetyPois, type SafetyPoi } from "@/data/safetyPois";
 import { buildMapStyle } from "@/lib/mapStyle";
+import { appleMapsDirectionsUrl } from "@/lib/maps";
+import { bearingDeg, cardinal, formatKm, haversineKm } from "@/lib/geo";
 import { saveLastFix } from "@/lib/lastFix";
 
 function cityStyle(city: MapPack) {
@@ -41,8 +44,46 @@ const protocol = new Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
 
 const ACTIVE_CITY_KEY = "sentinella-active-city";
+const HOME_BASE_KEY = "sentinella-home-base";
 
 type Fix = { lat: number; lng: number; accuracyM: number };
+type HomeBase = { name: string; lat: number; lng: number };
+
+function loadHomeBase(): HomeBase | null {
+  try {
+    const raw = window.localStorage.getItem(HOME_BASE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as HomeBase;
+    return typeof parsed?.lat === "number" && typeof parsed?.lng === "number" ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Marker glyphs: color is never the only signal — each kind has its own
+ *  shape, and the bottom sheet names the place. */
+const POI_GLYPHS: Record<SafetyPoi["kind"], string> = {
+  er: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z"/></svg>',
+  embassy:
+    '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 21V4"/><path d="M6 4h11l-2.5 4L17 12H6"/></svg>',
+};
+
+const BASE_GLYPH =
+  '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>';
+
+/** 44px tap target around a 30px visual pin. */
+function markerElement(kind: SafetyPoi["kind"] | "base", label: string): HTMLButtonElement {
+  const el = document.createElement("button");
+  el.type = "button";
+  el.setAttribute("aria-label", label);
+  el.className = "flex h-11 w-11 items-center justify-center";
+  const color =
+    kind === "er" ? "bg-verde" : kind === "embassy" ? "bg-azzurro" : "bg-terracotta";
+  el.innerHTML = `<span class="pointer-events-none flex h-[1.875rem] w-[1.875rem] items-center justify-center rounded-full ${color} text-white shadow-md ring-2 ring-white">${
+    kind === "base" ? BASE_GLYPH : POI_GLYPHS[kind]
+  }</span>`;
+  return el;
+}
 
 function formatSize(bytes: number): string {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
@@ -91,6 +132,32 @@ export default function MapView() {
   /** One quiet in-UI notice for map-level failures (WebGL, tile errors). */
   const [mapNotice, setMapNotice] = useState<string | null>(null);
   const [gpsNotice, setGpsNotice] = useState<string | null>(null);
+  const [selectedPoi, setSelectedPoi] = useState<SafetyPoi | null>(null);
+  const [base, setBase] = useState<HomeBase | null>(null);
+  const [baseName, setBaseName] = useState("Hotel");
+  const baseMarkerRef = useRef<maplibregl.Marker | null>(null);
+
+  /** Nearest 24h ER by straight-line distance — recomputed per GPS fix. */
+  const nearestEr = useMemo(() => {
+    if (!fix) return null;
+    let best: { poi: SafetyPoi; km: number; bearing: number } | null = null;
+    for (const poi of safetyPois) {
+      if (poi.kind !== "er") continue;
+      const km = haversineKm(fix.lat, fix.lng, poi.lngLat[1], poi.lngLat[0]);
+      if (!best || km < best.km) {
+        best = { poi, km, bearing: bearingDeg(fix.lat, fix.lng, poi.lngLat[1], poi.lngLat[0]) };
+      }
+    }
+    return best;
+  }, [fix]);
+
+  const baseReadout = useMemo(() => {
+    if (!fix || !base) return null;
+    return {
+      km: haversineKm(fix.lat, fix.lng, base.lat, base.lng),
+      bearing: bearingDeg(fix.lat, fix.lng, base.lat, base.lng),
+    };
+  }, [fix, base]);
 
   useEffect(() => {
     let cancelled = false;
@@ -179,7 +246,20 @@ export default function MapView() {
         );
       });
 
+      // Safety POI overlay: DOM markers survive style swaps between packs,
+      // and the data is bundled — they work fully offline.
+      for (const poi of safetyPois) {
+        const el = markerElement(poi.kind, poi.name);
+        el.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          setSelectedPoi(poi);
+          mapRef.current?.easeTo({ center: poi.lngLat });
+        });
+        new maplibregl.Marker({ element: el, anchor: "center" }).setLngLat(poi.lngLat).addTo(map);
+      }
+
       mapRef.current = map;
+      setBase(loadHomeBase());
       // Debug/verification handle (safe: client-only, no auth surface).
       (window as unknown as { __sentinellaMap?: maplibregl.Map }).__sentinellaMap = map;
     })();
@@ -192,6 +272,32 @@ export default function MapView() {
       mapRef.current = null;
     };
   }, []);
+
+  // Keep the home-base marker in sync with the saved base.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    baseMarkerRef.current?.remove();
+    baseMarkerRef.current = null;
+    if (base) {
+      const el = markerElement("base", `Home base: ${base.name}`);
+      baseMarkerRef.current = new maplibregl.Marker({ element: el, anchor: "center" })
+        .setLngLat([base.lng, base.lat])
+        .addTo(map);
+    }
+  }, [base]);
+
+  function saveBase() {
+    if (!fix) return;
+    const next: HomeBase = { name: baseName.trim() || "Hotel", lat: fix.lat, lng: fix.lng };
+    window.localStorage.setItem(HOME_BASE_KEY, JSON.stringify(next));
+    setBase(next);
+  }
+
+  function removeBase() {
+    window.localStorage.removeItem(HOME_BASE_KEY);
+    setBase(null);
+  }
 
   /** Re-point the active city's source and force the style to re-read it. */
   async function refreshActiveSource(city: MapPack, useStoredBlob: boolean) {
@@ -285,17 +391,53 @@ export default function MapView() {
 
   return (
     <div>
-      <div
-        ref={containerRef}
-        className="plate mt-5 h-[60dvh] min-h-[20rem] overflow-hidden border border-default bg-card"
-        role="application"
-        aria-label="City map"
-      />
+      <div className="relative mt-5">
+        <div
+          ref={containerRef}
+          className="plate h-[60dvh] min-h-[20rem] overflow-hidden border border-default bg-card"
+          role="application"
+          aria-label="City map with safety locations"
+        />
+        {base && baseReadout ? (
+          <p
+            className="pointer-events-none absolute left-2 top-2 flex items-center gap-2 rounded-full bg-card/95 px-3 py-2 text-footnote font-bold shadow"
+            role="status"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              className="h-4 w-4 shrink-0 text-terracotta"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+              style={{ transform: `rotate(${Math.round(baseReadout.bearing)}deg)` }}
+            >
+              <path d="M12 19V5" />
+              <path d="M5 12l7-7 7 7" />
+            </svg>
+            {base.name} — {formatKm(baseReadout.km)} {cardinal(baseReadout.bearing)}
+          </p>
+        ) : null}
+      </div>
       {mapNotice ? (
         <p className="callout mt-2" role="status">
           {mapNotice}
         </p>
       ) : null}
+      {nearestEr ? (
+        <p className="mt-2 rounded-xl bg-verde-tint px-3 py-2 text-callout font-semibold text-verde-deep" role="status">
+          Nearest ER: {nearestEr.poi.shortName} — {formatKm(nearestEr.km)}{" "}
+          {cardinal(nearestEr.bearing)} of you{" "}
+          <span className="font-normal">(straight line, not a route)</span>
+        </p>
+      ) : null}
+      <p className="mt-2 text-footnote text-secondary">
+        Markers: <span className="font-semibold text-verde-deep">+</span> 24h emergency rooms ·{" "}
+        <span className="font-semibold text-azzurro-900">⚑</span> embassies & consulates. All work
+        offline; tap one for call and directions.
+      </p>
 
       <div className="plate mt-3 border border-default bg-card p-4">
         <h2 className="text-headline">Your position</h2>
@@ -317,6 +459,54 @@ export default function MapView() {
           <p className="mt-2 text-callout font-medium text-ambra" role="status">
             {gpsNotice}
           </p>
+        ) : null}
+
+        {base ? (
+          <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-default pt-3">
+            <p className="min-w-0 flex-1 text-callout">
+              <strong className="font-bold">{base.name}</strong> saved as home base
+              {baseReadout ? (
+                <span className="text-secondary">
+                  {" "}
+                  — {formatKm(baseReadout.km)} {cardinal(baseReadout.bearing)} of you
+                </span>
+              ) : null}
+            </p>
+            <button
+              type="button"
+              onClick={removeBase}
+              className="min-h-[2.75rem] rounded-xl px-3 text-callout font-bold text-danger active:bg-danger-subtle"
+            >
+              Remove
+            </button>
+          </div>
+        ) : fix ? (
+          <div className="mt-3 border-t border-default pt-3">
+            <label className="block">
+              <span className="eyebrow">Save this spot</span>
+              <span className="mt-1 flex gap-2">
+                <input
+                  type="text"
+                  value={baseName}
+                  onChange={(e) => setBaseName(e.target.value)}
+                  maxLength={24}
+                  className="min-h-[2.75rem] w-0 min-w-0 flex-1 rounded-xl border border-default bg-card px-3 text-body"
+                  aria-label="Name for this spot"
+                />
+                <button
+                  type="button"
+                  onClick={saveBase}
+                  className="min-h-[2.75rem] shrink-0 rounded-xl bg-verde px-4 text-callout font-bold text-white active:bg-verde-deep"
+                >
+                  Save
+                </button>
+              </span>
+            </label>
+            <p className="mt-2 text-footnote text-secondary">
+              Saves on this device only. A chip on the map then points back here — which way is
+              the hotel, at a glance.
+            </p>
+          </div>
         ) : null}
       </div>
 
@@ -409,10 +599,71 @@ export default function MapView() {
         </div>
         <p className="mt-2 text-footnote text-secondary">
           Downloads live in this browser's storage. iOS may evict them if the device runs low on
-          space — re-download before you travel. Outside a downloaded city the map needs a
+          space — re-download before you travel. Outside a downloaded area the map needs a
           connection. Map data © OpenStreetMap contributors.
         </p>
       </section>
+
+      {selectedPoi ? (
+        <div
+          role="dialog"
+          aria-label={selectedPoi.name}
+          className="fixed inset-x-0 bottom-[calc(3.5rem+env(safe-area-inset-bottom))] z-30 mx-auto max-w-md px-4 pb-2"
+        >
+          <div className="plate border border-default bg-card p-4 shadow-lg">
+            <div className="flex items-start gap-3">
+              <div className="min-w-0 flex-1">
+                <p className="eyebrow">
+                  {selectedPoi.kind === "er" ? "24h emergency room" : "Embassy / consulate"}
+                </p>
+                <h3 className="text-headline">{selectedPoi.name}</h3>
+                <p className="mt-1 text-footnote text-secondary">{selectedPoi.address}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedPoi(null)}
+                aria-label="Close"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-secondary active:bg-sunken"
+              >
+                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+                  <path d="M6 6l12 12M18 6L6 18" />
+                </svg>
+              </button>
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              {selectedPoi.dial ? (
+                <a
+                  href={`tel:${selectedPoi.dial}`}
+                  className="flex min-h-[2.75rem] items-center justify-center rounded-xl bg-verde text-callout font-bold text-white active:bg-verde-deep"
+                >
+                  Call
+                </a>
+              ) : null}
+              <a
+                href={appleMapsDirectionsUrl(`${selectedPoi.address}, Italy`)}
+                target="_blank"
+                rel="noreferrer"
+                className={`flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde text-callout font-bold text-verde active:bg-verde-tint ${
+                  selectedPoi.dial ? "" : "col-span-2"
+                }`}
+              >
+                Directions
+              </a>
+              {selectedPoi.poisonDial && selectedPoi.poisonDial !== selectedPoi.dial ? (
+                <a
+                  href={`tel:${selectedPoi.poisonDial}`}
+                  className="col-span-2 flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde text-callout font-bold text-verde active:bg-verde-tint"
+                >
+                  Poison control — {selectedPoi.poisonPhone}
+                </a>
+              ) : null}
+            </div>
+            <p className="mt-2 text-footnote text-secondary">
+              Calls work offline via the phone network. Directions need a connection.
+            </p>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
