@@ -311,6 +311,17 @@ textarea,
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+/* ---- Map screen (full-bleed /map) --------------------------------------
+   The geolocate control does the tracking work but its 29px button is
+   hidden — the 48px FAB triggers it. Attribution stays collapsed at
+   bottom-left, raised above the sheet's 96px peek strip. */
+.map-screen .maplibregl-ctrl-top-left .maplibregl-ctrl-group {
+  display: none;
+}
+.map-screen .maplibregl-ctrl-bottom-left {
+  margin-bottom: 6.75rem;
+}
+
 /* ---- Motion system ----------------------------------------------------
    ONE system: 150–200ms ease-out, applied only to disclosure, pressed
    states, and the skeleton shimmer. No entrance animations. Everything
