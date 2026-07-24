@@ -6,12 +6,16 @@ import { FetchSource, PMTiles, Protocol } from "pmtiles";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { AlertTriangle, Download, LocateFixed, Map as MapIcon, Minus, Plus } from "lucide-react";
 import { MAP_PACKS, type MapPack } from "@/data/mapPacks";
+import Link from "next/link";
+import { denunciaNote } from "@/data/police";
 import {
   CATEGORY_LABEL,
+  badgeMarkup,
   buildBaseMarker,
   buildPoiMarker,
   mapPlaces,
   type MapPlace,
+  type PoiCategory,
 } from "@/lib/mapMarkers";
 import { buildMapStyle } from "@/lib/mapStyle";
 import { appleMapsDirectionsUrl } from "@/lib/maps";
@@ -62,7 +66,26 @@ maplibregl.addProtocol("pmtiles", protocol.tile);
 
 const ACTIVE_CITY_KEY = "sentinella-active-city";
 const HOME_BASE_KEY = "sentinella-home-base";
+const LEGEND_KEY = "sentinella-map-legend-off";
 const SHEET_PEEK_PX = 96;
+
+/** Legend chips: the actual mini markers, acting as category toggles. */
+const LEGEND: { category: PoiCategory; label: string }[] = [
+  { category: "er", label: "ERs" },
+  { category: "embassy", label: "US help" },
+  { category: "police", label: "Police" },
+];
+
+/** Hidden categories persist for the session only. */
+function loadHiddenCategories(): Set<PoiCategory> {
+  try {
+    const raw = window.sessionStorage.getItem(LEGEND_KEY);
+    if (!raw) return new Set();
+    return new Set(JSON.parse(raw) as PoiCategory[]);
+  } catch {
+    return new Set();
+  }
+}
 
 type Fix = { lat: number; lng: number; accuracyM: number };
 type HomeBase = { name: string; lat: number; lng: number };
@@ -163,6 +186,8 @@ export default function MapView() {
   const baseMarkerRef = useRef<maplibregl.Marker | null>(null);
   /** Marker elements by place id, for selection + category toggles. */
   const poiElsRef = useRef(new Map<string, HTMLButtonElement>());
+  /** Live copy of hidden categories for the async init path. */
+  const hiddenRef = useRef<Set<PoiCategory>>(new Set());
 
   const [downloaded, setDownloaded] = useState<Set<string>>(new Set());
   const [progress, setProgress] = useState<Record<string, number>>({});
@@ -178,6 +203,10 @@ export default function MapView() {
   const [gpsDenied, setGpsDenied] = useState(false);
   const [gpsNotice, setGpsNotice] = useState<string | null>(null);
   const [selectedPoi, setSelectedPoi] = useState<MapPlace | null>(null);
+  /** Legend toggles: hidden marker categories (all visible by default). */
+  const [hiddenCategories, setHiddenCategories] = useState<Set<PoiCategory>>(
+    () => (typeof window === "undefined" ? new Set() : loadHiddenCategories()),
+  );
   const [base, setBase] = useState<HomeBase | null>(null);
   const [baseName, setBaseName] = useState("Hotel");
   const [detent, setDetent] = useState<SheetDetent>("peek");
@@ -414,6 +443,7 @@ export default function MapView() {
       poiElsRef.current.clear();
       for (const place of mapPlaces) {
         const el = buildPoiMarker(place);
+        if (hiddenRef.current.has(place.category)) el.style.display = "none";
         el.addEventListener("click", (ev) => {
           ev.stopPropagation();
           setSelectedPoi(place);
@@ -472,6 +502,40 @@ export default function MapView() {
       el.dataset.selected = String(id === selectedPoi?.id);
     });
   }, [selectedPoi]);
+
+  // Legend toggles hide whole categories; markers stay mounted (cheap,
+  // and their state survives). The async init path reads hiddenRef.
+  useEffect(() => {
+    hiddenRef.current = hiddenCategories;
+    poiElsRef.current.forEach((el) => {
+      const cat = el.dataset.category as PoiCategory;
+      el.style.display = hiddenCategories.has(cat) ? "none" : "";
+    });
+  }, [hiddenCategories]);
+
+  function toggleCategory(category: PoiCategory) {
+    setHiddenCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(category)) next.delete(category);
+      else next.add(category);
+      try {
+        window.sessionStorage.setItem(LEGEND_KEY, JSON.stringify(Array.from(next)));
+      } catch {
+        // Session persistence is a nicety; the toggle still works.
+      }
+      return next;
+    });
+    if (selectedPoi?.category === category) setSelectedPoi(null);
+  }
+
+  /** Straight-line distance + bearing from the fix to the tapped marker. */
+  const selectedReadout = useMemo(() => {
+    if (!fix || !selectedPoi) return null;
+    return {
+      km: haversineKm(fix.lat, fix.lng, selectedPoi.lngLat[1], selectedPoi.lngLat[0]),
+      bearing: bearingDeg(fix.lat, fix.lng, selectedPoi.lngLat[1], selectedPoi.lngLat[0]),
+    };
+  }, [fix, selectedPoi]);
 
   function saveBase() {
     if (!fix) return;
@@ -803,6 +867,14 @@ export default function MapView() {
                     <p className="eyebrow">{CATEGORY_LABEL[selectedPoi.category]}</p>
                     <h2 className="text-headline">{selectedPoi.name}</h2>
                     <p className="mt-1 text-footnote text-secondary">{selectedPoi.address}</p>
+                    {selectedReadout ? (
+                      <p className="mt-1 text-subhead">
+                        <strong className="font-bold">
+                          {formatKm(selectedReadout.km)} {cardinal(selectedReadout.bearing)}
+                        </strong>{" "}
+                        of you <span className="text-secondary">(straight line)</span>
+                      </p>
+                    ) : null}
                   </div>
                   <button
                     type="button"
@@ -835,13 +907,54 @@ export default function MapView() {
                     ].filter(Boolean) as Action[]
                   }
                 />
+                {selectedPoi.category === "police" ? (
+                  <p className="mt-3 border-t border-default pt-3 text-subhead text-secondary">
+                    {selectedPoi.notes ? <>{selectedPoi.notes} </> : null}
+                    {denunciaNote}{" "}
+                    <Link href="/emergency#robbed" className="text-link">
+                      If you&apos;re robbed →
+                    </Link>
+                  </p>
+                ) : null}
                 <p className="mt-2 text-footnote text-secondary">
                   Calls work offline via the phone network. Directions need a connection.
                 </p>
               </div>
             ) : (
               <div>
-                {/* Peek strip: your position, live. */}
+                {/* Peek strip: the legend IS the filter — each chip is the
+                    actual mini marker and toggles its category. */}
+                <section aria-label="Marker legend" className="mb-3">
+                  <div className="flex flex-wrap gap-2">
+                    {LEGEND.map(({ category, label }) => {
+                      const on = !hiddenCategories.has(category);
+                      return (
+                        <button
+                          key={category}
+                          type="button"
+                          aria-pressed={on}
+                          onClick={() => toggleCategory(category)}
+                          className={`legend-chip flex min-h-11 items-center gap-1.5 rounded-full border px-3 text-subhead font-semibold ${
+                            on
+                              ? "border-strong bg-card text-primary"
+                              : "border-default bg-sunken text-secondary"
+                          }`}
+                        >
+                          <span
+                            aria-hidden="true"
+                            dangerouslySetInnerHTML={{ __html: badgeMarkup(category) }}
+                          />
+                          {label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="mt-1.5 text-footnote text-secondary">
+                    All markers work offline — tap one for call and directions.
+                  </p>
+                </section>
+
+                {/* Your position, live. */}
                 <section aria-label="Your position">
                   {fix ? (
                     <>
@@ -1010,12 +1123,6 @@ export default function MapView() {
                     runs low on space — re-download before you travel.
                   </p>
                 </section>
-
-                <p className="mt-6 border-t border-default pt-3 text-footnote text-secondary">
-                  Markers: <span className="font-semibold text-verde-deep">+</span> 24h emergency
-                  rooms · <span className="font-semibold text-azzurro-900">⚑</span> embassies &
-                  consulates. All work offline; tap one for call and directions.
-                </p>
               </div>
             )}
           </BottomSheet>

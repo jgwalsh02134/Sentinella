@@ -22,7 +22,8 @@ export default function MapPage() {
         <h1 className="text-title-large">Map</h1>
         <p className="mt-2 text-body text-secondary">
           A safety map that works with zero signal: your GPS position, 24h emergency rooms,
-          embassies, and the way back to your hotel. The interactive map needs JavaScript.
+          embassies, police stations, and the way back to your hotel. The interactive map
+          needs JavaScript.
         </p>
         <ul className="mt-3 space-y-1">
           {MAP_PACKS.map((pack) => (
