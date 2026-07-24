@@ -4,6 +4,79 @@
 
 :root {
   color-scheme: light;
+
+  /* ---- Core palette ---------------------------------------------------
+     RGB triplets consumed by tailwind.config.ts as
+     rgb(var(--…) / <alpha-value>) so opacity modifiers keep working.
+     Seven hues share the same five steps:
+       -100 subtle bg · -200 tint · -600 base · -700 strong/pressed · -900 deep text
+     Raw scales live here and ONLY here; components speak the semantic
+     layer. Structured so dark mode later is a variable swap. */
+
+  /* verde — brand green (autostrada signage; anchors preserved) */
+  --verde-100: 241 247 243;
+  --verde-200: 228 240 233;
+  --verde-600: 10 107 68;
+  --verde-700: 7 80 51;
+  --verde-900: 6 51 33;
+
+  /* signal — emergency red. Solid fills are for emergency actions ONLY. */
+  --signal-100: 253 244 244;
+  --signal-200: 251 233 233;
+  --signal-600: 210 35 42;
+  --signal-700: 166 21 27;
+  --signal-900: 122 16 20;
+
+  /* ambra — warning/caution */
+  --ambra-100: 251 245 230;
+  --ambra-200: 246 236 209;
+  --ambra-600: 138 95 0;
+  --ambra-700: 110 76 0;
+  --ambra-900: 79 55 0;
+
+  /* azzurro — Mediterranean blue: info, links */
+  --azzurro-100: 239 247 250;
+  --azzurro-200: 221 237 244;
+  --azzurro-600: 29 110 143;
+  --azzurro-700: 20 85 111;
+  --azzurro-900: 15 61 80;
+
+  /* terracotta — Tuscan rooftops: warm decorative accent. Deliberately
+     earthen/orange at every step so it never reads as signal red, and it
+     is NEVER used for errors, warnings, or emergencies. */
+  --terracotta-100: 251 241 236;
+  --terracotta-200: 247 228 220;
+  --terracotta-600: 178 83 52;
+  --terracotta-700: 153 69 42;
+  --terracotta-900: 110 53 33;
+
+  /* glicine — wisteria purple: language/culture */
+  --glicine-100: 245 243 249;
+  --glicine-200: 234 230 242;
+  --glicine-600: 122 104 166;
+  --glicine-700: 91 76 128;
+  --glicine-900: 69 58 97;
+
+  /* oliva — olive grove: muted secondary green, clearly grayer than verde */
+  --oliva-100: 244 246 238;
+  --oliva-200: 233 236 223;
+  --oliva-600: 110 123 79;
+  --oliva-700: 83 94 61;
+  --oliva-900: 57 65 42;
+
+  /* neutral ramp — paper=50, line=200, mist=600, ink=950 (aliases kept) */
+  --neutral-0: 255 255 255;
+  --neutral-50: 244 246 243;
+  --neutral-100: 236 239 234;
+  --neutral-200: 220 227 223;
+  --neutral-300: 195 204 199;
+  --neutral-400: 154 166 160;
+  --neutral-500: 102 114 110;
+  --neutral-600: 94 107 103;
+  --neutral-700: 71 83 79;
+  --neutral-800: 53 64 60;
+  --neutral-900: 35 47 42;
+  --neutral-950: 23 32 29;
 }
 
 html {
@@ -29,7 +102,7 @@ textarea,
 
 /* Every interactive element gets a visible focus ring. */
 :focus-visible {
-  outline: 3px solid #0a6b44;
+  outline: 3px solid rgb(var(--verde-600));
   outline-offset: 2px;
   border-radius: 4px;
 }
