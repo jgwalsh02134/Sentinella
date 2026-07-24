@@ -32,8 +32,9 @@ export function buildMapStyle(opts: {
         bounds: opts.bounds,
         minzoom: 0,
         maxzoom: opts.maxzoom,
-        attribution:
-          '<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap</a> · <a href="https://protomaps.com" target="_blank" rel="noreferrer">Protomaps</a>',
+        // Plain text on purpose: the offline guarantee bans remote URLs in
+        // the style, and attribution links are useless with no connection.
+        attribution: "© OpenStreetMap · Protomaps",
       },
     },
     layers: [

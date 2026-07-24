@@ -93,10 +93,24 @@ export async function requestPersistentStorage(): Promise<boolean> {
  */
 const PROGRESS_REPORT_INTERVAL_MS = 150;
 
+const PMTILES_MAGIC = "PMTiles";
+
+/** True if the blob starts with the PMTiles magic bytes. */
+export async function isValidPack(blob: Blob): Promise<boolean> {
+  if (blob.size < PMTILES_MAGIC.length) return false;
+  const head = await blob.slice(0, PMTILES_MAGIC.length).arrayBuffer();
+  return new TextDecoder("latin1").decode(head) === PMTILES_MAGIC;
+}
+
 /**
  * Streams a pack, reporting (receivedBytes, totalBytes) as it downloads.
  * Progress is throttled to one report per PROGRESS_REPORT_INTERVAL_MS,
  * with a final report guaranteed once the download completes.
+ *
+ * The result is verified before it is returned: byte count must match
+ * Content-Length and the file must start with the PMTiles magic bytes.
+ * A dropped connection mid-stream must never become a silently corrupt
+ * offline map.
  */
 export async function downloadPack(
   url: string,
@@ -124,7 +138,14 @@ export async function downloadPack(
     }
   }
   onProgress(received, total);
-  return new Blob(chunks, { type: "application/octet-stream" });
+  const blob = new Blob(chunks, { type: "application/octet-stream" });
+  if (total > 0 && blob.size !== total) {
+    throw new Error("Download incomplete — check your connection and try again.");
+  }
+  if (!(await isValidPack(blob))) {
+    throw new Error("Downloaded file isn't a valid map pack. Try again.");
+  }
+  return blob;
 }
 
 /** PMTiles source backed by an IndexedDB Blob — byte-range reads via slice. */

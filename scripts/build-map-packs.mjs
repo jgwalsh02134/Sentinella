@@ -1,39 +1,63 @@
 /**
- * Extracts per-city offline map packs from a Protomaps daily build
- * (https://build.protomaps.com) and writes them to public/map-packs/,
- * plus a generated manifest at src/data/mapPacks.ts with real byte sizes.
+ * Extracts the trip's offline map packs from a Protomaps daily build
+ * (https://build.protomaps.com) into public/map-packs/, and regenerates
+ * the manifest at src/data/mapPacks.ts with real byte sizes.
+ *
+ * Exactly two packs ship:
+ *   rome     — Rome metro bbox, maxzoom 14 (street/building detail)
+ *   tuscany  — regional bbox covering Florence, Siena, Pisa, Lucca,
+ *              San Gimignano, Volterra, Cortona, Montepulciano and the
+ *              connecting roads; maxzoom 13 (38.5 MB — fits the cap;
+ *              drop TUSCANY_MAXZOOM to 12 if a future build outgrows it)
+ *
+ * Every extract is verified: PMTiles magic bytes, a minimum plausible size
+ * (stub detection), and a HARD CAP of 45 MB per file (GitHub blocks 100 MB,
+ * warns at 50 MB — 45 keeps margin). Any violation exits non-zero and
+ * deletes the bad file so a stub can never be committed.
  *
  * Requires the pmtiles CLI (https://github.com/protomaps/go-pmtiles):
  *   brew install pmtiles
  *
- * Usage:
- *   node scripts/build-map-packs.mjs                 # all cities
- *   node scripts/build-map-packs.mjs rome venice     # a subset
- *   PROTOMAPS_BUILD=20260722 MAXZOOM=13 node scripts/build-map-packs.mjs
- *
- * Extraction uses HTTP range requests against the daily build, so it only
- * downloads the tiles inside each bounding box. Target is < ~40 MB per city
- * (GitHub warns at 50 MB); lower MAXZOOM if a city comes out too big.
+ * Rebuild commands:
+ *   node scripts/build-map-packs.mjs                    # both packs
+ *   node scripts/build-map-packs.mjs tuscany            # one pack
+ *   PROTOMAPS_BUILD=20260723 node scripts/build-map-packs.mjs
+ *   TUSCANY_MAXZOOM=13 node scripts/build-map-packs.mjs tuscany
  */
 import { spawnSync } from "node:child_process";
-import { mkdirSync, statSync, writeFileSync } from "node:fs";
+import { mkdirSync, openSync, readSync, closeSync, rmSync, statSync, writeFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const BUILD = process.env.PROTOMAPS_BUILD ?? "20260722";
-const MAXZOOM = Number(process.env.MAXZOOM ?? 13);
+const BUILD = process.env.PROTOMAPS_BUILD ?? "20260723";
 const SOURCE = `https://build.protomaps.com/${BUILD}.pmtiles`;
 const OUT_DIR = join(ROOT, "public", "map-packs");
 const MANIFEST = join(ROOT, "src", "data", "mapPacks.ts");
 
-/** Metro-area bounding boxes: [minLon, minLat, maxLon, maxLat]. */
-const CITIES = [
-  { id: "rome", name: "Rome", nameIt: "Roma", bbox: [12.17, 41.65, 12.73, 42.05], center: [12.4964, 41.9028] },
-  { id: "florence", name: "Florence", nameIt: "Firenze", bbox: [11.1, 43.7, 11.4, 43.85], center: [11.2558, 43.7696] },
-  { id: "venice", name: "Venice", nameIt: "Venezia", bbox: [12.15, 45.37, 12.5, 45.55], center: [12.3155, 45.4408] },
-  { id: "milan", name: "Milan", nameIt: "Milano", bbox: [9.02, 45.35, 9.35, 45.58], center: [9.19, 45.4642] },
-  { id: "naples", name: "Naples", nameIt: "Napoli", bbox: [14.1, 40.78, 14.4, 40.95], center: [14.2681, 40.8518] },
+const HARD_CAP_MB = 45;
+const MIN_PLAUSIBLE_MB = 1; // anything smaller is a failed/stub extract
+
+/** The data model stays city-agnostic: add/remove entries here only. */
+const PACKS = [
+  {
+    id: "rome",
+    name: "Rome",
+    nameIt: "Roma",
+    bbox: [12.17, 41.65, 12.73, 42.05],
+    center: [12.4964, 41.9028],
+    maxzoom: 14,
+  },
+  {
+    id: "tuscany",
+    name: "Tuscany",
+    nameIt: "Toscana",
+    // Florence, Siena, Pisa, Lucca, San Gimignano, Volterra, Cortona,
+    // Montepulciano + the connecting roads (A1/A11/SR2/SR68/raccordi).
+    bbox: [10.25, 42.95, 12.1, 43.95],
+    center: [11.2558, 43.7696],
+    maxzoom: Number(process.env.TUSCANY_MAXZOOM ?? 13),
+  },
 ];
 
 const check = spawnSync("pmtiles", ["--help"], { stdio: "ignore" });
@@ -42,49 +66,82 @@ if (check.error) {
   process.exit(1);
 }
 
-const only = process.argv.slice(2).map((s) => s.toLowerCase());
-const selected = only.length ? CITIES.filter((c) => only.includes(c.id)) : CITIES;
-if (!selected.length) {
-  console.error(`No matching cities. Known ids: ${CITIES.map((c) => c.id).join(", ")}`);
+function fail(msg) {
+  console.error(`\nFATAL: ${msg}`);
   process.exit(1);
+}
+
+/** Verify magic bytes + plausible size + hard cap; deletes bad files. */
+function verifyPack(path, label) {
+  const size = statSync(path).size;
+  const mb = size / 1024 / 1024;
+
+  const fd = openSync(path, "r");
+  const head = Buffer.alloc(7);
+  readSync(fd, head, 0, 7, 0);
+  closeSync(fd);
+
+  if (head.toString("latin1") !== "PMTiles") {
+    rmSync(path);
+    fail(`${label}: not a PMTiles archive (bad magic bytes). File deleted.`);
+  }
+  if (mb < MIN_PLAUSIBLE_MB) {
+    rmSync(path);
+    fail(`${label}: only ${mb.toFixed(2)} MB — almost certainly a stub/failed extract. File deleted.`);
+  }
+  if (mb > HARD_CAP_MB) {
+    rmSync(path);
+    fail(`${label}: ${mb.toFixed(1)} MB exceeds the ${HARD_CAP_MB} MB hard cap. File deleted — lower maxzoom and re-run.`);
+  }
+  return size;
+}
+
+const only = process.argv.slice(2).map((s) => s.toLowerCase());
+const selected = only.length ? PACKS.filter((c) => only.includes(c.id)) : PACKS;
+if (!selected.length) {
+  fail(`No matching packs. Known ids: ${PACKS.map((c) => c.id).join(", ")}`);
 }
 
 mkdirSync(OUT_DIR, { recursive: true });
 
-for (const city of selected) {
-  const out = join(OUT_DIR, `${city.id}.pmtiles`);
-  console.log(`\n== ${city.name}: extracting z0–${MAXZOOM} of ${city.bbox.join(",")} from ${BUILD} ==`);
+for (const pack of selected) {
+  const out = join(OUT_DIR, `${pack.id}.pmtiles`);
+  console.log(`\n== ${pack.name}: extracting z0-${pack.maxzoom} of ${pack.bbox.join(",")} from ${BUILD} ==`);
   const res = spawnSync(
     "pmtiles",
-    ["extract", SOURCE, out, `--bbox=${city.bbox.join(",")}`, `--maxzoom=${MAXZOOM}`, "--download-threads=4"],
+    ["extract", SOURCE, out, `--bbox=${pack.bbox.join(",")}`, `--maxzoom=${pack.maxzoom}`, "--download-threads=4"],
     { stdio: "inherit" },
   );
-  if (res.status !== 0) {
-    console.error(`Extract failed for ${city.name}.`);
-    process.exit(1);
-  }
-  const mb = statSync(out).size / 1024 / 1024;
-  console.log(`   -> ${out} (${mb.toFixed(1)} MB)`);
-  if (mb > 40) {
-    console.warn(`   WARNING: ${city.name} is over the ~40 MB target. Re-run with a lower MAXZOOM.`);
+  if (res.status !== 0) fail(`Extract failed for ${pack.name}.`);
+  const size = verifyPack(out, pack.name);
+  console.log(`   -> ${out} (${(size / 1024 / 1024).toFixed(1)} MB, verified)`);
+}
+
+// Remove any pack file that is no longer in the PACKS list.
+for (const file of readdirSync(OUT_DIR)) {
+  const id = file.replace(/\.pmtiles$/, "");
+  if (file.endsWith(".pmtiles") && !PACKS.some((p) => p.id === id)) {
+    rmSync(join(OUT_DIR, file));
+    console.log(`Removed stale pack: ${file}`);
   }
 }
 
-// Manifest with real sizes for every city whose pack exists on disk.
-const entries = CITIES.flatMap((city) => {
+// Manifest with real, verified sizes for every pack on disk.
+const entries = PACKS.flatMap((pack) => {
   let size;
   try {
-    size = statSync(join(OUT_DIR, `${city.id}.pmtiles`)).size;
+    size = verifyPack(join(OUT_DIR, `${pack.id}.pmtiles`), pack.name);
   } catch {
     return []; // pack not generated/shipped — leave it out of the app
   }
-  return [{ ...city, sizeBytes: size }];
+  return [{ ...pack, sizeBytes: size }];
 });
+if (!entries.length) fail("No verified packs on disk — nothing to write to the manifest.");
 
 const manifest = `/**
  * Generated by scripts/build-map-packs.mjs — do not edit by hand.
- * Protomaps build ${BUILD}, maxzoom ${MAXZOOM}. Regenerate after changing
- * bounding boxes or shipping new cities.
+ * Protomaps build ${BUILD}. Regenerate after changing bounding boxes or
+ * shipping new packs. Every pack is verified (magic bytes, size caps).
  */
 export type MapPack = {
   id: string;
@@ -94,16 +151,16 @@ export type MapPack = {
   bbox: [number, number, number, number];
   /** [lng, lat] */
   center: [number, number];
+  /** Max tile zoom baked into the archive. */
+  maxzoom: number;
   sizeBytes: number;
 };
 
-export const PACKS_MAXZOOM = ${MAXZOOM};
-
 export const MAP_PACKS: MapPack[] = ${JSON.stringify(
-  entries.map(({ id, name, nameIt, bbox, center, sizeBytes }) => ({ id, name, nameIt, bbox, center, sizeBytes })),
+  entries.map(({ id, name, nameIt, bbox, center, maxzoom, sizeBytes }) => ({ id, name, nameIt, bbox, center, maxzoom, sizeBytes })),
   null,
   2,
 )};
 `;
 writeFileSync(MANIFEST, manifest);
-console.log(`\nWrote ${MANIFEST} with ${entries.length} cities.`);
+console.log(`\nWrote ${MANIFEST} with ${entries.length} packs.`);

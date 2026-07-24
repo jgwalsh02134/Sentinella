@@ -93,6 +93,9 @@ export default function BottomNav() {
             <Link
               key={tab.href}
               href={tab.href}
+              // No RSC prefetch: offline, prefetches fail and spam the
+              // console with errors. Navigation itself is SW-cached.
+              prefetch={false}
               aria-current={active ? "page" : undefined}
               className={`flex min-h-[3.5rem] flex-1 flex-col items-center justify-center gap-1 pt-2 pb-1 ${color}`}
             >

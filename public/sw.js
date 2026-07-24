@@ -11,8 +11,10 @@
  *    files managed in IndexedDB by the Map screen, and their online mode uses
  *    HTTP range requests the Cache API can't store.
  */
-// v5: Before You Fly checklist — /prepare joins the precached safety screens.
-const VERSION = "sentinella-v5";
+// v6: deterministic offline map — /map shell is cache-first, glyph caching
+// unchanged (/map-fonts, cache-first), /map-packs stays out of the SW for
+// good (packs live in IndexedDB; double-storing 40 MB kills iOS quota).
+const VERSION = "sentinella-v6";
 const PRECACHE = [
   "/",
   "/emergency",
@@ -85,7 +87,25 @@ self.addEventListener("fetch", (event) => {
   if (url.pathname.startsWith("/api/")) return;
   if (url.pathname.startsWith("/map-packs/") || request.headers.has("range")) return;
 
-  // Navigations: fresh when possible, cached when not, /offline as last resort.
+  // /map shell: cache-first with background refresh. The map must open
+  // deterministically offline; a stale shell is refreshed for next time.
+  if (request.mode === "navigate" && url.pathname === "/map") {
+    event.respondWith(
+      caches.match("/map").then((cached) => {
+        const refresh = fetch(request)
+          .then((response) => {
+            const copy = response.clone();
+            caches.open(VERSION).then((cache) => cache.put("/map", copy));
+            return response;
+          })
+          .catch(() => cached || caches.match("/offline"));
+        return cached || refresh;
+      }),
+    );
+    return;
+  }
+
+  // Other navigations: fresh when possible, cached when not, /offline last.
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)
