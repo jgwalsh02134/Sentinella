@@ -109,7 +109,7 @@ export const overseasCitizensServices = {
   summary: "Can't reach the embassy? State Dept 24/7 line.",
   lines: [
     { label: "From Italy", number: "+1 202 501 4444", dial: "+12025014444" },
-    { label: "From the US — for family back home", number: "1 888 407 4747", dial: "+18884074747" },
+    { label: "Family in the US", number: "1 888 407 4747", dial: "+18884074747" },
   ] as LabeledLine[],
 } as const;
 

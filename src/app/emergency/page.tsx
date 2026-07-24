@@ -16,6 +16,7 @@ import ShareLocation from "@/components/ShareLocation";
 import TelText from "@/components/TelText";
 import WhereAreUCard from "@/components/WhereAreUCard";
 import AustraliaFlag from "@/components/AustraliaFlag";
+import CanadaFlag from "@/components/CanadaFlag";
 import IrelandFlag from "@/components/IrelandFlag";
 import ItalyFlag from "@/components/ItalyFlag";
 import NewZealandFlag from "@/components/NewZealandFlag";
@@ -37,10 +38,12 @@ import { policeStations, stationEmergencyNote } from "@/data/police";
 import { safetyPois } from "@/data/safetyPois";
 import { appleMapsDirectionsUrl } from "@/lib/maps";
 
-/** Countries with SVG flag icons; the rest fall back to their emoji flag. */
-const flagIcons: Record<string, (props: { className?: string }) => JSX.Element> = {
+/** Every post uses the app's flag icon system — no emoji fallback. On this
+ *  page flags are MEANINGFUL, so each carries alt text via `label`. */
+const flagIcons: Record<string, (props: { className?: string; label?: string }) => JSX.Element> = {
   "United States": UsFlag,
   "United Kingdom": UkFlag,
+  Canada: CanadaFlag,
   Ireland: IrelandFlag,
   Australia: AustraliaFlag,
   "New Zealand": NewZealandFlag,
@@ -56,7 +59,7 @@ function EmbassyBody({ embassy, headingLevel }: { embassy: Embassy; headingLevel
   return (
     <>
       <Heading className="text-headline">
-        {FlagIcon ? <FlagIcon /> : <span aria-hidden="true">{embassy.flag}</span>} {embassy.name}
+        {FlagIcon ? <FlagIcon label={`${embassy.country} flag`} /> : null} {embassy.name}
       </Heading>
       <p className="mt-1 text-subhead text-secondary">{embassy.address}</p>
       <p className="mt-1 font-mono text-callout font-semibold tabular-nums">
@@ -67,23 +70,6 @@ function EmbassyBody({ embassy, headingLevel }: { embassy: Embassy; headingLevel
       {embassy.notes ? (
         <p className="mt-1 text-subhead text-secondary">
           <TelText text={embassy.notes} />
-        </p>
-      ) : null}
-      {embassy.afterHours ? (
-        <p className="mt-1 text-subhead text-secondary">
-          <TelText text={embassy.afterHours} />
-        </p>
-      ) : null}
-      {embassy.passports ? (
-        <p className="mt-1 text-subhead">
-          <a
-            href={embassy.passports.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-link"
-          >
-            {embassy.passports.note}
-          </a>
         </p>
       ) : null}
       {embassy.email ? (
@@ -178,10 +164,11 @@ export default function EmergencyPage() {
   const primary = emergencyNumbers.filter((n) => n.tier === "primary");
   const services = emergencyNumbers.filter((n) => n.tier === "service");
   const support = emergencyNumbers.filter((n) => n.tier === "support");
-  // US posts promoted right after the numbers; Rome (the embassy) leads.
+  // US posts promoted right after the numbers; Florence (this trip's
+  // consulate) leads, the Rome embassy follows.
   const usRome = embassies.find((e) => e.country === "United States" && e.city === "Rome");
   const usFlorence = embassies.find((e) => e.country === "United States" && e.city === "Florence");
-  const usEmbassies = [usRome, usFlorence].filter((e): e is Embassy => e != null);
+  const usEmbassies = [usFlorence, usRome].filter((e): e is Embassy => e != null);
   const otherEmbassies = embassies.filter((e) => e.country !== "United States");
   // Tuscany ERs come from the map's POI data — one source of truth.
   const tuscanyErs: EmergencyRoom[] = safetyPois
@@ -254,7 +241,7 @@ export default function EmergencyPage() {
         <SectionHeader
           title={
             <span className="flex items-center gap-2">
-              <SealBadge /> U.S. citizens
+              <SealBadge /> U.S. help
             </span>
           }
         />
@@ -303,10 +290,7 @@ export default function EmergencyPage() {
           </Card>
 
           <Card padded={false} className="px-4 py-2">
-            <Disclosure
-              label="Other embassies"
-              sublabel="UK, Canada, Australia, Ireland, New Zealand"
-            >
+            <Disclosure label="Other embassies" sublabel="UK, Canada, Australia, Ireland, NZ">
               <div className="break-words pb-2">
                 {otherEmbassies.map((embassy) => (
                   <div key={embassy.name} className="border-t border-default pb-1 pt-3">
@@ -317,10 +301,6 @@ export default function EmergencyPage() {
             </Disclosure>
           </Card>
         </div>
-        <Callout className="mt-3">
-          Switchboard numbers verified July 2026. After-hours consular emergency lines differ —{" "}
-          <strong className="font-bold">verify yours on the official site before travel.</strong>
-        </Callout>
       </section>
 
       {/* e. Medical: poison control + emergency rooms, one card pattern. */}
@@ -468,6 +448,13 @@ export default function EmergencyPage() {
           subtitle="Your position on a downloaded map — no connection needed"
         />
         <WhereAreUCard headingLevel={3} />
+        {/* THE one verification caveat for all hardcoded numbers on this page. */}
+        <Callout>
+          Numbers and medical contacts verified July 2026 —{" "}
+          <strong className="font-bold">
+            verify against official sources before relying on them.
+          </strong>
+        </Callout>
       </section>
     </main>
   );

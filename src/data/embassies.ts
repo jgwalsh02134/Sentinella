@@ -2,7 +2,6 @@ import type { Step } from "@/data/emergency";
 
 export type Embassy = {
   country: string;
-  flag: string;
   name: string;
   city: string;
   address: string;
@@ -10,11 +9,9 @@ export type Embassy = {
   dial: string;
   email?: string;
   website: string;
+  /** ONE line on US posts; overseas 24/7 lines for the others (numbers
+      render tappable via TelText). */
   notes?: string;
-  /** After-hours routing fact, rendered plain with tappable numbers. */
-  afterHours?: string;
-  /** Emergency-passport walk-in line linking the official page. */
-  passports?: { note: string; url: string };
 };
 
 /**
@@ -27,7 +24,6 @@ export type Embassy = {
 export const embassies: Embassy[] = [
   {
     country: "United States",
-    flag: "🇺🇸",
     name: "U.S. Consulate General Florence",
     city: "Florence",
     address: "Lungarno Amerigo Vespucci 38, 50123 Florence",
@@ -35,14 +31,10 @@ export const embassies: Embassy[] = [
     dial: "+39055266951",
     email: "USCitizensFlorence@state.gov",
     website: "https://it.usembassy.gov/embassy-consulates/florence/",
-    notes:
-      "Issues same-day emergency passports for lost or stolen cases — for a Tuscany trip, this beats Rome. Serves Tuscany, Emilia-Romagna (except Piacenza/Parma), and San Marino.",
-    afterHours:
-      "After-hours emergency? Call the Rome switchboard +39 06 46741 — it covers Florence too.",
+    notes: "Serves Tuscany · same-day emergency passports · same number after hours",
   },
   {
     country: "United States",
-    flag: "🇺🇸",
     name: "U.S. Embassy Rome",
     city: "Rome",
     address: "Via Vittorio Veneto 121, 00187 Roma",
@@ -50,15 +42,10 @@ export const embassies: Embassy[] = [
     dial: "+390646741",
     email: "USCitizensRome@state.gov",
     website: "https://it.usembassy.gov",
-    notes: "After hours, the switchboard connects to the duty officer for citizen emergencies. Consulates General in Milan, Florence, and Naples.",
-    passports: {
-      note: "Emergency passports: walk in weekday mornings — confirm hours.",
-      url: "https://it.usembassy.gov/u-s-citizen-services/passports/",
-    },
+    notes: "After hours: duty officer for citizen emergencies — covers Florence district too",
   },
   {
     country: "United Kingdom",
-    flag: "🇬🇧",
     name: "British Embassy Rome",
     city: "Rome",
     address: "Via XX Settembre 80a, 00187 Roma",
@@ -69,7 +56,6 @@ export const embassies: Embassy[] = [
   },
   {
     country: "Canada",
-    flag: "🇨🇦",
     name: "Embassy of Canada to Italy",
     city: "Rome",
     address: "Via Zara 30, 00198 Roma",
@@ -80,7 +66,6 @@ export const embassies: Embassy[] = [
   },
   {
     country: "Australia",
-    flag: "🇦🇺",
     name: "Australian Embassy Rome",
     city: "Rome",
     address: "Via Antonio Bosio 5, 00161 Roma",
@@ -91,7 +76,6 @@ export const embassies: Embassy[] = [
   },
   {
     country: "Ireland",
-    flag: "🇮🇪",
     name: "Embassy of Ireland",
     city: "Rome",
     address: "Villa Spada, Via Giacomo Medici 1, 00153 Roma",
@@ -101,7 +85,6 @@ export const embassies: Embassy[] = [
   },
   {
     country: "New Zealand",
-    flag: "🇳🇿",
     name: "New Zealand Embassy Rome",
     city: "Rome",
     address: "Via Clitunno 44, 00198 Roma",

@@ -3,13 +3,23 @@
  * emoji so it renders consistently on every platform, viewBox cropped to the
  * flag artwork, sized relative to the surrounding text.
  */
-export default function AustraliaFlag({ className = "" }: { className?: string }) {
+export default function AustraliaFlag({
+  className = "",
+  label,
+}: {
+  className?: string;
+  /** Meaningful placements pass e.g. "Australia flag"; omitted = decorative,
+      hidden from assistive tech. */
+  label?: string;
+}) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="2 10 44 28"
       className={`inline-block h-[0.875em] w-auto align-[-0.05em] ${className}`.trim()}
-      aria-hidden="true"
+      role={label ? "img" : undefined}
+      aria-label={label}
+      aria-hidden={label ? undefined : true}
       focusable="false"
     >
       <path fill="#283593" d="M2 10H46V38H2z" />

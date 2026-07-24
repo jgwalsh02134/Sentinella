@@ -3,13 +3,23 @@
  * emoji so it renders consistently on every platform, viewBox cropped to the
  * flag artwork, sized relative to the surrounding text.
  */
-export default function NewZealandFlag({ className = "" }: { className?: string }) {
+export default function NewZealandFlag({
+  className = "",
+  label,
+}: {
+  className?: string;
+  /** Meaningful placements pass e.g. "New Zealand flag"; omitted =
+      decorative, hidden from assistive tech. */
+  label?: string;
+}) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="2 9 44 30"
       className={`inline-block h-[0.875em] w-auto align-[-0.05em] ${className}`.trim()}
-      aria-hidden="true"
+      role={label ? "img" : undefined}
+      aria-label={label}
+      aria-hidden={label ? undefined : true}
       focusable="false"
     >
       <path fill="#3f51b5" d="M2 9H46V39H2z" />

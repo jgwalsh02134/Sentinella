@@ -3,13 +3,23 @@
  * renders consistently on every platform (Windows shows emoji flags as
  * plain "US" letters). viewBox is cropped to the flag artwork itself.
  */
-export default function UsFlag({ className = "" }: { className?: string }) {
+export default function UsFlag({
+  className = "",
+  label,
+}: {
+  className?: string;
+  /** Meaningful placements (embassy posts) pass e.g. "United States flag";
+      omitted = decorative, hidden from assistive tech. */
+  label?: string;
+}) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="2 10 44 27"
       className={`inline-block h-[0.875em] w-auto align-[-0.05em] ${className}`.trim()}
-      aria-hidden="true"
+      role={label ? "img" : undefined}
+      aria-label={label}
+      aria-hidden={label ? undefined : true}
       focusable="false"
     >
       <path fill="#ECEFF1" d="M1.998 10H45.998V37H1.998z" />
