@@ -137,6 +137,11 @@ const config: Config = {
           indigo: v("ios-indigo"),
           purple: v("ios-purple"),
           gray: v("ios-gray"),
+          /* Accessible-contrast variants for TEXT roles (>=4.5:1 on
+             white) — active tab labels use these, tiles keep the base. */
+          "blue-deep": v("ios-blue-deep"),
+          "orange-deep": v("ios-orange-deep"),
+          "teal-deep": v("ios-teal-deep"),
         },
         neutral: {
           0: v("neutral-0"),

@@ -77,6 +77,12 @@
   --ios-indigo: 88 86 214;
   --ios-purple: 175 82 222;
   --ios-gray: 142 142 147;
+  /* Apple's accessible-contrast light variants — used wherever an iOS
+     color must work as TEXT (active tab labels): the base blue/orange/
+     teal sit under 4.5:1 on white. Same hue identity, HIG-sanctioned. */
+  --ios-blue-deep: 0 64 221;
+  --ios-orange-deep: 201 52 0;
+  --ios-teal-deep: 0 113 164;
   /* iOS grouped-table background; hairline separator is rgba(60,60,67,.29)
      (fixed alpha, applied in tailwind.config as border-separator). */
   --grouped-bg: 242 242 247;

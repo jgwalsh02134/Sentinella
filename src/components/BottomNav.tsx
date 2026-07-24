@@ -8,7 +8,9 @@ import { usePathname } from "next/navigation";
  * Guide, Alerts. Check-in lives on the home screen (card + header
  * shortcut). Active-tab tint follows the navigation color map (see
  * NavTile + .cursorrules): Home verde, Emergency signal red (the
- * emergency affordance), Map blue, Guide orange, Alerts teal. Only the
+ * emergency affordance), Map blue, Guide orange, Alerts teal — blue/
+ * orange/teal use Apple's accessible-contrast variants (the base values
+ * sit under 4.5:1 as 12px label text on white). Only the
  * ACTIVE tab is tinted (icon + label + 2px indicator); inactive tabs
  * stay gray — color marks where you are, never decorates. Labels wrap
  * rather than truncate at accessibility text sizes.
@@ -62,8 +64,8 @@ const tabs: Tab[] = [
   {
     href: "/map",
     label: "Map",
-    activeText: "text-ios-blue",
-    activeIndicator: "bg-ios-blue",
+    activeText: "text-ios-blue-deep",
+    activeIndicator: "bg-ios-blue-deep",
     icon: (
       <svg viewBox="0 0 24 24" className={iconClass} {...stroke} aria-hidden="true">
         <path d="M9 4 3.5 6v14L9 18l6 2 5.5-2V4L15 6 9 4z" />
@@ -75,8 +77,8 @@ const tabs: Tab[] = [
   {
     href: "/guide",
     label: "Guide",
-    activeText: "text-ios-orange",
-    activeIndicator: "bg-ios-orange",
+    activeText: "text-ios-orange-deep",
+    activeIndicator: "bg-ios-orange-deep",
     icon: (
       <svg viewBox="0 0 24 24" className={iconClass} {...stroke} aria-hidden="true">
         <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5H6.5A2.5 2.5 0 0 0 4 21V5.5z" />
@@ -87,8 +89,8 @@ const tabs: Tab[] = [
   {
     href: "/alerts",
     label: "Alerts",
-    activeText: "text-ios-teal",
-    activeIndicator: "bg-ios-teal",
+    activeText: "text-ios-teal-deep",
+    activeIndicator: "bg-ios-teal-deep",
     icon: (
       <svg viewBox="0 0 24 24" className={iconClass} {...stroke} aria-hidden="true">
         <path d="M18 9a6 6 0 1 0-12 0c0 5-2 6-2 6h16s-2-1-2-6" />

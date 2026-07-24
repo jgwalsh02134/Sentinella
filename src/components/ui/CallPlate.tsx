@@ -57,7 +57,10 @@ export default function CallPlate({
         >
           {number}
         </span>
-        <span className="min-w-0 flex-1">
+        {/* basis keeps the name legible: at accessibility text sizes the
+            row runs out of room and the name wraps BELOW the numerals
+            instead of compressing into a one-character column. */}
+        <span className="min-w-0 flex-1 basis-24">
           <span className={`block ${isPrimary ? "text-title" : "text-headline"}`}>{name}</span>
           {nameIt ? (
             <i
