@@ -19,7 +19,7 @@ export default function GuideHealthPage() {
 
         {/* Cross-link: the callable plate lives on the Emergency screen. */}
         <ListRow
-          href="/emergency#support"
+          href="/emergency#numbers"
           icon={<Icon icon={PhoneCall} size="lg" />}
           title="Call 116 117 — out-of-hours doctor"
           subtitle="The plate is on the Emergency screen"

@@ -21,16 +21,16 @@ export const emergencyNumbers: EmergencyNumber[] = [
     dial: "112",
     name: "All emergencies",
     nameIt: "Numero Unico di Emergenza",
-    detail:
-      "Routes to police, medical, or fire; interpreters available.",
+    detail: "Free from any phone, no SIM needed · interpreters available",
     tier: "primary",
   },
+  // Descriptors are ONE line, ≤6 words — this list is scanned mid-crisis.
   {
     number: "113",
     dial: "113",
     name: "State Police",
     nameIt: "Polizia di Stato",
-    detail: "Crimes in progress, theft, public safety.",
+    detail: "Crimes in progress",
     tier: "service",
   },
   {
@@ -38,7 +38,7 @@ export const emergencyNumbers: EmergencyNumber[] = [
     dial: "115",
     name: "Fire Brigade",
     nameIt: "Vigili del Fuoco",
-    detail: "Fires, gas leaks, collapses, people trapped, technical rescue.",
+    detail: "Fire, gas, rescue",
     tier: "service",
   },
   {
@@ -46,7 +46,7 @@ export const emergencyNumbers: EmergencyNumber[] = [
     dial: "118",
     name: "Medical emergency",
     nameIt: "Emergenza Sanitaria",
-    detail: "Ambulance. Say your town first — regions run separate dispatch centers.",
+    detail: "Ambulance — say your town first",
     tier: "service",
   },
   {
@@ -54,7 +54,7 @@ export const emergencyNumbers: EmergencyNumber[] = [
     dial: "1530",
     name: "Coast Guard",
     nameIt: "Guardia Costiera",
-    detail: "Emergencies at sea: swimmers or boats in difficulty.",
+    detail: "Sea emergencies",
     tier: "service",
   },
   {
@@ -62,7 +62,7 @@ export const emergencyNumbers: EmergencyNumber[] = [
     dial: "1522",
     name: "Anti-violence & stalking",
     nameIt: "Antiviolenza e Stalking",
-    detail: "Free 24/7 multilingual helpline for violence and stalking; also via app and chat.",
+    detail: "Free, 24/7, multilingual",
     tier: "support",
   },
   {
@@ -70,7 +70,7 @@ export const emergencyNumbers: EmergencyNumber[] = [
     dial: "116117",
     name: "Non-urgent medical care",
     nameIt: "Guardia Medica",
-    detail: "Out-of-hours doctor for non-life-threatening problems. Where inactive, ask your accommodation for the local number.",
+    detail: "Out-of-hours doctor",
     tier: "support",
   },
 ];
@@ -91,14 +91,11 @@ export type LabeledLine = {
 export const roadsideAssistance = {
   name: "Roadside assistance (ACI)",
   nameIt: "Soccorso Stradale",
-  summary: "Breakdowns, 24/7. Fees may apply — check rental coverage.",
+  summary: "24/7 · fee unless covered — confirm before dispatch",
   lines: [
     { label: "From Italian phones", number: "803 116", dial: "803116" },
-    { label: "From US or foreign phones", number: "+39 800 116 800", dial: "+39800116800" },
+    { label: "From US/foreign phones", number: "800 116 800", dial: "+39800116800" },
   ] as LabeledLine[],
-  /** Some carriers reject the +39 form of Italian toll-free numbers. */
-  fallback: { number: "800 116 800", dial: "800116800" },
-  footnote: "Orange SOS columns on the autostrada also connect you.",
 } as const;
 
 /**

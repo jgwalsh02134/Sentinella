@@ -12,8 +12,9 @@ import type { MouseEvent } from "react";
  */
 const JUMPS = [
   { label: "Numbers", target: "numbers" },
-  { label: "U.S. help", target: "us-citizens" },
-  { label: "Hospitals", target: "hospitals" },
+  { label: "U.S. help", target: "us-help" },
+  { label: "Medical", target: "medical" },
+  { label: "If it goes wrong", target: "robbed" },
   { label: "Tools", target: "tools" },
 ] as const;
 

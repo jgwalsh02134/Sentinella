@@ -29,14 +29,10 @@ import {
   roadsideAssistance,
   robbed,
   type LabeledLine,
+  type Step,
 } from "@/data/emergency";
 import { consularHelp, embassies, lostDocumentSteps, type Embassy } from "@/data/embassies";
-import {
-  embassyDoctorsLink,
-  erCostNote,
-  romeEmergencyRooms,
-  type EmergencyRoom,
-} from "@/data/emergencyRooms";
+import { romeEmergencyRooms, type EmergencyRoom } from "@/data/emergencyRooms";
 import { policeStations, stationEmergencyNote } from "@/data/police";
 import { safetyPois } from "@/data/safetyPois";
 import { appleMapsDirectionsUrl } from "@/lib/maps";
@@ -113,6 +109,22 @@ function EmbassyBody({ embassy, headingLevel }: { embassy: Embassy; headingLevel
   );
 }
 
+/** THE one numbering mechanism on this page: native ol markers, styled —
+ *  never a manual digit span next to a list item (that reads as double
+ *  numbering to assistive tech). */
+function NumberedSteps({ steps }: { steps: readonly Step[] }) {
+  return (
+    <ol className="list-decimal space-y-2 pl-5 marker:font-mono marker:font-bold marker:text-secondary">
+      {steps.map((step) => (
+        <li key={step.lead} className="body-copy pl-1 text-secondary">
+          <strong className="font-bold text-primary">{step.lead}</strong>{" "}
+          <TelText text={step.rest} />
+        </li>
+      ))}
+    </ol>
+  );
+}
+
 /** Label + big mono number, the shared shape for multi-line phone cards. */
 function LabeledLines({ lines }: { lines: readonly LabeledLine[] }) {
   return (
@@ -183,10 +195,10 @@ export default function EmergencyPage() {
         eyebrow="Emergency"
         tile={<NavTile feature="emergency" />}
         title="One tap to help"
-        intro="Tap any plate to call. Core lines are free from any phone, even without a SIM."
+        intro="Tap any plate to call."
       />
 
-      {/* a. 112 hero + footnote + the call script one tap away. */}
+      {/* a. 112 hero: PURE SIGNAGE + one footnote line + the script one tap away. */}
       <section className="mt-5 space-y-3" aria-label="Primary emergency number">
         {primary.map((n) => (
           <CallPlate
@@ -201,16 +213,9 @@ export default function EmergencyPage() {
         ))}
         <Card padded={false} className="px-4 py-1">
           <Disclosure label="What to say when they answer">
-            <ol className="space-y-2 pb-3 pt-1">
-              {callScript.map((step, i) => (
-                <li key={step.lead} className="body-copy flex gap-3">
-                  <span className="font-mono font-bold text-secondary">{i + 1}</span>
-                  <span className="min-w-0 text-secondary">
-                    <strong className="font-bold text-primary">{step.lead}</strong> {step.rest}
-                  </span>
-                </li>
-              ))}
-            </ol>
+            <div className="pb-3 pt-1">
+              <NumberedSteps steps={callScript} />
+            </div>
           </Disclosure>
         </Card>
       </section>
@@ -218,10 +223,10 @@ export default function EmergencyPage() {
       {/* b. Quick jumps — rendered client-side only. */}
       <EmergencyJumpChips className="mt-4" />
 
-      {/* c. Direct service lines. */}
-      <section id="numbers" className="mt-8 scroll-mt-4 space-y-3" aria-label="Emergency services">
-        <SectionHeader title="Direct service lines" />
-        {services.map((n) => (
+      {/* c. Every number, compact — within ~2 screens of the top. */}
+      <section id="numbers" className="mt-8 scroll-mt-4 space-y-3" aria-label="Numbers">
+        <SectionHeader title="Numbers" />
+        {[...services, ...support].map((n) => (
           <CallPlate
             key={n.dial}
             number={n.number}
@@ -232,10 +237,20 @@ export default function EmergencyPage() {
             footnote={n.detail}
           />
         ))}
+
+        <Card as="article">
+          <h3 className="flex items-center gap-2 text-headline">
+            <Icon icon={Car} size="md" /> {roadsideAssistance.name}
+          </h3>
+          <p className="mt-0.5 text-subhead text-secondary">
+            <i lang="it">{roadsideAssistance.nameIt}</i> · {roadsideAssistance.summary}
+          </p>
+          <LabeledLines lines={roadsideAssistance.lines} />
+        </Card>
       </section>
 
-      {/* d. U.S. citizens — promoted right after the numbers. */}
-      <section id="us-citizens" className="mt-8 scroll-mt-4" aria-label="U.S. citizens">
+      {/* d. U.S. help — promoted right after the numbers. */}
+      <section id="us-help" className="mt-8 scroll-mt-4" aria-label="U.S. help">
         <SectionHeader
           title={
             <span className="flex items-center gap-2">
@@ -308,42 +323,9 @@ export default function EmergencyPage() {
         </Callout>
       </section>
 
-      {/* e. Support lines. */}
-      <section id="support" className="mt-8 scroll-mt-4 space-y-3" aria-label="Support lines">
-        <SectionHeader title="Support lines" />
-        {support.map((n) => (
-          <CallPlate
-            key={n.dial}
-            number={n.number}
-            dial={n.dial}
-            name={n.name}
-            nameIt={n.nameIt}
-            tier={n.tier}
-            footnote={n.detail}
-          />
-        ))}
-
-        <Card as="article">
-          <h3 className="flex items-center gap-2 text-headline">
-            <Icon icon={Car} size="md" /> {roadsideAssistance.name}
-          </h3>
-          <p className="mt-0.5 text-subhead text-secondary">
-            {roadsideAssistance.nameIt} · {roadsideAssistance.summary}
-          </p>
-          <LabeledLines lines={roadsideAssistance.lines} />
-          <p className="mt-2 text-footnote text-secondary">
-            If the +39 form won&apos;t connect from your phone, dial{" "}
-            <a
-              href={`tel:${roadsideAssistance.fallback.dial}`}
-              className="font-semibold tabular-nums underline underline-offset-2"
-            >
-              {roadsideAssistance.fallback.number}
-            </a>
-            .
-          </p>
-          <p className="mt-2 text-footnote text-secondary">{roadsideAssistance.footnote}</p>
-        </Card>
-
+      {/* e. Medical: poison control + emergency rooms, one card pattern. */}
+      <section id="medical" className="mt-8 scroll-mt-4 space-y-3" aria-label="Medical">
+        <SectionHeader title="Medical" />
         {poisonCenters.map((p) => (
           <Card key={p.dial} as="article">
             <h3 className="text-headline">Poison control — {p.city}</h3>
@@ -367,17 +349,9 @@ export default function EmergencyPage() {
             />
           </Card>
         ))}
-        <Callout>
-          Support and poison-control numbers verified July 2026 —{" "}
-          <strong className="font-bold">
-            verify against official sources before relying on them.
-          </strong>
-        </Callout>
-      </section>
-
-      {/* f. Emergency rooms. */}
-      <section id="hospitals" className="mt-8 scroll-mt-4" aria-label="Emergency rooms">
         <SectionHeader
+          className="mt-6"
+          level={3}
           title={
             <span className="flex items-center gap-2">
               <Icon icon={Hospital} size="md" /> Emergency rooms — Rome
@@ -386,7 +360,7 @@ export default function EmergencyPage() {
         />
         <div className="mt-3 space-y-3">
           {romeEmergencyRooms.map((er) => (
-            <ErCard key={er.name} er={er} />
+            <ErCard key={er.name} er={er} headingLevel={4} />
           ))}
         </div>
 
@@ -404,42 +378,9 @@ export default function EmergencyPage() {
             <ErCard key={er.name} er={er} headingLevel={4} />
           ))}
         </div>
-
-        <p className="body-copy mt-4 text-secondary">{erCostNote}</p>
-        <p className="mt-2 text-subhead">
-          <a
-            href={embassyDoctorsLink.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-link"
-          >
-            {embassyDoctorsLink.label} →
-          </a>{" "}
-          <span className="text-secondary">({embassyDoctorsLink.note})</span>
-        </p>
-        <Callout className="mt-3">
-          Hospital switchboards verified July 2026 —{" "}
-          <strong className="font-bold">
-            verify against official sources before relying on them.
-          </strong>{" "}
-          In a true emergency call 112 first.
-        </Callout>
       </section>
 
-      {/* g. Tools. */}
-      <section id="tools" className="mt-8 scroll-mt-4 space-y-3" aria-label="Tools">
-        <SectionHeader title="Tools" />
-        <ShareLocation />
-        <ListRow
-          href="/map"
-          icon={<Icon icon={Map} size="lg" />}
-          title="Offline map"
-          subtitle="Your position on a downloaded map — no connection needed"
-        />
-        <WhereAreUCard headingLevel={3} />
-      </section>
-
-      {/* h. If you're robbed + lost passport. */}
+      {/* f. If it goes wrong. */}
       <section id="robbed" className="mt-8 scroll-mt-4" aria-label="If you're robbed">
         <SectionHeader
           title={
@@ -450,17 +391,7 @@ export default function EmergencyPage() {
           intro={robbed.summary}
         />
         <Card className="mt-3">
-          <ol className="space-y-3">
-            {robbed.steps.map((step, i) => (
-              <li key={step.lead} className="body-copy flex gap-3">
-                <span className="font-mono font-bold text-secondary">{i + 1}</span>
-                <span className="min-w-0 text-secondary">
-                  <strong className="font-bold text-primary">{step.lead}</strong>{" "}
-                  <TelText text={step.rest} />
-                </span>
-              </li>
-            ))}
-          </ol>
+          <NumberedSteps steps={robbed.steps} />
           <p className="mt-3 border-t border-default pt-3 text-subhead">
             Passport taken?{" "}
             <a href="#lost-passport" className="text-link">
@@ -522,18 +453,21 @@ export default function EmergencyPage() {
       <section id="lost-passport" className="mt-8 scroll-mt-4" aria-label="Lost documents">
         <SectionHeader title="Passport lost or stolen" />
         <Card className="mt-3">
-          <ol className="space-y-3">
-            {lostDocumentSteps.map((step, i) => (
-              <li key={step.lead} className="body-copy flex gap-3">
-                <span className="font-mono font-bold text-secondary">{i + 1}</span>
-                <span className="min-w-0 text-secondary">
-                  <strong className="font-bold text-primary">{step.lead}</strong>{" "}
-                  <TelText text={step.rest} />
-                </span>
-              </li>
-            ))}
-          </ol>
+          <NumberedSteps steps={lostDocumentSteps} />
         </Card>
+      </section>
+
+      {/* g. Tools — last on purpose: reference, not rescue. */}
+      <section id="tools" className="mt-8 scroll-mt-4 space-y-3" aria-label="Tools">
+        <SectionHeader title="Tools" />
+        <ShareLocation />
+        <ListRow
+          href="/map"
+          icon={<Icon icon={Map} size="lg" />}
+          title="Offline map"
+          subtitle="Your position on a downloaded map — no connection needed"
+        />
+        <WhereAreUCard headingLevel={3} />
       </section>
     </main>
   );
