@@ -58,6 +58,13 @@ export const checkIns = pgTable("check_ins", {
   userId: uuid("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
+  /**
+   * Client-generated UUID for idempotency: the offline queue retries a
+   * POST until it lands, and the unique index guarantees retries can
+   * never create a second row. Null for legacy rows (unique indexes
+   * ignore NULLs).
+   */
+  clientId: uuid("client_id").unique(),
   status: checkInStatus("status").notNull(),
   lat: doublePrecision("lat"),
   lng: doublePrecision("lng"),

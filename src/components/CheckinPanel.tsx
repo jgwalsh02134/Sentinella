@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { formatDualDateTime } from "@/lib/timezones";
 import { Check, MapPin } from "lucide-react";
 import Icon from "@/components/Icon";
@@ -17,11 +17,20 @@ import ListRow from "@/components/ui/ListRow";
 import SectionHeader from "@/components/ui/SectionHeader";
 import Segmented from "@/components/ui/Segmented";
 import { SkeletonCard } from "@/components/ui/Skeleton";
+import {
+  QUEUE_EVENT,
+  enqueueCheckIn,
+  listQueued,
+  syncQueue,
+  updateQueued,
+  type QueuedCheckIn,
+} from "@/lib/checkinQueue";
 
 type Status = "safe" | "caution" | "help";
 
 type CheckIn = {
   id: string;
+  clientId?: string | null;
   status: Status;
   lat: number | null;
   lng: number | null;
@@ -30,7 +39,59 @@ type CheckIn = {
   note: string | null;
   isAuto?: boolean;
   createdAt: string;
+  /** True while the row lives only in the local queue. */
+  pending?: boolean;
 };
+
+/**
+ * GPS as an enhancement, never a requirement: resolve a fix within
+ * `timeoutMs` or resolve null — the check-in has ALREADY saved by the
+ * time this runs.
+ */
+function getFix(timeoutMs = 10000): Promise<{ lat: number; lng: number; accuracyM: number } | null> {
+  return new Promise((resolve) => {
+    if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
+      resolve(null);
+      return;
+    }
+    let settled = false;
+    const settle = (v: { lat: number; lng: number; accuracyM: number } | null) => {
+      if (!settled) {
+        settled = true;
+        clearTimeout(timer);
+        resolve(v);
+      }
+    };
+    // Belt and braces: browsers apply the `timeout` option unevenly.
+    const timer = setTimeout(() => settle(null), timeoutMs + 500);
+    navigator.geolocation.getCurrentPosition(
+      (pos) =>
+        settle({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          accuracyM: pos.coords.accuracy,
+        }),
+      () => settle(null),
+      { enableHighAccuracy: true, timeout: timeoutMs, maximumAge: 60000 },
+    );
+  });
+}
+
+function queuedToCheckIn(q: QueuedCheckIn): CheckIn {
+  return {
+    id: q.clientId,
+    clientId: q.clientId,
+    status: q.status,
+    lat: q.lat,
+    lng: q.lng,
+    accuracyM: q.accuracyM,
+    placeName: q.placeName,
+    note: q.note,
+    isAuto: q.isAuto,
+    createdAt: q.createdAt,
+    pending: true,
+  };
+}
 
 type NearbyAdvisory = {
   source: "team" | "official";
@@ -57,84 +118,187 @@ export default function CheckinPanel() {
   const [note, setNote] = useState("");
   const [fix, setFix] = useState<{ lat: number; lng: number; accuracyM: number } | null>(null);
   const [locating, setLocating] = useState(false);
+  const [gpsNote, setGpsNote] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
+  const [confirmed, setConfirmed] = useState<{ at: Date; clientId: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [history, setHistory] = useState<CheckIn[]>([]);
+  const [serverHistory, setServerHistory] = useState<CheckIn[]>([]);
+  const [queued, setQueued] = useState<CheckIn[]>([]);
   const [historyState, setHistoryState] = useState<"loading" | "ready" | "error">("loading");
+  const [authNeeded, setAuthNeeded] = useState(false);
   const [nearby, setNearby] = useState<NearbyAdvisory[]>([]);
+  const submittingRef = useRef(false);
+
+  const refreshQueued = useCallback(() => {
+    void listQueued().then((items) => setQueued(items.map(queuedToCheckIn)));
+  }, []);
 
   const loadHistory = useCallback(() => {
     let cancelled = false;
     setHistoryState("loading");
     fetch("/api/checkins")
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("load failed"))))
+      .then((r) => {
+        if (r.status === 401) {
+          setAuthNeeded(true);
+          return { checkIns: [] };
+        }
+        return r.ok ? r.json() : Promise.reject(new Error("load failed"));
+      })
       .then((data) => {
         if (cancelled) return;
-        setHistory(data.checkIns ?? []);
+        setServerHistory(data.checkIns ?? []);
         setHistoryState("ready");
       })
-      .catch(() => {
-        if (!cancelled) setHistoryState("error");
+      .catch(async () => {
+        // Offline: queued items still render; server rows return later.
+        const localCount = (await listQueued()).length;
+        if (!cancelled) setHistoryState(localCount > 0 ? "ready" : "error");
       });
     return () => {
       cancelled = true;
     };
   }, []);
 
-  useEffect(() => loadHistory(), [loadHistory]);
+  /** Drain the queue and reconcile: the ONE sync entry point for this screen. */
+  const runSync = useCallback(async () => {
+    const result = await syncQueue();
+    setAuthNeeded(result.authRequired);
+    if (result.synced > 0) {
+      loadHistory();
+    }
+  }, [loadHistory]);
+
+  // Sync triggers: app open (mount), connectivity regained, app focus.
+  // Login lands back here, so mount also covers "after successful auth".
+  useEffect(() => {
+    loadHistory();
+    refreshQueued();
+    void runSync();
+
+    const onOnline = () => void runSync();
+    const onVisible = () => {
+      if (document.visibilityState === "visible") void runSync();
+    };
+    window.addEventListener("online", onOnline);
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener(QUEUE_EVENT, refreshQueued);
+    return () => {
+      window.removeEventListener("online", onOnline);
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener(QUEUE_EVENT, refreshQueued);
+    };
+  }, [loadHistory, refreshQueued, runSync]);
 
   function capture() {
-    if (!("geolocation" in navigator)) return;
+    setGpsNote(null);
     setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setFix({
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-          accuracyM: pos.coords.accuracy,
-        });
-        setLocating(false);
-      },
-      () => setLocating(false),
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
-    );
+    void getFix().then((got) => {
+      setLocating(false);
+      if (got) setFix(got);
+      else setGpsNote("GPS unavailable — check-ins still save without location.");
+    });
   }
 
+  /**
+   * A CHECK-IN NEVER FAILS: write locally first (instant — the button is
+   * only disabled for this write), then enhance with GPS in the
+   * background, then sync when network and auth allow.
+   */
   async function submit() {
+    // Synchronous re-entry guard: React state can't flip `disabled` fast
+    // enough to stop a double-tap (the diagnosed duplicate bug).
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setSaving(true);
     setError(null);
-    setMessage(null);
+    setGpsNote(null);
+    const clientId = crypto.randomUUID();
+    const item: QueuedCheckIn = {
+      clientId,
+      status,
+      lat: fix?.lat ?? null,
+      lng: fix?.lng ?? null,
+      accuracyM: fix?.accuracyM ?? null,
+      placeName: placeName.trim() || null,
+      note: note.trim() || null,
+      isAuto: false,
+      createdAt: new Date().toISOString(),
+    };
+
     try {
-      const res = await fetch("/api/checkins", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          status,
-          lat: fix?.lat ?? null,
-          lng: fix?.lng ?? null,
-          accuracyM: fix?.accuracyM ?? null,
-          placeName: placeName || undefined,
-          note: note || undefined,
-        }),
+      await enqueueCheckIn(item);
+    } catch {
+      // No IndexedDB (rare: some private modes). Fall back to a direct
+      // network save so the tap still counts.
+      try {
+        const res = await fetch("/api/checkins", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(item),
+        });
+        if (!res.ok) throw new Error();
+        const data = await res.json().catch(() => ({}));
+        setServerHistory((h) => [data.checkIn, ...h]);
+        setNearby(data.advisories ?? []);
+      } catch {
+        submittingRef.current = false;
+        setSaving(false);
+        setError("This browser couldn't store the check-in. Try again — or call if urgent.");
+        return;
+      }
+    }
+
+    // Saved. Everything past this point is enhancement.
+    setConfirmed({ at: new Date(), clientId });
+    setPlaceName("");
+    setNote("");
+    submittingRef.current = false;
+    setSaving(false);
+
+    const hadFix = fix != null;
+    setFix(null);
+
+    if (!hadFix) {
+      // Background GPS, capped at 10s: attach coordinates if they arrive
+      // while the item is still queued; say so plainly if they don't.
+      void getFix().then(async (got) => {
+        if (got) {
+          const attached = await updateQueued(clientId, got);
+          if (attached) refreshQueued();
+        } else {
+          setGpsNote("Saved without location — GPS unavailable.");
+        }
+        void runSync();
       });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error ?? "Check-in didn't save.");
-      setHistory((h) => [data.checkIn, ...h]);
-      setNearby(data.advisories ?? []);
-      setMessage("Checked in.");
-      setPlaceName("");
-      setNote("");
-      setFix(null);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Check-in didn't save. Try again.");
-    } finally {
-      setSaving(false);
+    } else {
+      void runSync();
     }
   }
 
+  const pendingIds = new Set(queued.map((c) => c.clientId));
+  const history: CheckIn[] = [
+    ...queued,
+    ...serverHistory.filter((c) => !c.clientId || !pendingIds.has(c.clientId)),
+  ].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+
+  const confirmedPending = confirmed ? pendingIds.has(confirmed.clientId) : false;
+
   return (
     <div className="space-y-6">
+      {authNeeded && queued.length > 0 ? (
+        // ONE quiet banner — never red, never blocking: the check-ins are
+        // safe locally and sync automatically after sign-in.
+        <div className="plate flex flex-wrap items-center justify-between gap-3 border border-default bg-card p-4">
+          <p className="text-subhead text-secondary">
+            Signed out — sign in to sync {queued.length}{" "}
+            {queued.length === 1 ? "check-in" : "check-ins"}.
+          </p>
+          <Button href="/login?next=/checkin" variant="tinted" size="sm">
+            Sign in
+          </Button>
+        </div>
+      ) : null}
+
       {nearby.length > 0 ? (
         <Callout>
           <p className="font-bold">Alerts and advisories near your position</p>
@@ -205,6 +369,11 @@ export default function CheckinPanel() {
               {fix.lat.toFixed(5)}, {fix.lng.toFixed(5)} · ~{Math.round(fix.accuracyM)} m
             </p>
           ) : null}
+          {gpsNote ? (
+            <p className="text-footnote text-secondary" role="status">
+              {gpsNote}
+            </p>
+          ) : null}
 
           <Field label="Place">
             <Input
@@ -226,9 +395,11 @@ export default function CheckinPanel() {
         </div>
 
         {error ? <FieldError className="mt-3">{error}</FieldError> : null}
-        {message ? (
+        {confirmed ? (
           <p className="mt-3 text-callout font-semibold text-success" role="status">
-            {message}
+            Checked in ·{" "}
+            {confirmed.at.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })} ·{" "}
+            {confirmedPending ? (authNeeded ? "waiting for sign-in" : "syncing…") : "synced"}
           </p>
         ) : null}
 
@@ -245,7 +416,7 @@ export default function CheckinPanel() {
 
       <TripTracking
         onAutoCheckIn={(checkIn, advisories) => {
-          setHistory((h) => [checkIn as CheckIn, ...h]);
+          setServerHistory((h) => [checkIn as CheckIn, ...h]);
           setNearby(advisories as NearbyAdvisory[]);
         }}
       />
@@ -303,6 +474,7 @@ export default function CheckinPanel() {
                         <span className="flex items-center gap-2">
                           {statusMeta[c.status].label}
                           {c.isAuto ? <Badge tone="neutral">Auto</Badge> : null}
+                          {c.pending ? <Badge tone="neutral">Pending sync</Badge> : null}
                         </span>
                       }
                       subtitle={

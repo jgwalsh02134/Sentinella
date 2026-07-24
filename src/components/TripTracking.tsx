@@ -54,6 +54,8 @@ export default function TripTracking({ onAutoCheckIn }: Props) {
           lng: fix.lng,
           accuracyM: fix.accuracyM,
           isAuto: true,
+          // Idempotency: a retried request can never double-post.
+          clientId: crypto.randomUUID(),
         }),
       });
       if (!res.ok) return;

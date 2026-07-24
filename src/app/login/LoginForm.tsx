@@ -5,6 +5,7 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Button from "@/components/ui/Button";
 import { Field, FieldError, Input } from "@/components/ui/Field";
+import { syncQueue } from "@/lib/checkinQueue";
 
 function Form() {
   const router = useRouter();
@@ -28,6 +29,8 @@ function Form() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error ?? "Sign in didn't work. Try again.");
+      // Auth succeeded: flush any check-ins queued while signed out.
+      void syncQueue();
       router.push(nextPath.startsWith("/") ? nextPath : "/");
       router.refresh();
     } catch (err) {

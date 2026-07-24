@@ -27,9 +27,14 @@ const Body = z.object({
   lat: z.number().min(-90).max(90).nullable().optional(),
   lng: z.number().min(-180).max(180).nullable().optional(),
   accuracyM: z.number().nonnegative().nullable().optional(),
-  placeName: z.string().trim().max(120).optional(),
-  note: z.string().trim().max(500).optional(),
+  // Nullish: the offline queue serializes empty fields as null.
+  placeName: z.string().trim().max(120).nullish(),
+  note: z.string().trim().max(500).nullish(),
   isAuto: z.boolean().optional(),
+  /** Client-generated idempotency key: retries never duplicate. */
+  clientId: z.string().uuid().optional(),
+  /** When the check-in actually happened (offline queue submits later). */
+  createdAt: z.string().datetime().optional(),
 });
 
 export async function POST(req: Request) {
@@ -42,11 +47,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Check the check-in fields and try again." }, { status: 400 });
   }
 
-  const { status, lat, lng, accuracyM, placeName, note, isAuto } = parsed.data;
+  const { status, lat, lng, accuracyM, placeName, note, isAuto, clientId, createdAt } = parsed.data;
+
+  // Idempotent insert: a retried clientId returns the existing row
+  // instead of creating a second one.
   const [row] = await db
     .insert(checkIns)
     .values({
       userId: session.sub,
+      clientId: clientId ?? null,
       status,
       lat: lat ?? null,
       lng: lng ?? null,
@@ -54,8 +63,25 @@ export async function POST(req: Request) {
       placeName: placeName || null,
       note: note || null,
       isAuto: isAuto ?? false,
+      // Trust the client's timestamp only within reason: an offline
+      // check-in keeps its real moment; garbage falls back to now().
+      ...(createdAt && Math.abs(Date.now() - Date.parse(createdAt)) < 1000 * 60 * 60 * 24 * 30
+        ? { createdAt: new Date(createdAt) }
+        : {}),
     })
+    .onConflictDoNothing({ target: checkIns.clientId })
     .returning();
+
+  if (!row && clientId) {
+    const existing = await db.query.checkIns.findFirst({
+      where: eq(checkIns.clientId, clientId),
+    });
+    // Only report someone else's row as "yours" never: enforce ownership.
+    if (existing && existing.userId === session.sub) {
+      return NextResponse.json({ checkIn: existing, advisories: [], duplicate: true });
+    }
+    return NextResponse.json({ error: "Check the check-in fields and try again." }, { status: 400 });
+  }
 
   // Advisory proximity: surface anything active near these coordinates so
   // the caution appears immediately after checking in. Never blocks the
