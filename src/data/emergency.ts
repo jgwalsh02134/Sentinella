@@ -91,6 +91,25 @@ export type PoisonCenter = {
 };
 
 /** Major 24/7 poison control centers. Verify before operational use. */
+/**
+ * Official 112 companion app (developer AREU — Azienda Regionale Emergenza
+ * Urgenza). Presented as a supplement on the Emergency screen: dialing 112
+ * directly is always the primary action.
+ */
+export const whereAreUApp = {
+  title: "112 Where ARE U — the official app",
+  body: "The official app of Italy's 112 service (developer AREU). It dials 112 and transmits your GPS position to the response center at the same time.",
+  bullets: [
+    "Active in both Lazio (Rome) and Tuscany (Florence).",
+    "Dialing 112 directly is always the primary action — the app is a supplement, never a requirement.",
+  ],
+  link: {
+    label: "App Store — 112 Where ARE U",
+    url: "https://apps.apple.com/us/app/112-where-are-u/id888964800",
+  },
+  note: "The App Store link needs a connection — install before you travel. Calling 112 needs nothing.",
+} as const;
+
 export const poisonCenters: PoisonCenter[] = [
   // Florence first: this trip is Tuscany-based.
   {

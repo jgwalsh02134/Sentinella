@@ -7,7 +7,7 @@ import IrelandFlag from "@/components/IrelandFlag";
 import NewZealandFlag from "@/components/NewZealandFlag";
 import UkFlag from "@/components/UkFlag";
 import UsFlag from "@/components/UsFlag";
-import { callScript, emergencyNumbers, poisonCenters } from "@/data/emergency";
+import { callScript, emergencyNumbers, poisonCenters, whereAreUApp } from "@/data/emergency";
 import { embassies, lostDocumentSteps } from "@/data/embassies";
 import { appleMapsDirectionsUrl } from "@/lib/maps";
 
@@ -65,6 +65,29 @@ export default function EmergencyPage() {
             See where you are on a downloaded city map — works without a connection.
           </p>
         </Link>
+      </section>
+
+      <section className="mt-6" aria-label="112 companion app">
+        <div className="plate border border-line bg-white p-5">
+          <h2 className="text-base font-bold leading-snug">{whereAreUApp.title}</h2>
+          <p className="body-copy mt-1.5 text-mist">{whereAreUApp.body}</p>
+          <ul className="mt-2 space-y-1.5">
+            {whereAreUApp.bullets.map((b) => (
+              <li key={b} className="body-copy text-mist">
+                {b}
+              </li>
+            ))}
+          </ul>
+          <a
+            href={whereAreUApp.link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde px-4 text-sm font-bold text-verde active:bg-verde-tint"
+          >
+            {whereAreUApp.link.label}
+          </a>
+          <p className="mt-2 text-xs leading-relaxed text-mist">{whereAreUApp.note}</p>
+        </div>
       </section>
 
       <section className="mt-6 space-y-3" aria-label="Emergency services">
