@@ -1,6 +1,8 @@
 export type InfoItem = {
   title: string;
   body: string;
+  /** Optional bullet list rendered after the body, for multi-part items. */
+  bullets?: string[];
   /** Must-not-miss warning, rendered as a highlighted callout (max one per section). */
   warning?: string;
   /**
@@ -59,6 +61,20 @@ export const basicsItems: InfoItem[] = [
       // Urgenza), linked from where.areu.lombardia.it.
       { label: "App Store — 112 Where ARE U", url: "https://apps.apple.com/app/112-where-are-u/id888964800" },
       { label: "Google Play — 112 Where ARE U", url: "https://play.google.com/store/apps/details?id=it.Beta80Group.whereareu" },
+    ],
+  },
+  {
+    title: "Your iPhone's built-in safety net",
+    body: "Set these up before you fly — they complement this app and 112, they don't replace them.",
+    bullets: [
+      "Emergency SOS via satellite: works in Italy on iPhone 14 and later when there's no cell or Wi-Fi. You need open sky — exactly the situation in rural Tuscany.",
+      "Messages and Find My also work via satellite, so you can text a contact and stay findable off-grid.",
+      "Medical ID: fill in conditions, medications, and emergency contacts before flying — responders can read it from the lock screen without your passcode.",
+      "Check In (in Messages): tell it where you're headed and a contact is alerted automatically if you don't arrive.",
+    ],
+    links: [
+      // Official Apple support page (HT213426 redirects here).
+      { label: "Apple — Emergency SOS via satellite", url: "https://support.apple.com/en-us/101573" },
     ],
   },
   {

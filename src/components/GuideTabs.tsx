@@ -67,6 +67,15 @@ function InfoCard({ item }: { item: InfoItem }) {
       <p className="body-copy mt-1.5 text-mist">
         <LeadBody text={item.body} />
       </p>
+      {item.bullets?.length ? (
+        <ul className="mt-2 space-y-1.5">
+          {item.bullets.map((b) => (
+            <li key={b} className="body-copy text-mist">
+              <ColonLead text={b} />
+            </li>
+          ))}
+        </ul>
+      ) : null}
       {item.warning ? <p className="callout mt-2.5">{item.warning}</p> : null}
       {item.links?.length ? (
         <div className="mt-3 flex flex-wrap gap-2">
