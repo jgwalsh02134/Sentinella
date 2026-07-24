@@ -37,6 +37,7 @@ import {
   romeEmergencyRooms,
   type EmergencyRoom,
 } from "@/data/emergencyRooms";
+import { policeStations, stationEmergencyNote } from "@/data/police";
 import { safetyPois } from "@/data/safetyPois";
 import { appleMapsDirectionsUrl } from "@/lib/maps";
 
@@ -441,7 +442,7 @@ export default function EmergencyPage() {
       </section>
 
       {/* h. If you're robbed + lost passport. */}
-      <section className="mt-8" aria-label="If you're robbed">
+      <section id="robbed" className="mt-8 scroll-mt-4" aria-label="If you're robbed">
         <SectionHeader
           title={
             <span className="flex items-center gap-2">
@@ -469,6 +470,53 @@ export default function EmergencyPage() {
             </a>
             .
           </p>
+        </Card>
+        {/* Same typed data the map markers use — one source of truth. */}
+        <Card className="mt-3">
+          <Disclosure
+            label="Where to file — stations in Rome, Florence &amp; Siena"
+            sublabel={stationEmergencyNote}
+          >
+            <ul className="mt-2">
+              {policeStations.map((station, i) => (
+                <li
+                  key={station.id}
+                  className={`py-3 ${i > 0 ? "border-t border-default" : ""}`}
+                >
+                  <p className="text-callout font-bold">
+                    {station.name}{" "}
+                    <span className="font-normal text-secondary">· {station.city}</span>
+                  </p>
+                  <p className="mt-0.5 text-footnote text-secondary">{station.address}</p>
+                  {station.notes ? (
+                    <p className="mt-0.5 text-footnote text-secondary">{station.notes}</p>
+                  ) : null}
+                  <p className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-subhead">
+                    {station.dial ? (
+                      <a
+                        href={`tel:${station.dial}`}
+                        className="inline-flex min-h-control items-center font-mono font-semibold tabular-nums underline underline-offset-2"
+                      >
+                        {station.phone}
+                      </a>
+                    ) : null}
+                    <a
+                      href={appleMapsDirectionsUrl(`${station.address}, Italy`)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex min-h-control items-center gap-1.5 text-link"
+                    >
+                      <BrandIcon brand="apple" size={16} /> Directions
+                    </a>
+                  </p>
+                </li>
+              ))}
+            </ul>
+            <p className="text-footnote text-secondary">
+              Directions need a connection; calls work on the phone network. Station contacts
+              verified July 2026 — verify before relying on them.
+            </p>
+          </Disclosure>
         </Card>
         <Callout className="mt-3">{robbed.tip}</Callout>
       </section>
