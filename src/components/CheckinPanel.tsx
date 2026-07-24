@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Check } from "lucide-react";
+import Icon from "@/components/Icon";
 import ReminderSettings from "@/components/ReminderSettings";
 import TripTracking from "@/components/TripTracking";
 
@@ -197,7 +199,15 @@ export default function CheckinPanel() {
             disabled={locating}
             className="min-h-[3rem] w-full rounded-xl border-2 border-verde px-4 font-semibold text-verde active:bg-verde-tint disabled:opacity-60"
           >
-            {locating ? "Getting position…" : fix ? "Position attached ✓ (tap to refresh)" : "Attach my position"}
+            {locating ? (
+              "Getting position…"
+            ) : fix ? (
+              <span className="flex items-center justify-center gap-2">
+                <Icon icon={Check} size="sm" /> Position attached (tap to refresh)
+              </span>
+            ) : (
+              "Attach my position"
+            )}
           </button>
           {fix ? (
             <p className="font-mono text-xs tabular-nums text-mist">

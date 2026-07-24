@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { Map, MapPin, Plane, Shield } from "lucide-react";
 import CallPlate from "@/components/CallPlate";
+import Icon from "@/components/Icon";
 import Crest from "@/components/Crest";
 import InstallGuide from "@/components/InstallGuide";
 import LatestAlert from "@/components/LatestAlert";
@@ -52,22 +54,22 @@ export default async function HomePage() {
         <h2 className="eyebrow">Right now</h2>
         <div className="mt-2 grid grid-cols-2 gap-3">
           <Link href="/checkin" className="plate border border-line bg-white p-4">
-            <span className="block text-2xl" aria-hidden="true">
-              📍
+            <span className="block text-verde">
+              <Icon icon={MapPin} size="lg" />
             </span>
             <span className="mt-1 block text-sm font-bold">Check in</span>
             <span className="block text-xs text-mist">Log that you're safe</span>
           </Link>
           <Link href="/guide" className="plate border border-line bg-white p-4">
-            <span className="block text-2xl" aria-hidden="true">
-              🛡️
+            <span className="block text-verde">
+              <Icon icon={Shield} size="lg" />
             </span>
             <span className="mt-1 block text-sm font-bold">Field guide</span>
             <span className="block text-xs text-mist">Scams, phrases, cities</span>
           </Link>
           <Link href="/map" className="plate col-span-2 border border-line bg-white p-4">
-            <span className="block text-2xl" aria-hidden="true">
-              🗺️
+            <span className="block text-verde">
+              <Icon icon={Map} size="lg" />
             </span>
             <span className="mt-1 block text-sm font-bold">Offline map</span>
             <span className="block text-xs text-mist">
@@ -75,8 +77,8 @@ export default async function HomePage() {
             </span>
           </Link>
           <Link href="/prepare" className="plate col-span-2 border border-line bg-white p-4">
-            <span className="block text-2xl" aria-hidden="true">
-              ✈️
+            <span className="block text-verde">
+              <Icon icon={Plane} size="lg" />
             </span>
             <span className="mt-1 block text-sm font-bold">Before you fly</span>
             <span className="block text-xs text-mist">US → Italy pre-departure checklist</span>
