@@ -11,11 +11,9 @@
  *    files managed in IndexedDB by the Map screen, and their online mode uses
  *    HTTP range requests the Cache API can't store.
  */
-// v7: full Protomaps light style — sprites join glyphs as self-hosted,
-// cache-first render assets (/map-fonts, /map-sprites); /map-packs stays
-// out of the SW for good (packs live in IndexedDB; double-storing 40 MB
-// kills iOS quota).
-const VERSION = "sentinella-v7";
+// v8: precache the State Dept seal — the Emergency screen's U.S.
+// citizens section must render complete offline, seal included.
+const VERSION = "sentinella-v8";
 const PRECACHE = [
   "/",
   "/emergency",
@@ -28,6 +26,7 @@ const PRECACHE = [
   "/icons/icon-192.png",
   "/icons/icon-512.png",
   "/brand/crest-ui.png",
+  "/brand/us-state-seal.svg",
 ];
 
 self.addEventListener("install", (event) => {

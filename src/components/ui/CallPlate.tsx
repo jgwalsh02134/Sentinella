@@ -47,7 +47,9 @@ export default function CallPlate({
     <a
       href={`tel:${dial}`}
       aria-label={`Call ${name} at ${number}`}
-      className={`plate ${tierStyles[tier]} p-5 transition-transform duration-150 ease-out active:scale-[0.99] motion-reduce:transition-none motion-reduce:active:scale-100`}
+      // Non-primary plates are compact so service/support sections scan
+      // as unified lists; the 112 hero keeps the larger footprint.
+      className={`plate ${tierStyles[tier]} ${isPrimary ? "p-5" : "p-4"} transition-transform duration-150 ease-out active:scale-[0.99] motion-reduce:transition-none motion-reduce:active:scale-100`}
     >
       <span className="flex flex-wrap items-center gap-4">
         <span

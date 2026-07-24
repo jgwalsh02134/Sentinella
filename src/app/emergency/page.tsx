@@ -9,7 +9,9 @@ import ListRow from "@/components/ui/ListRow";
 import NavTile from "@/components/ui/NavTile";
 import SectionHeader from "@/components/ui/SectionHeader";
 import BrandIcon from "@/components/BrandIcon";
+import EmergencyJumpChips from "@/components/EmergencyJumpChips";
 import Icon from "@/components/Icon";
+import SealBadge from "@/components/SealBadge";
 import ShareLocation from "@/components/ShareLocation";
 import TelText from "@/components/TelText";
 import WhereAreUCard from "@/components/WhereAreUCard";
@@ -166,8 +168,10 @@ export default function EmergencyPage() {
   const primary = emergencyNumbers.filter((n) => n.tier === "primary");
   const services = emergencyNumbers.filter((n) => n.tier === "service");
   const support = emergencyNumbers.filter((n) => n.tier === "support");
-  // The two US posts render first as full cards; the rest collapse.
-  const usEmbassies = embassies.filter((e) => e.country === "United States");
+  // US posts promoted right after the numbers; Rome (the embassy) leads.
+  const usRome = embassies.find((e) => e.country === "United States" && e.city === "Rome");
+  const usFlorence = embassies.find((e) => e.country === "United States" && e.city === "Florence");
+  const usEmbassies = [usRome, usFlorence].filter((e): e is Embassy => e != null);
   const otherEmbassies = embassies.filter((e) => e.country !== "United States");
   // Tuscany ERs come from the map's POI data — one source of truth.
   const tuscanyErs: EmergencyRoom[] = safetyPois
@@ -184,6 +188,7 @@ export default function EmergencyPage() {
         intro="Tap any plate to call. Core lines are free from any phone, even without a SIM."
       />
 
+      {/* a. 112 hero + footnote + the call script one tap away. */}
       <section className="mt-5 space-y-3" aria-label="Primary emergency number">
         {primary.map((n) => (
           <CallPlate
@@ -196,36 +201,27 @@ export default function EmergencyPage() {
             footnote={n.detail}
           />
         ))}
-        <Card>
-          <h2 className="text-headline">When the operator answers</h2>
-          <ol className="mt-2 space-y-2">
-            {callScript.map((step, i) => (
-              <li key={step.lead} className="body-copy flex gap-3">
-                <span className="font-mono font-bold text-secondary">{i + 1}</span>
-                <span className="min-w-0 text-secondary">
-                  <strong className="font-bold text-primary">{step.lead}</strong> {step.rest}
-                </span>
-              </li>
-            ))}
-          </ol>
+        <Card padded={false} className="px-4 py-1">
+          <Disclosure label="What to say when they answer">
+            <ol className="space-y-2 pb-3 pt-1">
+              {callScript.map((step, i) => (
+                <li key={step.lead} className="body-copy flex gap-3">
+                  <span className="font-mono font-bold text-secondary">{i + 1}</span>
+                  <span className="min-w-0 text-secondary">
+                    <strong className="font-bold text-primary">{step.lead}</strong> {step.rest}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </Disclosure>
         </Card>
       </section>
 
-      <section className="mt-8 space-y-3" aria-label="Share your position">
-        <ShareLocation />
-        <ListRow
-          href="/map"
-          icon={<Icon icon={Map} size="lg" />}
-          title="Offline map"
-          subtitle="Your position on a downloaded map — no connection needed"
-        />
-      </section>
+      {/* b. Quick jumps — rendered client-side only. */}
+      <EmergencyJumpChips className="mt-4" />
 
-      <section className="mt-8" aria-label="112 companion app">
-        <WhereAreUCard />
-      </section>
-
-      <section className="mt-8 space-y-3" aria-label="Emergency services">
+      {/* c. Direct service lines. */}
+      <section id="numbers" className="mt-8 scroll-mt-4 space-y-3" aria-label="Emergency services">
         <SectionHeader title="Direct service lines" />
         {services.map((n) => (
           <CallPlate
@@ -240,6 +236,79 @@ export default function EmergencyPage() {
         ))}
       </section>
 
+      {/* d. U.S. citizens — promoted right after the numbers. */}
+      <section id="us-citizens" className="mt-8 scroll-mt-4" aria-label="U.S. citizens">
+        <SectionHeader
+          title={
+            <span className="flex items-center gap-2">
+              <SealBadge /> U.S. citizens
+            </span>
+          }
+        />
+        <div className="mt-3 space-y-3">
+          {usEmbassies.map((embassy) => (
+            <Card key={embassy.name} as="article" className="break-words">
+              <EmbassyBody embassy={embassy} headingLevel={3} />
+            </Card>
+          ))}
+
+          <Card as="article">
+            <h3 className="flex items-center gap-2 text-headline">
+              <SealBadge /> {overseasCitizensServices.name}
+            </h3>
+            <p className="mt-0.5 text-subhead text-secondary">{overseasCitizensServices.summary}</p>
+            <LabeledLines lines={overseasCitizensServices.lines} />
+          </Card>
+
+          <Card padded={false} className="px-4 py-2">
+            <Disclosure label="What consular officers can and can't do">
+              <div className="grid gap-4 pb-3 pt-1 sm:grid-cols-2">
+                <div>
+                  <h4 className="text-subhead font-bold">They can</h4>
+                  <ul className="mt-1 space-y-1">
+                    {consularHelp.can.map((item) => (
+                      <li key={item} className="text-subhead text-secondary">
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="text-subhead font-bold">They can&apos;t</h4>
+                  <ul className="mt-1 space-y-1">
+                    {consularHelp.cant.map((item) => (
+                      <li key={item} className="text-subhead text-secondary">
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </Disclosure>
+          </Card>
+
+          <Card padded={false} className="px-4 py-2">
+            <Disclosure
+              label="Other embassies"
+              sublabel="UK, Canada, Australia, Ireland, New Zealand"
+            >
+              <div className="break-words pb-2">
+                {otherEmbassies.map((embassy) => (
+                  <div key={embassy.name} className="border-t border-default pb-1 pt-3">
+                    <EmbassyBody embassy={embassy} headingLevel={4} />
+                  </div>
+                ))}
+              </div>
+            </Disclosure>
+          </Card>
+        </div>
+        <Callout className="mt-3">
+          Switchboard numbers verified July 2026. After-hours consular emergency lines differ —{" "}
+          <strong className="font-bold">verify yours on the official site before travel.</strong>
+        </Callout>
+      </section>
+
+      {/* e. Support lines. */}
       <section className="mt-8 space-y-3" aria-label="Support lines">
         <SectionHeader title="Support lines" />
         {support.map((n) => (
@@ -275,14 +344,6 @@ export default function EmergencyPage() {
           <p className="mt-2 text-footnote text-secondary">{roadsideAssistance.footnote}</p>
         </Card>
 
-        <Card as="article">
-          <h3 className="text-headline">
-            <UsFlag /> {overseasCitizensServices.name}
-          </h3>
-          <p className="mt-0.5 text-subhead text-secondary">{overseasCitizensServices.summary}</p>
-          <LabeledLines lines={overseasCitizensServices.lines} />
-        </Card>
-
         {poisonCenters.map((p) => (
           <Card key={p.dial} as="article">
             <h3 className="text-headline">Poison control — {p.city}</h3>
@@ -315,7 +376,8 @@ export default function EmergencyPage() {
         </Callout>
       </section>
 
-      <section className="mt-8" aria-label="Emergency rooms">
+      {/* f. Emergency rooms. */}
+      <section id="hospitals" className="mt-8 scroll-mt-4" aria-label="Emergency rooms">
         <SectionHeader
           title={
             <span className="flex items-center gap-2">
@@ -365,61 +427,20 @@ export default function EmergencyPage() {
         </Callout>
       </section>
 
-      <section className="mt-8" aria-label="Embassies and consulates">
-        <SectionHeader title="Embassies & consulates" />
-        <div className="mt-3 space-y-3">
-          {usEmbassies.map((embassy) => (
-            <Card key={embassy.name} as="article" className="break-words">
-              <EmbassyBody embassy={embassy} headingLevel={3} />
-            </Card>
-          ))}
-          <Card padded={false} className="px-4 py-2">
-            <Disclosure label="What consular officers can and can't do">
-              <div className="grid gap-4 pb-3 pt-1 sm:grid-cols-2">
-                <div>
-                  <h4 className="text-subhead font-bold">They can</h4>
-                  <ul className="mt-1 space-y-1">
-                    {consularHelp.can.map((item) => (
-                      <li key={item} className="text-subhead text-secondary">
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="text-subhead font-bold">They can&apos;t</h4>
-                  <ul className="mt-1 space-y-1">
-                    {consularHelp.cant.map((item) => (
-                      <li key={item} className="text-subhead text-secondary">
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </Disclosure>
-          </Card>
-          <Card padded={false} className="px-4 py-2">
-            <Disclosure
-              label="Other embassies"
-              sublabel="UK, Canada, Australia, Ireland, New Zealand"
-            >
-              <div className="break-words pb-2">
-                {otherEmbassies.map((embassy) => (
-                  <div key={embassy.name} className="border-t border-default pb-1 pt-3">
-                    <EmbassyBody embassy={embassy} headingLevel={4} />
-                  </div>
-                ))}
-              </div>
-            </Disclosure>
-          </Card>
-        </div>
-        <Callout className="mt-3">
-          Switchboard numbers verified July 2026. After-hours consular emergency lines differ —{" "}
-          <strong className="font-bold">verify yours on the official site before travel.</strong>
-        </Callout>
+      {/* g. Tools. */}
+      <section id="tools" className="mt-8 scroll-mt-4 space-y-3" aria-label="Tools">
+        <SectionHeader title="Tools" />
+        <ShareLocation />
+        <ListRow
+          href="/map"
+          icon={<Icon icon={Map} size="lg" />}
+          title="Offline map"
+          subtitle="Your position on a downloaded map — no connection needed"
+        />
+        <WhereAreUCard headingLevel={3} />
       </section>
 
+      {/* h. If you're robbed + lost passport. */}
       <section className="mt-8" aria-label="If you're robbed">
         <SectionHeader
           title={
