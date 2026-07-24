@@ -73,15 +73,48 @@ export const emergencyNumbers: EmergencyNumber[] = [
     detail: "Out-of-hours doctor for non-life-threatening problems. Where inactive, ask your accommodation for the local number.",
     tier: "support",
   },
-  {
-    number: "803 116",
-    dial: "803116",
-    name: "Roadside assistance (ACI)",
-    nameIt: "Soccorso Stradale",
-    detail: "ACI breakdown, 24/7. Confirm the price before dispatch — free only for members and covered rentals.",
-    tier: "support",
-  },
 ];
+
+export type LabeledLine = {
+  /** Who dials this line, e.g. "From Italian phones". */
+  label: string;
+  number: string;
+  dial: string;
+};
+
+/**
+ * ACI roadside assistance is TWO numbers: 803 116 answers Italian SIMs
+ * only — a traveler on a US phone gets nowhere. ACI runs 800 116 800
+ * specifically for foreign-operator mobiles (verified on aci.it network
+ * sites, July 2026). Both render together as one roadside item.
+ */
+export const roadsideAssistance = {
+  name: "Roadside assistance (ACI)",
+  nameIt: "Soccorso Stradale",
+  summary: "Breakdowns, 24/7. Fees may apply — check rental coverage.",
+  lines: [
+    { label: "From Italian phones", number: "803 116", dial: "803116" },
+    { label: "From US or foreign phones", number: "+39 800 116 800", dial: "+39800116800" },
+  ] as LabeledLine[],
+  /** Some carriers reject the +39 form of Italian toll-free numbers. */
+  fallback: { number: "800 116 800", dial: "800116800" },
+  footnote: "Orange SOS columns on the autostrada also connect you.",
+} as const;
+
+/**
+ * State Department Overseas Citizens Services — the 24/7 backstop when
+ * no embassy or consulate answers. The US line is framed for family:
+ * relatives in New York can act from home. Verified on travel.state.gov,
+ * July 2026.
+ */
+export const overseasCitizensServices = {
+  name: "Overseas Citizens Services — State Dept",
+  summary: "Can't reach the embassy? State Dept 24/7 line.",
+  lines: [
+    { label: "From Italy", number: "+1 202 501 4444", dial: "+12025014444" },
+    { label: "From the US — for family back home", number: "1 888 407 4747", dial: "+18884074747" },
+  ] as LabeledLine[],
+} as const;
 
 export type PoisonCenter = {
   city: string;
@@ -153,3 +186,24 @@ export const callScript: Step[] = [
   { lead: "Your number,", rest: "for callbacks." },
   { lead: "Stay on the line", rest: "until the operator tells you to hang up." },
 ];
+
+/**
+ * Being robbed in Italy is an Italian-institution process: the stamped
+ * police report (denuncia) is the document everything downstream —
+ * insurance claims, passport replacement — depends on.
+ */
+export const robbed = {
+  summary: "File a police report (denuncia) — insurance and passport replacement require it.",
+  steps: [
+    { lead: "Crime in progress:", rest: "call 112." },
+    {
+      lead: "Then file the denuncia",
+      rest: "at any Polizia di Stato Questura or Carabinieri station.",
+    },
+    {
+      lead: "Keep the stamped copy",
+      rest: "— insurers and the consulate will ask for it.",
+    },
+  ] as Step[],
+  tip: "English varies; use your hotel or a translation app.",
+} as const;

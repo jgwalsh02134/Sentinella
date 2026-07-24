@@ -11,6 +11,10 @@ export type Embassy = {
   email?: string;
   website: string;
   notes?: string;
+  /** After-hours routing fact, rendered plain with tappable numbers. */
+  afterHours?: string;
+  /** Emergency-passport walk-in line linking the official page. */
+  passports?: { note: string; url: string };
 };
 
 /**
@@ -32,7 +36,9 @@ export const embassies: Embassy[] = [
     email: "USCitizensFlorence@state.gov",
     website: "https://it.usembassy.gov/embassy-consulates/florence/",
     notes:
-      "Issues same-day emergency passports for lost or stolen cases — for a Tuscany trip, this beats Rome. Serves Tuscany, Emilia-Romagna (except Piacenza/Parma), and San Marino. The same number answers after hours.",
+      "Issues same-day emergency passports for lost or stolen cases — for a Tuscany trip, this beats Rome. Serves Tuscany, Emilia-Romagna (except Piacenza/Parma), and San Marino.",
+    afterHours:
+      "After-hours emergency? Call the Rome switchboard +39 06 46741 — it covers Florence too.",
   },
   {
     country: "United States",
@@ -42,8 +48,13 @@ export const embassies: Embassy[] = [
     address: "Via Vittorio Veneto 121, 00187 Roma",
     phone: "+39 06 46741",
     dial: "+390646741",
+    email: "USCitizensRome@state.gov",
     website: "https://it.usembassy.gov",
     notes: "After hours, the switchboard connects to the duty officer for citizen emergencies. Consulates General in Milan, Florence, and Naples.",
+    passports: {
+      note: "Emergency passports: walk in weekday mornings — confirm hours.",
+      url: "https://it.usembassy.gov/u-s-citizen-services/passports/",
+    },
   },
   {
     country: "United Kingdom",
@@ -99,6 +110,29 @@ export const embassies: Embassy[] = [
     website: "https://www.mfat.govt.nz",
   },
 ];
+
+/**
+ * What consular officers can and can't do — State Department's own
+ * framing, shared by both US posts. ≤6 words per line by design: this
+ * is scanned in a crisis.
+ */
+export const consularHelp = {
+  can: [
+    "Issue emergency passports",
+    "Contact your family",
+    "Find doctors and lawyers",
+    "Help if you're arrested",
+    "Support crime victims",
+    "Coordinate after a death",
+  ],
+  cant: [
+    "Pay your bills",
+    "Get you out of jail",
+    "Act as your lawyer",
+    "Provide medical care",
+    "Investigate crimes",
+  ],
+} as const;
 
 export const lostDocumentSteps: Step[] = [
   {

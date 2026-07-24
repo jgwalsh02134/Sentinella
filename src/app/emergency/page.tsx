@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Map } from "lucide-react";
+import { Car, Hospital, Map } from "lucide-react";
 import CallPlate from "@/components/ui/CallPlate";
 import ActionRow from "@/components/ui/ActionRow";
 import Callout from "@/components/ui/Callout";
@@ -15,11 +15,27 @@ import TelText from "@/components/TelText";
 import WhereAreUCard from "@/components/WhereAreUCard";
 import AustraliaFlag from "@/components/AustraliaFlag";
 import IrelandFlag from "@/components/IrelandFlag";
+import ItalyFlag from "@/components/ItalyFlag";
 import NewZealandFlag from "@/components/NewZealandFlag";
 import UkFlag from "@/components/UkFlag";
 import UsFlag from "@/components/UsFlag";
-import { callScript, emergencyNumbers, poisonCenters } from "@/data/emergency";
-import { embassies, lostDocumentSteps, type Embassy } from "@/data/embassies";
+import {
+  callScript,
+  emergencyNumbers,
+  overseasCitizensServices,
+  poisonCenters,
+  roadsideAssistance,
+  robbed,
+  type LabeledLine,
+} from "@/data/emergency";
+import { consularHelp, embassies, lostDocumentSteps, type Embassy } from "@/data/embassies";
+import {
+  embassyDoctorsLink,
+  erCostNote,
+  romeEmergencyRooms,
+  type EmergencyRoom,
+} from "@/data/emergencyRooms";
+import { safetyPois } from "@/data/safetyPois";
 import { appleMapsDirectionsUrl } from "@/lib/maps";
 
 /** Countries with SVG flag icons; the rest fall back to their emoji flag. */
@@ -54,6 +70,23 @@ function EmbassyBody({ embassy, headingLevel }: { embassy: Embassy; headingLevel
           <TelText text={embassy.notes} />
         </p>
       ) : null}
+      {embassy.afterHours ? (
+        <p className="mt-1 text-subhead text-secondary">
+          <TelText text={embassy.afterHours} />
+        </p>
+      ) : null}
+      {embassy.passports ? (
+        <p className="mt-1 text-subhead">
+          <a
+            href={embassy.passports.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-link"
+          >
+            {embassy.passports.note}
+          </a>
+        </p>
+      ) : null}
       {embassy.email ? (
         <p className="mt-1 text-subhead text-secondary">
           Email:{" "}
@@ -79,6 +112,56 @@ function EmbassyBody({ embassy, headingLevel }: { embassy: Embassy; headingLevel
   );
 }
 
+/** Label + big mono number, the shared shape for multi-line phone cards. */
+function LabeledLines({ lines }: { lines: readonly LabeledLine[] }) {
+  return (
+    <dl className="mt-3 space-y-3">
+      {lines.map((line) => (
+        <div key={line.dial}>
+          <dt className="text-footnote text-secondary">{line.label}</dt>
+          <dd className="mt-0.5 font-mono text-callout font-semibold tabular-nums">
+            <a href={`tel:${line.dial}`} className="underline underline-offset-2">
+              {line.number}
+            </a>
+          </dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+/** One ER card: name, the fact that changes who goes, address, actions.
+ *  A Call action appears only for switchboards verified against an
+ *  official source — never guessed. */
+function ErCard({ er, headingLevel = 3 }: { er: EmergencyRoom; headingLevel?: 3 | 4 }) {
+  const Heading = `h${headingLevel}` as "h3" | "h4";
+  return (
+    <Card as="article">
+      <Heading className="text-headline">{er.name}</Heading>
+      {er.note ? <p className="mt-0.5 text-subhead font-semibold">{er.note}</p> : null}
+      <p className="mt-1 text-subhead text-secondary">{er.address}</p>
+      {er.phone && er.dial ? (
+        <p className="mt-1 font-mono text-callout font-semibold tabular-nums">
+          <a href={`tel:${er.dial}`} className="underline underline-offset-2">
+            {er.phone}
+          </a>
+        </p>
+      ) : null}
+      <ActionRow
+        className="mt-3"
+        actions={[
+          ...(er.phone && er.dial ? [{ label: "Call", href: `tel:${er.dial}` }] : []),
+          {
+            label: "Get directions",
+            href: appleMapsDirectionsUrl(`${er.address}, Italy`),
+            icon: <BrandIcon brand="apple" size={16} />,
+          },
+        ]}
+      />
+    </Card>
+  );
+}
+
 export default function EmergencyPage() {
   const primary = emergencyNumbers.filter((n) => n.tier === "primary");
   const services = emergencyNumbers.filter((n) => n.tier === "service");
@@ -86,6 +169,10 @@ export default function EmergencyPage() {
   // The two US posts render first as full cards; the rest collapse.
   const usEmbassies = embassies.filter((e) => e.country === "United States");
   const otherEmbassies = embassies.filter((e) => e.country !== "United States");
+  // Tuscany ERs come from the map's POI data — one source of truth.
+  const tuscanyErs: EmergencyRoom[] = safetyPois
+    .filter((p) => p.kind === "er" && (p.city === "Florence" || p.city === "Siena"))
+    .map((p) => ({ name: p.name, address: p.address, phone: p.phone, dial: p.dial }));
 
   return (
     <main>
@@ -166,6 +253,36 @@ export default function EmergencyPage() {
             footnote={n.detail}
           />
         ))}
+
+        <Card as="article">
+          <h3 className="flex items-center gap-2 text-headline">
+            <Icon icon={Car} size="md" /> {roadsideAssistance.name}
+          </h3>
+          <p className="mt-0.5 text-subhead text-secondary">
+            {roadsideAssistance.nameIt} · {roadsideAssistance.summary}
+          </p>
+          <LabeledLines lines={roadsideAssistance.lines} />
+          <p className="mt-2 text-footnote text-secondary">
+            If the +39 form won&apos;t connect from your phone, dial{" "}
+            <a
+              href={`tel:${roadsideAssistance.fallback.dial}`}
+              className="font-semibold tabular-nums underline underline-offset-2"
+            >
+              {roadsideAssistance.fallback.number}
+            </a>
+            .
+          </p>
+          <p className="mt-2 text-footnote text-secondary">{roadsideAssistance.footnote}</p>
+        </Card>
+
+        <Card as="article">
+          <h3 className="text-headline">
+            <UsFlag /> {overseasCitizensServices.name}
+          </h3>
+          <p className="mt-0.5 text-subhead text-secondary">{overseasCitizensServices.summary}</p>
+          <LabeledLines lines={overseasCitizensServices.lines} />
+        </Card>
+
         {poisonCenters.map((p) => (
           <Card key={p.dial} as="article">
             <h3 className="text-headline">Poison control — {p.city}</h3>
@@ -198,6 +315,56 @@ export default function EmergencyPage() {
         </Callout>
       </section>
 
+      <section className="mt-8" aria-label="Emergency rooms">
+        <SectionHeader
+          title={
+            <span className="flex items-center gap-2">
+              <Icon icon={Hospital} size="md" /> Emergency rooms — Rome
+            </span>
+          }
+        />
+        <div className="mt-3 space-y-3">
+          {romeEmergencyRooms.map((er) => (
+            <ErCard key={er.name} er={er} />
+          ))}
+        </div>
+
+        <SectionHeader
+          className="mt-6"
+          level={3}
+          title={
+            <span className="flex items-center gap-2">
+              <Icon icon={Hospital} size="md" /> Emergency rooms — Tuscany
+            </span>
+          }
+        />
+        <div className="mt-3 space-y-3">
+          {tuscanyErs.map((er) => (
+            <ErCard key={er.name} er={er} headingLevel={4} />
+          ))}
+        </div>
+
+        <p className="body-copy mt-4 text-secondary">{erCostNote}</p>
+        <p className="mt-2 text-subhead">
+          <a
+            href={embassyDoctorsLink.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-link"
+          >
+            {embassyDoctorsLink.label} →
+          </a>{" "}
+          <span className="text-secondary">({embassyDoctorsLink.note})</span>
+        </p>
+        <Callout className="mt-3">
+          Hospital switchboards verified July 2026 —{" "}
+          <strong className="font-bold">
+            verify against official sources before relying on them.
+          </strong>{" "}
+          In a true emergency call 112 first.
+        </Callout>
+      </section>
+
       <section className="mt-8" aria-label="Embassies and consulates">
         <SectionHeader title="Embassies & consulates" />
         <div className="mt-3 space-y-3">
@@ -206,6 +373,32 @@ export default function EmergencyPage() {
               <EmbassyBody embassy={embassy} headingLevel={3} />
             </Card>
           ))}
+          <Card padded={false} className="px-4 py-2">
+            <Disclosure label="What consular officers can and can't do">
+              <div className="grid gap-4 pb-3 pt-1 sm:grid-cols-2">
+                <div>
+                  <h4 className="text-subhead font-bold">They can</h4>
+                  <ul className="mt-1 space-y-1">
+                    {consularHelp.can.map((item) => (
+                      <li key={item} className="text-subhead text-secondary">
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="text-subhead font-bold">They can&apos;t</h4>
+                  <ul className="mt-1 space-y-1">
+                    {consularHelp.cant.map((item) => (
+                      <li key={item} className="text-subhead text-secondary">
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </Disclosure>
+          </Card>
           <Card padded={false} className="px-4 py-2">
             <Disclosure
               label="Other embassies"
@@ -227,7 +420,39 @@ export default function EmergencyPage() {
         </Callout>
       </section>
 
-      <section className="mt-8" aria-label="Lost documents">
+      <section className="mt-8" aria-label="If you're robbed">
+        <SectionHeader
+          title={
+            <span className="flex items-center gap-2">
+              <ItalyFlag /> If you&apos;re robbed
+            </span>
+          }
+          intro={robbed.summary}
+        />
+        <Card className="mt-3">
+          <ol className="space-y-3">
+            {robbed.steps.map((step, i) => (
+              <li key={step.lead} className="body-copy flex gap-3">
+                <span className="font-mono font-bold text-secondary">{i + 1}</span>
+                <span className="min-w-0 text-secondary">
+                  <strong className="font-bold text-primary">{step.lead}</strong>{" "}
+                  <TelText text={step.rest} />
+                </span>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-3 border-t border-default pt-3 text-subhead">
+            Passport taken?{" "}
+            <a href="#lost-passport" className="text-link">
+              Continue below
+            </a>
+            .
+          </p>
+        </Card>
+        <Callout className="mt-3">{robbed.tip}</Callout>
+      </section>
+
+      <section id="lost-passport" className="mt-8 scroll-mt-4" aria-label="Lost documents">
         <SectionHeader title="Passport lost or stolen" />
         <Card className="mt-3">
           <ol className="space-y-3">
