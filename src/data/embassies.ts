@@ -8,17 +8,32 @@ export type Embassy = {
   address: string;
   phone: string;
   dial: string;
+  email?: string;
   website: string;
   notes?: string;
 };
 
 /**
- * Switchboard numbers for embassies in Rome. These are the published main
- * lines; after-hours consular emergency lines differ by country and change
- * more often, so confirm them on the official site before travel. The app
- * renders a "verify before travel" notice wherever this data appears.
+ * Switchboard numbers for embassies and consulates. These are the published
+ * main lines; after-hours consular emergency lines differ by country and
+ * change more often, so confirm them on the official site before travel.
+ * The app renders a "verify before travel" notice wherever this data
+ * appears. Verified against travel.state.gov / it.usembassy.gov, July 2026.
  */
 export const embassies: Embassy[] = [
+  {
+    country: "United States",
+    flag: "🇺🇸",
+    name: "U.S. Consulate General Florence",
+    city: "Florence",
+    address: "Lungarno Amerigo Vespucci 38, 50123 Florence",
+    phone: "+39 055 266 951",
+    dial: "+39055266951",
+    email: "USCitizensFlorence@state.gov",
+    website: "https://it.usembassy.gov/embassy-consulates/florence/",
+    notes:
+      "Serves Tuscany, Emilia-Romagna (except Piacenza/Parma), and San Marino. Issues same-day emergency passports for lost/stolen cases — for a Tuscany trip, this beats going to Rome. The same number answers after hours.",
+  },
   {
     country: "United States",
     flag: "🇺🇸",

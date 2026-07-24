@@ -89,7 +89,7 @@ export default function EmergencyPage() {
               tier="support"
             />
             <a
-              href={appleMapsDirectionsUrl(`${p.hospital}, ${p.city}, Italy`)}
+              href={appleMapsDirectionsUrl(`${p.hospital.replace(/\s*\([^)]*\)/g, "")}, ${p.city}, Italy`)}
               target="_blank"
               rel="noreferrer"
               className="flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde text-sm font-bold text-verde active:bg-verde-tint"
@@ -98,19 +98,23 @@ export default function EmergencyPage() {
             </a>
           </div>
         ))}
+        <p className="callout">
+          Support and poison-control numbers verified July 2026 —{" "}
+          <strong className="font-bold">verify against official sources before relying on them.</strong>
+        </p>
       </section>
 
-      <section className="mt-6" aria-label="Embassies">
-        <h2 className="eyebrow">Embassies in Rome</h2>
+      <section className="mt-6" aria-label="Embassies and consulates">
+        <h2 className="eyebrow">Embassies & consulates</h2>
         <p className="callout mt-2">
-          Switchboard numbers only. After-hours consular emergency lines differ —{" "}
+          Switchboard numbers only, verified July 2026. After-hours consular emergency lines differ —{" "}
           <strong className="font-bold">verify yours on the official site before travel.</strong>
         </p>
         <div className="mt-3 space-y-3">
           {embassies.map((e) => {
             const FlagIcon = flagIcons[e.country];
             return (
-            <div key={e.country} className="plate break-words border border-line bg-white p-4">
+            <div key={e.name} className="plate break-words border border-line bg-white p-4">
               <p className="text-base font-bold">
                 {FlagIcon ? <FlagIcon /> : <span aria-hidden="true">{e.flag}</span>}{" "}
                 {e.name}
@@ -118,6 +122,14 @@ export default function EmergencyPage() {
               <p className="mt-0.5 text-sm text-mist">{e.address}</p>
               <p className="mt-0.5 font-mono text-sm font-semibold tabular-nums">{e.phone}</p>
               {e.notes ? <p className="mt-1 text-xs leading-relaxed text-mist">{e.notes}</p> : null}
+              {e.email ? (
+                <p className="mt-1 text-xs leading-relaxed text-mist">
+                  Email:{" "}
+                  <a href={`mailto:${e.email}`} className="text-link break-all">
+                    {e.email}
+                  </a>
+                </p>
+              ) : null}
               <div className="mt-3 grid grid-cols-2 gap-2">
                 <a
                   href={`tel:${e.dial}`}

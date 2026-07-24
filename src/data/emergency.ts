@@ -92,6 +92,13 @@ export type PoisonCenter = {
 
 /** Major 24/7 poison control centers. Verify before operational use. */
 export const poisonCenters: PoisonCenter[] = [
+  // Florence first: this trip is Tuscany-based.
+  {
+    city: "Florence",
+    hospital: "Centro Antiveleni, Ospedale Careggi (24h)",
+    phone: "+39 055 794 7819",
+    dial: "+390557947819",
+  },
   {
     city: "Rome",
     hospital: "Policlinico Gemelli",

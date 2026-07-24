@@ -185,6 +185,34 @@ export default function GuideTabs() {
                   </li>
                 ))}
               </ul>
+              {r.sections?.map((sec) => (
+                <div key={sec.label}>
+                  <h4 className="eyebrow mt-3">{sec.label}</h4>
+                  <ul className="mt-1 space-y-1.5">
+                    {sec.bullets.map((b) => (
+                      <li key={b} className="body-copy text-mist">
+                        <ColonLead text={b} />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+              {r.links?.length ? (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {r.links.map((link) => (
+                    <a
+                      key={link.url}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex min-h-[2.75rem] items-center justify-center rounded-xl border-2 border-verde px-4 text-sm font-bold text-verde active:bg-verde-tint"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              ) : null}
+              {r.caveat ? <p className="callout mt-3">{r.caveat}</p> : null}
             </article>
           ))}
 

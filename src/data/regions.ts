@@ -3,6 +3,12 @@ export type RegionBrief = {
   headline: string;
   watch: string[];
   move: string[];
+  /** Extra labeled bullet sections beyond the standard watch/move pair. */
+  sections?: { label: string; bullets: string[] }[];
+  /** Official or directions links, rendered as outline buttons (need a connection). */
+  links?: { label: string; url: string }[];
+  /** Verify-before-travel caveat, required whenever bullets carry contact data. */
+  caveat?: string;
 };
 
 export const regions: RegionBrief[] = [
@@ -57,6 +63,63 @@ export const regions: RegionBrief[] = [
       "The ZTL covers nearly the whole center and is camera-enforced; rental cars should stay in garages on the ring.",
       "Everything central is walkable; the station area is fine but scruffy late.",
     ],
+  },
+  {
+    name: "Tuscany",
+    headline: "Hill towns and ZTL cameras — the region rewards planning.",
+    watch: [
+      "ZTL cameras: Florence, Siena, Lucca, and Pisa all gate their centers with camera-enforced ZTL zones. Every camera pass is a separate fine — roughly €80–335 each, plus a ~€60 rental-agency admin fee, arriving by mail weeks later.",
+      "Florence's central ZTL: runs about Mon–Fri 07:30–20:00 and Saturday to 16:00. Park outside the walls; if your hotel is inside the zone, have them register your plate BEFORE you drive in.",
+      "International Driving Permit: legally required alongside a US license and checked at police stops — get one from AAA (~$20) before leaving the US. On-the-spot fines are real.",
+    ],
+    move: [
+      "Hill towns (San Gimignano, Siena, Cortona, Montepulciano): cobblestones, stairs, steep grades, and few elevators. October rain makes the stone slick — wear sturdy grippy shoes, plan rest stops, and confirm your lodging has an elevator if stairs are an issue.",
+    ],
+    sections: [
+      {
+        label: "24h emergency rooms (pronto soccorso)",
+        bullets: [
+          "Careggi (Florence): Largo G.A. Brambilla 3 — switchboard 055 794111; the ER entrance is on Viale Pieraccini.",
+          "Santa Maria Nuova (Florence): Piazza Santa Maria Nuova 1 — in the historic center.",
+          "Le Scotte (Siena): Viale Bracci — switchboard 0577 585111.",
+        ],
+      },
+      {
+        label: "October medical reality",
+        bullets: [
+          "Tourist clinics: the summer-only guardia medica turistica is closed by October.",
+          "After-hours, non-emergency care: call 116117 (Continuità Assistenziale, year-round); non-residents pay roughly €20 at the clinic or €30–35 for a home visit.",
+          "Pharmacies: after-hours coverage rotates — look for the farmacia di turno sign posted on any pharmacy door.",
+          "Emergencies: always 112.",
+        ],
+      },
+      {
+        label: "October on the ground",
+        bullets: [
+          "White truffles: menus appear in October; the San Miniato fair itself runs the last three weekends of November.",
+          "Olive harvest: late October through November — agriturismi and small towns get busy, book ahead.",
+          "Winter hours from Oct 25: sites shift schedules (the Colosseum's last entry drops from 17:30 to 15:30; the Uffizi is closed Mondays year-round) — check hours for your exact dates.",
+        ],
+      },
+    ],
+    links: [
+      {
+        label: "Directions — Careggi ER",
+        url: "https://maps.apple.com/?daddr=Largo%20G.A.%20Brambilla%203%2C%20Florence%2C%20Italy",
+      },
+      {
+        label: "Directions — Santa Maria Nuova",
+        url: "https://maps.apple.com/?daddr=Piazza%20Santa%20Maria%20Nuova%201%2C%20Florence%2C%20Italy",
+      },
+      {
+        label: "Directions — Le Scotte, Siena",
+        url: "https://maps.apple.com/?daddr=Viale%20Bracci%2C%20Siena%2C%20Italy",
+      },
+      { label: "Allerta meteo — Regione Toscana", url: "https://www.regione.toscana.it/allertameteo" },
+      { label: "LaMMA weather service", url: "https://www.lamma.toscana.it" },
+    ],
+    caveat:
+      "Numbers, hours, and prices verified July 2026 — verify against official sources before relying on them. Tuscany's daily color-coded weather alerts are explained on the seasonal weather card under Basics.",
   },
   {
     name: "Venice",
