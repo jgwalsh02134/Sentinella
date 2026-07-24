@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import ItalyFlag from "@/components/ItalyFlag";
+import SeasonalWeatherCard from "@/components/SeasonalWeatherCard";
 import { scams } from "@/data/scams";
 import { phraseGroups } from "@/data/phrases";
 import { regions } from "@/data/regions";
@@ -120,7 +121,14 @@ export default function GuideTabs() {
       </header>
 
       <div className="mt-3 space-y-3">
-        {tab === "Basics" && basicsItems.map((item) => <InfoCard key={item.title} item={item} />)}
+        {tab === "Basics" && (
+          <>
+            <SeasonalWeatherCard />
+            {basicsItems.map((item) => (
+              <InfoCard key={item.title} item={item} />
+            ))}
+          </>
+        )}
 
         {tab === "Scams" &&
           scams.map((s) => (
